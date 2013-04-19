@@ -11,44 +11,69 @@ if(empty($page_index))
 // fonction met en forme les valeur pour l output
 function parser_to_ressource($input=null)
 {
-	if(empty($input['NOM_MANAGER_LONG']) || empty($input['NOM_MANAGER_SHORT']) || empty($input['manga']))
-		return -4;
-	$out = $input['NOM_MANAGER_LONG']. ' ' .$input['NOM_MANAGER_SHORT']. "\n";
-	foreach($input['manga'] as $array){
-		if(check_manga_line_is_full($array))
-			$out.=$array['LONG_PROJECT_NAME'].' '.$array['SHORT_PROJECT_NAME'].' '.$array['FIRST_CHAPTER'].' '.$array['LAST_CHAPTER'].' '.$array['FIRST_TOME'].' '.$array['LAST_TOME'].' '.$array['STATE_AND_GENDER'].' '.$array['INFOPNG'].' '.$array['CHAPTER_SPECIALS']."\n";
+	if(empty($input['const']['NOM_MANAGER_LONG']) || empty($input['const']['NOM_MANAGER_SHORT']) || empty($input['data']))
+		return false;
+	$out = str_replace(' ','_',$input['const']['NOM_MANAGER_LONG']). ' ' .str_replace(' ','_',$input['const']['NOM_MANAGER_SHORT']). "\n";
+	foreach($input['data'] as $array){
+		if(($array = check_manga_line($array)))
+			$out.=$array['LONG_PROJECT_NAME'].' '.$array['SHORT_PROJECT_NAME'].' '.$array['FIRST_CHAPTER'].' '.$array['LAST_CHAPTER'].' '.$array['FIRST_TOME'].' '.$array['LAST_TOME'].' '.$array['STATE'].$array['GENDER'].' '.$array['INFOPNG'].' '.$array['CHAPTER_SPECIALS']."\n";
 	}
-	$out.= '#';
 	return $out;
 }
 /*************************************************/
 // fonction check si les valeur de la ligne sont correcte
-function check_manga_line_is_full($input)
+function check_manga_line($input)
 {
 	// Check que toutes les variables sont remplies & correctment
-	if	(empty($input) 
-		|| empty($input['LONG_PROJECT_NAME']) 
-		|| empty($input['SHORT_PROJECT_NAME']) 
-		|| !isset($input['FIRST_CHAPTER']) // ?
-		|| !isset($input['LAST_CHAPTER']) // ?
-		|| !isset($input['FIRST_TOME']) // ?
-		|| !isset($input['LAST_TOME']) // ?
-		|| empty($input['STATE_AND_GENDER']) 
-		|| !isset($input['INFOPNG']) // ?
+	if	(!isset($input['LONG_PROJECT_NAME'])
+		|| $input['LONG_PROJECT_NAME'] == null
+		|| strlen($input['LONG_PROJECT_NAME']) > 50
+		|| !isset($input['SHORT_PROJECT_NAME'])
+		|| $input['SHORT_PROJECT_NAME'] == null
+		|| strlen($input['SHORT_PROJECT_NAME']) > 10
+		|| empty($input['STATE'])
+		|| empty($input['GENDER'])
 		|| !isset($input['CHAPTER_SPECIALS'])
-		|| strlen($input['LONG_PROJECT_NAME']) > 50 
-		|| strlen($input['SHORT_PROJECT_NAME']) > 10 
-		|| !is_numeric($input['FIRST_CHAPTER']) 
+		)
+		return false;
+	if 	(	(!isset($input['FIRST_CHAPTER']) 
+			|| $input['FIRST_CHAPTER'] == null
+			|| !isset($input['LAST_CHAPTER'])
+			|| $input['LAST_CHAPTER'] == null
+			)
+		&& // error si chap et tome vide
+			(!isset($input['FIRST_TOME']) 
+			|| $input['FIRST_TOME'] == null
+			|| !isset($input['LAST_TOME'])
+			|| $input['LAST_TOME'] == null
+			)
+		)
+		return false;
+	// on met les 0 pour les valeurs vide
+	$input['SHORT_PROJECT_NAME'] = str_replace(' ', '_', $input['SHORT_PROJECT_NAME']);
+	$input['LONG_PROJECT_NAME'] = str_replace(' ', '_', $input['LONG_PROJECT_NAME']);
+	$input['CHAPTER_SPECIALS'] =(int) (empty($input['CHAPTER_SPECIALS']))? 0 : $input['CHAPTER_SPECIALS'];	
+	$input['FIRST_CHAPTER'] =(int) (empty($input['FIRST_CHAPTER']))? -1 : $input['FIRST_CHAPTER'];	
+	$input['LAST_CHAPTER'] =(int) (empty($input['LAST_CHAPTER']))? -1 : $input['LAST_CHAPTER'];	
+	$input['GENDER'] =(int) ($input['GENDER'] < 1 || $input['GENDER'] > 4)? 1 : $input['GENDER'];
+	$input['STATE'] =(int) ($input['STATE'] < 1 || $input['STATE'] > 3)? 1 : $input['STATE'];
+	$input['FIRST_TOME'] =(int) (empty($input['FIRST_TOME']))? -1 : $input['FIRST_TOME'];	
+	$input['LAST_TOME'] =(int) (empty($input['LAST_TOME']))? -1 : $input['LAST_TOME'];
+	$input['INFOPNG'] =(int) (empty($input['INFOPNG']))? 0 : 1;
+	
+	if	(!is_numeric($input['FIRST_CHAPTER']) 
 		|| !is_numeric($input['LAST_CHAPTER']) 
 		|| !is_numeric($input['FIRST_TOME']) 
 		|| !is_numeric($input['LAST_TOME']) 
-		|| !is_numeric($input['STATE_AND_GENDER']) 
+		|| !is_numeric($input['STATE']) 
+		|| !is_numeric($input['GENDER']) 
 		|| !is_numeric($input['INFOPNG']) 
 		|| !is_numeric($input['CHAPTER_SPECIALS'])
+		|| $input['FIRST_CHAPTER'] > $input['LAST_CHAPTER']
+		|| $input['FIRST_TOME'] > $input['LAST_TOME']
 		)
 		return false;
-	else
-		return true;
+	return $input;
 }
 /*************************************************/
 // fonction lancer le dl du ficher
@@ -95,9 +120,10 @@ function utf8_to_ascii($mixed, $ascii='ISO-8859-1//TRANSLIT')
 // fonction remet les output_value[] en output[]value
 function sort_array($array)
 {
+	$out = null;
 	for($i=0;isset($array['LONG_PROJECT_NAME'][$i]) ;$i++)
 		foreach($array as $key=>$value)
-			$out[$i][$key] = $value[$i];
+			$out[$i][$key] = (isset($value[$i]))? $value[$i] : null;
 	return $out;
 }
 /*************************************************/

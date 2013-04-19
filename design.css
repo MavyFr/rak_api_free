@@ -59,6 +59,7 @@ em
 hr
 {
 	color: #B84700;
+	background-color: #B84700;
 }
 /* def des #id */ 
 #conten
@@ -112,4 +113,10 @@ hr
 .red
 {
 	color: red;
+}
+.separator
+{
+	width: 800px;
+	height: 10px;
+	border-bottom: 3px solid #B84700;
 }
