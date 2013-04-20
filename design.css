@@ -120,3 +120,8 @@ hr
 	height: 10px;
 	border-bottom: 3px solid #B84700;
 }
+.help
+{
+	color: #B84700;
+	cursor: help;
+}

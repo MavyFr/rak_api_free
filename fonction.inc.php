@@ -13,12 +13,13 @@ function parser_to_ressource($input=null)
 {
 	if(empty($input['const']['NOM_MANAGER_LONG']) || empty($input['const']['NOM_MANAGER_SHORT']) || empty($input['data']))
 		return false;
-	$out = str_replace(' ','_',$input['const']['NOM_MANAGER_LONG']). ' ' .str_replace(' ','_',$input['const']['NOM_MANAGER_SHORT']). "\n";
+	$head = str_replace(' ','_',$input['const']['NOM_MANAGER_LONG']). ' ' .str_replace(' ','_',$input['const']['NOM_MANAGER_SHORT']). "\n";
+	$out = null;
 	foreach($input['data'] as $array){
 		if(($array = check_manga_line($array)))
 			$out.=$array['LONG_PROJECT_NAME'].' '.$array['SHORT_PROJECT_NAME'].' '.$array['FIRST_CHAPTER'].' '.$array['LAST_CHAPTER'].' '.$array['FIRST_TOME'].' '.$array['LAST_TOME'].' '.$array['STATE'].$array['GENDER'].' '.$array['INFOPNG'].' '.$array['CHAPTER_SPECIALS']."\n";
 	}
-	return $out;
+	return (empty($out))? false : $head . $out;
 }
 /*************************************************/
 // fonction check si les valeur de la ligne sont correcte
@@ -102,18 +103,18 @@ function set_cookie($mixed=null,$name=null, $time_out=30758400)
 }
 /*************************************************/
 // fonction convertire utf8 en ascii
-function utf8_to_ascii($mixed, $ascii='ISO-8859-1//TRANSLIT')
+function switch_utf8_ascii($mixed, $out='ISO-8859-1//TRANSLIT', $in='UTF-8')
 {
 	if(is_array($mixed)){ // si on lui passe un array on recursive
 		foreach($mixed as $key => $value){
 			if(is_array($value))
-				$out[$key] = utf8_to_ascii($value);
+				$out[$key] = switch_utf8_ascii($value, $out, $in);
 			else
-				$out[$key] = iconv("UTF-8", $ascii, $value);
+				$out[$key] = iconv($in, $out, $value);
 		}
 	}
 	else
-		$out = iconv("UTF-8", $ascii, $mixed);
+		$out = iconv($in, $out, $mixed);
 	return $out;
 }
 /*************************************************/

@@ -5,13 +5,20 @@ include_once('fonction.inc.php');
 if(empty($page_fonction)) // si le chargement merde
 	die('SECURITY ERROR : Please Contact Your Admin, <a href="mailto:contact@rakshata.com">contact@rakshata.com</a>.');
 
+if(!empty($t))
+{
+	;
+}
+
 if(!empty($_POST))
 {
 	$manga_array = $_POST;
+	
+	
 	if(($sorted_array = sort_array($_POST['data'])))
 	{
 		$manga_array['data'] = $sorted_array;
-		if( ($ressource = parser_to_ressource(utf8_to_ascii($manga_array))) )
+		if( ($ressource = parser_to_ressource(switch_utf8_ascii($manga_array))) )
 			set_download($ressource);
 	}
 }
@@ -30,7 +37,7 @@ if(!empty($_POST))
 		{
 			// Crée un nouvel element
 			var span = document.createElement("span");
-			span.innerHTML="\t\t\t<hr />\n\t\t\t<label for=\"LONG_PROJECT_NAME\">Nom long de votre s&eacute;rie (&lt; 51 caract&egrave;res) : <span class=\"red\">*</span></label>\n\t\t\t<br />\n\t\t\t<input type=\"text\" name=\"data[LONG_PROJECT_NAME][]\" id=\"LONG_PROJECT_NAME\" />\n\t\t\t<br />\n\t\t\t<label for=\"SHORT_PROJECT_NAME\">Nom cours de votre s&eacute;rie (&lt; 11 caract&egrave;res) : <span class=\"red\">*</span></label>\n\t\t\t<br />\n\t\t\t<input type=\"text\" name=\"data[SHORT_PROJECT_NAME][]\" id=\"SHORT_PROJECT_NAME\" />\n\t\t\t<br/>\n\t\t\t<label for=\"FIRST_CHAPTER\">Premier chapitre (vide si non-sorti) : </label>\n\t\t\t<br />\n\t\t\t<input type=\"text\" name=\"data[FIRST_CHAPTER][]\" id=\"FIRST_CHAPTER\" />\n\t\t\t<br/>\n\t\t\t<label for=\"LAST_CHAPTER\">Dernier chapitre : </label>\n\t\t\t<br />\n\t\t\t<input type=\"text\" name=\"data[LAST_CHAPTER][]\" id=\"LAST_CHAPTER\" />\n\t\t\t<br/>\n\t\t\t<label for=\"FIRST_TOME\">Premier tome (vide si non-sorti) :</label>\n\t\t\t<br />\n\t\t\t<input type=\"text\" name=\"data[FIRST_TOME][]\" id=\"FIRST_TOME\" />\n\t\t\t<br/>\n\t\t\t<label for=\"LAST_TOME\">Dernier tome : </label>\n\t\t\t<br />\n\t\t\t<input type=\"text\" name=\"data[LAST_TOME][]\" id=\"LAST_TOME\" />\n\t\t\t<br/>\n\t\t\t<label for=\"STATE\">&Eacute;tat : <span class=\"red\">*</span></label>\n\t\t\t<br />\n\t\t\t<select name=\"data[STATE][]\" id=\"STATE\" >\n\t\t\t\t<option value=\"1\">En cours</option>\n\t\t\t\t<option value=\"2\">Suspendu</option>\n\t\t\t\t<option value=\"3\">Termin&eacute;</option>\n\t\t\t</select>\n\t\t\t<br/>\n\t\t\t<label for=\"GENDER\">Type : <span class=\"red\">*</span></label>\n\t\t\t<br />\n\t\t\t<select name=\"data[GENDER][]\" id=\"GENDER\" >\n\t\t\t\t<option value=\"1\">Shonen</option>\n\t\t\t\t<option value=\"2\">Shojo</option>\n\t\t\t\t<option value=\"3\">Seinen</option>\n\t\t\t\t<option value=\"4\">Hentai (-16/-18)</option>\n\t\t\t</select>\n\t\t\t<br/>\n\t\t\tPage d'information : \n\t\t\t<br />\n\t\t\t<input type=\"checkbox\" name=\"data[INFOPNG][]\" id=\"INFOPNG\" /><label for=\"INFOPNG\">Oui</label>\n\t\t\t<br/>\n\t\t\t<label for=\"CHAPTER_SPECIALS\">Nombre de chapitre sp&eacute;ciaux (\"10.5\", \"20.1\", ...) : </label>\n\t\t\t<br />\n\t\t\t<input type=\"text\" name=\"data[CHAPTER_SPECIALS][]\" id=\"CHAPTER_SPECIALS\" />\n\t\t\t<br/>";
+			span.innerHTML="\t\t\t<hr />\n\t\t\t<label>Nom long de votre s&eacute;rie (&lt; 51 caract&egrave;res) : <span class=\"red\">*</span></label>\n\t\t\t<br />\n\t\t\t<input type=\"text\" name=\"data[LONG_PROJECT_NAME][]\" />\n\t\t\t<br />\n\t\t\t<label>Nom cours de votre s&eacute;rie (&lt; 11 caract&egrave;res) : <span class=\"red\">*</span></label>\n\t\t\t<br />\n\t\t\t<input type=\"text\" name=\"data[SHORT_PROJECT_NAME][]\" />\n\t\t\t<br/>\n\t\t\t<label>Premier chapitre (vide si non-sorti) : </label>\n\t\t\t<br />\n\t\t\t<input type=\"text\" name=\"data[FIRST_CHAPTER][]\" />\n\t\t\t<br/>\n\t\t\t<label>Dernier chapitre : </label>\n\t\t\t<br />\n\t\t\t<input type=\"text\" name=\"data[LAST_CHAPTER][]\" />\n\t\t\t<br/>\n\t\t\t<label>Premier tome (vide si non-sorti) :</label>\n\t\t\t<br />\n\t\t\t<input type=\"text\" name=\"data[FIRST_TOME][]\" />\n\t\t\t<br/>\n\t\t\t<label>Dernier tome : </label>\n\t\t\t<br />\n\t\t\t<input type=\"text\" name=\"data[LAST_TOME][]\" />\n\t\t\t<br/>\n\t\t\t<label>&Eacute;tat de la s&eacute;rie : <span class=\"red\">*</span></label>\n\t\t\t<br />\n\t\t\t<select name=\"data[STATE][]\" >\n\t\t\t\t<option value=\"1\">En cours</option>\n\t\t\t\t<option value=\"2\">Suspendu</option>\n\t\t\t\t<option value=\"3\">Termin&eacute;</option>\n\t\t\t</select>\n\t\t\t<br/>\n\t\t\t<label>Type de la s&eacute;rie : <span class=\"red\">*</span></label>\n\t\t\t<br />\n\t\t\t<select name=\"data[GENDER][]\" >\n\t\t\t\t<option value=\"1\">Shonen</option>\n\t\t\t\t<option value=\"2\">Shojo</option>\n\t\t\t\t<option value=\"3\">Seinen</option>\n\t\t\t\t<option value=\"4\">Hentai (-16/-18)</option>\n\t\t\t</select>\n\t\t\t<br/>\n\t\t\t<label>Page d'information : <span class=\"help\" title=\"Utilisez-vous une page 'info.png' pour cette s&eacute;rie ?\">(?)</span></label>\n\t\t\t<br />\n\t\t\t<input type=\"checkbox\" name=\"data[INFOPNG][]\" /><label>Oui</label>\n\t\t\t<br/>\n\t\t\t<label>Nombre de chapitre sp&eacute;ciaux : <span class=\"help\" title=\"Avez-vous des inter-chapitre de type '10.5' ? Donnez le nombre de ces chapitres\">(?)</span></label>\n\t\t\t<br />\n\t\t\t<input type=\"text\" name=\"data[CHAPTER_SPECIALS][]\" />\n\t\t\t<br/>";
 			// l'ajoute à la fin du document
 			document.getElementById("list_serie").appendChild(span);
 		}
@@ -47,21 +54,21 @@ if(!empty($_POST))
 		<p>
 		<?php /*<em>Fichier</em>
 		<br />
-		<label for="old-repo">Votre fichier <kbd>rakshata-manga-2</kbd> actuel : </label>
+		<label>Votre fichier <kbd>rakshata-manga-2</kbd> actuel : </label>
 		<br />
-		<input id="old-repo" type="file" name="old-repo" />
+		<input type="file" name="old-repo" />
 		<br />
 		<input type="submit" value="charger" />
 		<br />*/?>
 		<em>D&eacute;p&ocirc;t</em>
 		<br />
-		<label for="long-repo">Nom long de votre d&eacute;p&ocirc;t (&lt; 26 caract&egrave;res) : <span class="red">*</span></label>
+		<label>Nom long de votre d&eacute;p&ocirc;t (&lt; 26 caract&egrave;res) : <span class="red">*</span></label>
 		<br />
-		<input type="text" name="const[NOM_MANAGER_LONG]" id="long-repo" />
+		<input type="text" name="const[NOM_MANAGER_LONG]" />
 		<br />
-		<label for="short-repo">Nom cours de votre d&eacute;p&ocirc;t (&lt; 6 caract&egrave;res) : <span class="red">*</span></label>
+		<label>Nom cours de votre d&eacute;p&ocirc;t (&lt; 6 caract&egrave;res) : <span class="red">*</span></label>
 		<br />
-		<input type="text" name="const[NOM_MANAGER_SHORT]" id="short-repo" />
+		<input type="text" name="const[NOM_MANAGER_SHORT]" />
 		<br />
 		</p>
 		<div class="separator"></div>
@@ -70,54 +77,54 @@ if(!empty($_POST))
 		<br />
 		<span id="list_serie">
 			<span>
-			<label for="LONG_PROJECT_NAME">Nom long de votre s&eacute;rie (&lt; 51 caract&egrave;res) : <span class="red">*</span></label>
+			<label>Nom long de votre s&eacute;rie (&lt; 51 caract&egrave;res) : <span class="red">*</span></label>
 			<br />
-			<input type="text" name="data[LONG_PROJECT_NAME][]" id="LONG_PROJECT_NAME" />
+			<input type="text" name="data[LONG_PROJECT_NAME][]" />
 			<br />
-			<label for="SHORT_PROJECT_NAME">Nom cours de votre s&eacute;rie (&lt; 11 caract&egrave;res) : <span class="red">*</span></label>
+			<label>Nom cours de votre s&eacute;rie (&lt; 11 caract&egrave;res) : <span class="red">*</span></label>
 			<br />
-			<input type="text" name="data[SHORT_PROJECT_NAME][]" id="SHORT_PROJECT_NAME" />
+			<input type="text" name="data[SHORT_PROJECT_NAME][]" />
 			<br/>
-			<label for="FIRST_CHAPTER">Premier chapitre (vide si non-sorti) : </label>
+			<label>Premier chapitre (vide si non-sorti) : </label>
 			<br />
-			<input type="text" name="data[FIRST_CHAPTER][]" id="FIRST_CHAPTER" />
+			<input type="text" name="data[FIRST_CHAPTER][]" />
 			<br/>
-			<label for="LAST_CHAPTER">Dernier chapitre : </label>
+			<label>Dernier chapitre : </label>
 			<br />
-			<input type="text" name="data[LAST_CHAPTER][]" id="LAST_CHAPTER" />
+			<input type="text" name="data[LAST_CHAPTER][]" />
 			<br/>
-			<label for="FIRST_TOME">Premier tome (vide si non-sorti) :</label>
+			<label>Premier tome (vide si non-sorti) :</label>
 			<br />
-			<input type="text" name="data[FIRST_TOME][]" id="FIRST_TOME" />
+			<input type="text" name="data[FIRST_TOME][]" />
 			<br/>
-			<label for="LAST_TOME">Dernier tome : </label>
+			<label>Dernier tome : </label>
 			<br />
-			<input type="text" name="data[LAST_TOME][]" id="LAST_TOME" />
+			<input type="text" name="data[LAST_TOME][]" />
 			<br/>
-			<label for="STATE">&Eacute;tat : <span class="red">*</span></label>
+			<label>&Eacute;tat de la s&eacute;rie : <span class="red">*</span></label>
 			<br />
-			<select name="data[STATE][]" id="STATE" >
+			<select name="data[STATE][]" >
 				<option value="1">En cours</option>
 				<option value="2">Suspendu</option>
 				<option value="3">Termin&eacute;</option>
 			</select>
 			<br/>
-			<label for="GENDER">Type : <span class="red">*</span></label>
+			<label>Type de la s&eacute;rie : <span class="red">*</span></label>
 			<br />
-			<select name="data[GENDER][]" id="GENDER" >
+			<select name="data[GENDER][]" >
 				<option value="1">Shonen</option>
 				<option value="2">Shojo</option>
 				<option value="3">Seinen</option>
 				<option value="4">Hentai (-16/-18)</option>
 			</select>
 			<br/>
-			Page d'information : 
+			<label>Page d'information : <span class="help" title="Utilisez-vous une page 'info.png' pour cette s&eacute;rie ?">(?)</span></label>
 			<br />
-			<input type="checkbox" name="data[INFOPNG][]" id="INFOPNG" /><label for="INFOPNG">Oui</label>
+			<input type="checkbox" name="data[INFOPNG][]" /><label>Oui</label>
 			<br/>
-			<label for="CHAPTER_SPECIALS">Nombre de chapitre sp&eacute;ciaux ("10.5", "20.1", ...) : </label>
+			<label>Nombre de chapitre sp&eacute;ciaux : <span class="help" title="Avez-vous des inter-chapitre de type '10.5' ? Donnez le nombre de ces chapitres">(?)</span></label>
 			<br />
-			<input type="text" name="data[CHAPTER_SPECIALS][]" id="CHAPTER_SPECIALS" />
+			<input type="text" name="data[CHAPTER_SPECIALS][]" />
 			<br/>
 			</span>
 		</span>
