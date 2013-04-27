@@ -33,8 +33,10 @@ body
 h1
 {
 	font-family: "Ace Futurism Regular", "Deja vu" , Helvetica , Verdana , sans-serif;
+	text-decoration: none;
+	font-style: normal;
+	font-weight: bold;
 	font-size: 23px;
-	text-align: center;
 	color: #B84700;
 }
 a
@@ -46,15 +48,6 @@ a
 kbd
 {
 	background-color: #999999;
-}
-em
-{
-	font-family: "Ace Futurism Regular", "Deja vu" , Helvetica , Verdana , sans-serif;
-	text-decoration: none;
-	font-style: normal;
-	font-weight: bold;
-	font-size: 23px;
-	color: #B84700;
 }
 hr
 {
@@ -120,8 +113,23 @@ hr
 	height: 10px;
 	border-bottom: 3px solid #B84700;
 }
+
+.hr
+{
+	padding-bottom: 10px;
+	border-bottom: 1px solid #B84700;
+}
 .help
 {
 	color: #B84700;
 	cursor: help;
+}
+.delet
+{
+	display: block;
+	font-style: normal;
+	margin: 0px;
+	padding: 0px;
+	text-align:center;
+	background-color: #999999;
 }
