@@ -16,12 +16,12 @@ elseif(!empty($_POST))
 /**elseif(!empty($_COOKIE['old']))
 	$old = $_COOKIE['old'];**/
 
-	//var_dump($_POST);die;
 if(!empty($_POST['const']) and empty($_FILES['old-repo']['size']))
 {
 	$manga_array['const'] = $_POST['const'];
 	if(($manga_array['data'] = sort_array($_POST['data'])))
 	{
+		//var_dump($_SESSION);die;
 		if( ($ressource = parser_to_ressource($manga_array)) )
 		{
 			/**if(!empty($_POST['remember']))
@@ -64,11 +64,11 @@ if(!empty($_POST['const']) and empty($_FILES['old-repo']['size']))
 		<p>
 		<label>Nom long de votre d&eacute;p&ocirc;t (&lt; 26 caract&egrave;res) : <span class="red">*</span></label>
 		<br />
-		<input type="text" name="const[LONG_MANAGER_NAME]" <?php echo isset($old['const']['LONG_MANAGER_NAME'])? 'value="'.$old['const']['LONG_MANAGER_NAME'].'"':'';?>/>
+		<input type="text" name="const[LONG_MANAGER_NAME]" <?php if(isset($old['const']['LONG_MANAGER_NAME']))echo 'value="'.$old['const']['LONG_MANAGER_NAME'].'"';?>/>
 		<br />
 		<label>Nom cours de votre d&eacute;p&ocirc;t (&lt; 6 caract&egrave;res) : <span class="red">*</span></label>
 		<br />
-		<input type="text" name="const[SHORT_MANAGER_NAME]" <?php echo isset($old['const']['SHORT_MANAGER_NAME'])? 'value="'.$old['const']['SHORT_MANAGER_NAME'].'"':'';?>/>
+		<input type="text" name="const[SHORT_MANAGER_NAME]" <?php if(isset($old['const']['SHORT_MANAGER_NAME']))echo 'value="'.$old['const']['SHORT_MANAGER_NAME'].'"';?>/>
 		</p>
 		<div class="separator"></div>
 		<h1>S&eacute;rie</h1>
@@ -82,52 +82,52 @@ if(!empty($_POST['const']) and empty($_FILES['old-repo']['size']))
 			<a href="#" class="delet" onclick="delet_line('line_<?php echo $i; ?>'); return false;">(Supprimer)</a>
 			<label>Nom long de votre s&eacute;rie (&lt; 51 caract&egrave;res) : <span class="red">*</span></label>
 			<br />
-			<input type="text" name="data[LONG_PROJECT_NAME][<?php echo $i; ?>]" <?php echo isset($old['data'][$i]['LONG_PROJECT_NAME'])? 'value="'.$old['data'][$i]['LONG_PROJECT_NAME'].'"':'';?>/>
+			<input type="text" name="data[<?php echo $i;?>][LONG_PROJECT_NAME]" <?php if(isset($old['data'][$i]['LONG_PROJECT_NAME']))echo 'value="'.$old['data'][$i]['LONG_PROJECT_NAME'].'"';?>/>
 			<br />
 			<label>Nom cours de votre s&eacute;rie (&lt; 11 caract&egrave;res) : <span class="red">*</span></label>
 			<br />
-			<input type="text" name="data[SHORT_PROJECT_NAME][<?php echo $i; ?>]" <?php echo isset($old['data'][$i]['SHORT_PROJECT_NAME'])? 'value="'.$old['data'][$i]['SHORT_PROJECT_NAME'].'"':'';?>/>
+			<input type="text" name="data[<?php echo $i;?>][SHORT_PROJECT_NAME]" <?php if(isset($old['data'][$i]['SHORT_PROJECT_NAME']))echo 'value="'.$old['data'][$i]['SHORT_PROJECT_NAME'].'"';?>/>
 			<br/>
 			<label>Premier chapitre (vide si non-sorti) : </label>
 			<br />
-			<input type="text" name="data[FIRST_CHAPTER][<?php echo $i; ?>]" <?php echo (isset($old['data'][$i]['FIRST_CHAPTER']) && $old['data'][$i]['FIRST_CHAPTER']>=0)? 'value="'.$old['data'][$i]['FIRST_CHAPTER'].'"':'';?>/>
+			<input type="text" name="data[<?php echo $i;?>][FIRST_CHAPTER]" <?php if(isset($old['data'][$i]['FIRST_CHAPTER']) && $old['data'][$i]['FIRST_CHAPTER']>=0)echo 'value="'.$old['data'][$i]['FIRST_CHAPTER'].'"';?>/>
 			<br/>
 			<label>Dernier chapitre : </label>
 			<br />
-			<input type="text" name="data[LAST_CHAPTER][<?php echo $i; ?>]" <?php echo (isset($old['data'][$i]['LAST_CHAPTER']) && $old['data'][$i]['LAST_CHAPTER']>=0)? 'value="'.$old['data'][$i]['LAST_CHAPTER'].'"':'';?>/>
+			<input type="text" name="data[<?php echo $i;?>][LAST_CHAPTER]" <?php if(isset($old['data'][$i]['LAST_CHAPTER']) && $old['data'][$i]['LAST_CHAPTER']>=0)echo 'value="'.$old['data'][$i]['LAST_CHAPTER'].'"';?>/>
 			<br/>
 			<label>Premier tome (vide si non-sorti) :</label>
 			<br />
-			<input type="text" name="data[FIRST_TOME][<?php echo $i; ?>]" <?php echo (isset($old['data'][$i]['FIRST_TOME']) && $old['data'][$i]['FIRST_TOME']>=0)? 'value="'.$old['data'][$i]['FIRST_TOME'].'"':'';?>/>
+			<input type="text" name="data[<?php echo $i;?>][FIRST_TOME]" <?php if(isset($old['data'][$i]['FIRST_TOME']) && $old['data'][$i]['FIRST_TOME']>=0)echo 'value="'.$old['data'][$i]['FIRST_TOME'].'"';?>/>
 			<br/>
 			<label>Dernier tome : </label>
 			<br />
-			<input type="text" name="data[LAST_TOME][<?php echo $i; ?>]" <?php echo (isset($old['data'][$i]['LAST_TOME']) && $old['data'][$i]['LAST_TOME']>=0)? 'value="'.$old['data'][$i]['LAST_TOME'].'"':'';?>/>
+			<input type="text" name="data[<?php echo $i;?>][LAST_TOME]" <?php if(isset($old['data'][$i]['LAST_TOME']) && $old['data'][$i]['LAST_TOME']>=0)echo 'value="'.$old['data'][$i]['LAST_TOME'].'"';?>/>
 			<br/>
 			<label>&Eacute;tat de la s&eacute;rie : <span class="red">*</span></label>
 			<br />
-			<select name="data[STATE][<?php echo $i; ?>]" >
-				<option value="1" <?php echo (!empty($old['data'][$i]['STATE']) && $old['data'][$i]['STATE']==1)? 'selected="selected"':'';?>>En cours</option>
-				<option value="2" <?php echo (!empty($old['data'][$i]['STATE']) && $old['data'][$i]['STATE']==2)? 'selected="selected"':'';?>>Suspendu</option>
-				<option value="3" <?php echo (!empty($old['data'][$i]['STATE']) && $old['data'][$i]['STATE']==3)? 'selected="selected"':'';?>>Termin&eacute;</option>
+			<select name="data[<?php echo $i;?>][STATE]" >
+				<option value="1" <?php if(!empty($old['data'][$i]['STATE']) && $old['data'][$i]['STATE']==1)echo 'selected="selected"';?>>En cours</option>
+				<option value="2" <?php if(!empty($old['data'][$i]['STATE']) && $old['data'][$i]['STATE']==2)echo 'selected="selected"';?>>Suspendu</option>
+				<option value="3" <?php if(!empty($old['data'][$i]['STATE']) && $old['data'][$i]['STATE']==3)echo 'selected="selected"';?>>Termin&eacute;</option>
 			</select>
 			<br/>
 			<label>Type de la s&eacute;rie : <span class="red">*</span></label>
 			<br />
-			<select name="data[GENDER][<?php echo $i; ?>]" >
-				<option value="1" <?php echo (!empty($old['data'][$i]['GENDER']) && $old['data'][$i]['GENDER']==1)? 'selected="selected"':'';?>>Shonen</option>
-				<option value="2" <?php echo (!empty($old['data'][$i]['GENDER']) && $old['data'][$i]['GENDER']==2)? 'selected="selected"':'';?>>Shojo</option>
-				<option value="3" <?php echo (!empty($old['data'][$i]['GENDER']) && $old['data'][$i]['GENDER']==3)? 'selected="selected"':'';?>>Seinen</option>
-				<option value="4" <?php echo (!empty($old['data'][$i]['GENDER']) && $old['data'][$i]['GENDER']==4)? 'selected="selected"':'';?>>Hentai (-16/-18)</option>
+			<select name="data[<?php echo $i;?>][GENDER]" >
+				<option value="1" <?php if(!empty($old['data'][$i]['GENDER']) && $old['data'][$i]['GENDER']==1)echo 'selected="selected"';?>>Shonen</option>
+				<option value="2" <?php if(!empty($old['data'][$i]['GENDER']) && $old['data'][$i]['GENDER']==2)echo 'selected="selected"';?>>Shojo</option>
+				<option value="3" <?php if(!empty($old['data'][$i]['GENDER']) && $old['data'][$i]['GENDER']==3)echo 'selected="selected"';?>>Seinen</option>
+				<option value="4" <?php if(!empty($old['data'][$i]['GENDER']) && $old['data'][$i]['GENDER']==4)echo 'selected="selected"';?>>Hentai (-16/-18)</option>
 			</select>
 			<br/>
 			<label>Page d'information : <span class="help" title="Utilisez-vous une page 'info.png' pour cette s&eacute;rie ?">(?)</span></label>
 			<br />
-			<input type="checkbox" name="data[INFOPNG][<?php echo $i; ?>]" <?php echo !empty($old['data'][$i]['INFOPNG'])? 'checked="checked"':'';?>/><label>Oui</label>
+			<input type="checkbox" name="data[<?php echo $i;?>][INFOPNG]" <?php if(!empty($old['data'][$i]['INFOPNG']))echo 'checked="checked"';?>/><label>Oui</label>
 			<br/>
 			<label>Nombre de chapitre sp&eacute;ciaux : <span class="help" title="Avez-vous des inter-chapitre de type '10.5' ? Donnez le nombre de ces chapitres">(?)</span></label>
 			<br />
-			<input type="text" name="data[CHAPTER_SPECIALS][<?php echo $i; ?>]" <?php echo isset($old['data'][$i]['CHAPTER_SPECIALS'])? 'value="'.$old['data'][$i]['CHAPTER_SPECIALS'].'"':'';?>/>
+			<input type="text" name="data[<?php echo $i;?>][CHAPTER_SPECIALS]" <?php if(isset($old['data'][$i]['CHAPTER_SPECIALS']))echo 'value="'.$old['data'][$i]['CHAPTER_SPECIALS'].'"';?>/>
 			<br/>
 			</p>
 			<?php
@@ -163,7 +163,7 @@ if(!empty($_POST['const']) and empty($_FILES['old-repo']['size']))
 function add_ligne(i)
 {
 	var p = document.createElement("p");
-	p.innerHTML="\t\t\t<a href=\"#\" class=\"delet\" onclick=\"delet_line('line_"+i+"'); return false;\">(Supprimer)</a>\n\t\t\t<label>Nom long de votre s&eacute;rie (&lt; 51 caract&egrave;res) : <span class=\"red\">*</span></label>\n\t\t\t<br />\n\t\t\t<input type=\"text\" name=\"data[LONG_PROJECT_NAME]["+i+"]\" />\n\t\t\t<br />\n\t\t\t<label>Nom cours de votre s&eacute;rie (&lt; 11 caract&egrave;res) : <span class=\"red\">*</span></label>\n\t\t\t<br />\n\t\t\t<input type=\"text\" name=\"data[SHORT_PROJECT_NAME]["+i+"]\" />\n\t\t\t<br/>\n\t\t\t<label>Premier chapitre (vide si non-sorti) : </label>\n\t\t\t<br />\n\t\t\t<input type=\"text\" name=\"data[FIRST_CHAPTER]["+i+"]\" />\n\t\t\t<br/>\n\t\t\t<label>Dernier chapitre : </label>\n\t\t\t<br />\n\t\t\t<input type=\"text\" name=\"data[LAST_CHAPTER]["+i+"]\" />\n\t\t\t<br/>\n\t\t\t<label>Premier tome (vide si non-sorti) :</label>\n\t\t\t<br />\n\t\t\t<input type=\"text\" name=\"data[FIRST_TOME]["+i+"]\" />\n\t\t\t<br/>\n\t\t\t<label>Dernier tome : </label>\n\t\t\t<br />\n\t\t\t<input type=\"text\" name=\"data[LAST_TOME]["+i+"]\" />\n\t\t\t<br/>\n\t\t\t<label>&Eacute;tat de la s&eacute;rie : <span class=\"red\">*</span></label>\n\t\t\t<br />\n\t\t\t<select name=\"data[STATE]["+i+"]\" >\n\t\t\t\t<option value=\"1\">En cours</option>\n\t\t\t\t<option value=\"2\">Suspendu</option>\n\t\t\t\t<option value=\"3\">Termin&eacute;</option>\n\t\t\t</select>\n\t\t\t<br/>\n\t\t\t<label>Type de la s&eacute;rie : <span class=\"red\">*</span></label>\n\t\t\t<br />\n\t\t\t<select name=\"data[GENDER]["+i+"]\" >\n\t\t\t\t<option value=\"1\">Shonen</option>\n\t\t\t\t<option value=\"2\">Shojo</option>\n\t\t\t\t<option value=\"3\">Seinen</option>\n\t\t\t\t<option value=\"4\">Hentai (-16/-18)</option>\n\t\t\t</select>\n\t\t\t<br/>\n\t\t\t<label>Page d'information : <span class=\"help\" title=\"Utilisez-vous une page 'info.png' pour cette s&eacute;rie ?\">(?)</span></label>\n\t\t\t<br />\n\t\t\t<input type=\"checkbox\" name=\"data[INFOPNG]["+i+"]\" /><label>Oui</label>\n\t\t\t<br/>\n\t\t\t<label>Nombre de chapitre sp&eacute;ciaux : <span class=\"help\" title=\"Avez-vous des inter-chapitre de type '10.5' ? Donnez le nombre de ces chapitres\">(?)</span></label>\n\t\t\t<br />\n\t\t\t<input type=\"text\" name=\"data[CHAPTER_SPECIALS]["+i+"]\" />\n\t\t\t<br/>\n\t\t\t";
+	p.innerHTML="\t\t\t<a href=\"#\" class=\"delet\" onclick=\"delet_line('line_"+i+"'); return false;\">(Supprimer)</a>\n\t\t\t<label>Nom long de votre s&eacute;rie (&lt; 51 caract&egrave;res) : <span class=\"red\">*</span></label>\n\t\t\t<br />\n\t\t\t<input type=\"text\" name=\"data["+i+"][LONG_PROJECT_NAME]\" />\n\t\t\t<br />\n\t\t\t<label>Nom cours de votre s&eacute;rie (&lt; 11 caract&egrave;res) : <span class=\"red\">*</span></label>\n\t\t\t<br />\n\t\t\t<input type=\"text\" name=\"data["+i+"][SHORT_PROJECT_NAME]\" />\n\t\t\t<br/>\n\t\t\t<label>Premier chapitre (vide si non-sorti) : </label>\n\t\t\t<br />\n\t\t\t<input type=\"text\" name=\"data["+i+"][FIRST_CHAPTER]\" />\n\t\t\t<br/>\n\t\t\t<label>Dernier chapitre : </label>\n\t\t\t<br />\n\t\t\t<input type=\"text\" name=\"data["+i+"][LAST_CHAPTER]\" />\n\t\t\t<br/>\n\t\t\t<label>Premier tome (vide si non-sorti) :</label>\n\t\t\t<br />\n\t\t\t<input type=\"text\" name=\"data["+i+"][FIRST_TOME]\" />\n\t\t\t<br/>\n\t\t\t<label>Dernier tome : </label>\n\t\t\t<br />\n\t\t\t<input type=\"text\" name=\"data["+i+"][LAST_TOME]\" />\n\t\t\t<br/>\n\t\t\t<label>&Eacute;tat de la s&eacute;rie : <span class=\"red\">*</span></label>\n\t\t\t<br />\n\t\t\t<select name=\"data["+i+"][STATE]\" >\n\t\t\t\t<option value=\"1\">En cours</option>\n\t\t\t\t<option value=\"2\">Suspendu</option>\n\t\t\t\t<option value=\"3\">Termin&eacute;</option>\n\t\t\t</select>\n\t\t\t<br/>\n\t\t\t<label>Type de la s&eacute;rie : <span class=\"red\">*</span></label>\n\t\t\t<br />\n\t\t\t<select name=\"data["+i+"][GENDER]\" >\n\t\t\t\t<option value=\"1\">Shonen</option>\n\t\t\t\t<option value=\"2\">Shojo</option>\n\t\t\t\t<option value=\"3\">Seinen</option>\n\t\t\t\t<option value=\"4\">Hentai (-16/-18)</option>\n\t\t\t</select>\n\t\t\t<br/>\n\t\t\t<label>Page d'information : <span class=\"help\" title=\"Utilisez-vous une page 'info.png' pour cette s&eacute;rie ?\">(?)</span></label>\n\t\t\t<br />\n\t\t\t<input type=\"checkbox\" name=\"data["+i+"][INFOPNG]\" /><label>Oui</label>\n\t\t\t<br/>\n\t\t\t<label>Nombre de chapitre sp&eacute;ciaux : <span class=\"help\" title=\"Avez-vous des inter-chapitre de type '10.5' ? Donnez le nombre de ces chapitres\">(?)</span></label>\n\t\t\t<br />\n\t\t\t<input type=\"text\" name=\"data["+i+"][CHAPTER_SPECIALS]\" />\n\t\t\t<br/>\n\t\t\t";
 	// l'ajoute à la fin
 	p.className = 'hr';
 	p.id = 'line_'+i;
@@ -183,4 +183,6 @@ function delet_line(line_id)
 </script>
 </body>
 </html>
-
+<?php
+unset($_SESSION['error']);
+?>

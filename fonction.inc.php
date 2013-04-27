@@ -11,17 +11,17 @@ if(empty($page_index))
 // fonction sort un array de la lecture d une string
 function loader($string=null)
 {
-	if(!($ligne_ar = explode("\n", str_replace("\r",'',$string))))
+	if(!($ligne_array = explode("\n", str_replace("\r",'',$string))))
 		return -1;
-	if(!($const = explode(' ', $ligne_ar[0])))
+	if(!($const = explode(' ', $ligne_array[0])))
 		return -2;
 	
-	unset($ligne_ar[0]);
+	unset($ligne_array[0]);
 
 	$out['const']['LONG_MANAGER_NAME'] = (isset($const[0]))? str_replace('_',' ',$const[0]) : null;
 	$out['const']['SHORT_MANAGER_NAME'] = (isset($const[1]))? str_replace('_',' ',$const[1]) : null;
 
-	foreach($ligne_ar as $ligne)
+	foreach($ligne_array as $ligne)
 	{
 		if($ligne != '#' and $ligne != null)
 		{
@@ -54,9 +54,9 @@ function parser_to_ressource($input=null)
 		$_SESSION['error']['SHORT_MANAGER_NAME'][] = 'Merci de remplir le "Nom Court" de votre d&eacute;p&ocirc;t.';
 	if(empty($input['data']))
 		$_SESSION['error']['data'][] = 'Merci de remplir vos s&eacute;rie.';
-	if($input['const']['LONG_MANAGER_NAME'] > 25)
+	if(strlen($input['const']['LONG_MANAGER_NAME']) > 25)
 		$_SESSION['error']['LONG_MANAGER_NAME'][] = 'Le "Nom Long" de votre d&eacute;p&ocirc;t fait plus de 25 caract&egrave;res.';
-	if($input['const']['SHORT_MANAGER_NAME'] > 5)
+	if(strlen($input['const']['SHORT_MANAGER_NAME']) > 5)
 		$_SESSION['error']['SHORT_MANAGER_NAME'][] = 'Le "Nom Cours" de votre d&eacute;p&ocirc;t fait plus de 5 caract&egrave;res';
 	if(!empty($_SESSION['error']))
 		return false;
@@ -105,7 +105,7 @@ function check_manga_line($input, $id)
 			|| $input['LAST_TOME'] == null
 			)
 		)
-
+	return false;
 	if(!empty($_SESSION['error'][$id]))
 		return false;
 	// on met les 0 pour les valeurs vide
@@ -139,7 +139,7 @@ function check_manga_line($input, $id)
 function set_download($str_file=null, $name = 'rakshata-manga-2')
 {
 	$size = strlen($str_file);
-	header("Content-Type: application/force-download;");
+	header("Content-Type: application/octet-stream; charset=ISO-8859-1;");
 	header("Content-Transfer-Encoding: binary");
 	header("Content-Length: $size");
 	header("Content-Disposition: attachment; filename=\"" .$name. "\"");
@@ -177,12 +177,11 @@ function switch_utf8_ascii($mixed, $out_enc='ISO-8859-1//TRANSLIT', $in_enc='UTF
 }
 /*************************************************/
 // fonction remet les output_value[] en output[]value
-function sort_array($array)
+function sort_array($array=null)
 {
 	$out = null;
-	for($i=0;isset($array['LONG_PROJECT_NAME'][$i]) ;$i++)
-		foreach($array as $key=>$value)
-			$out[$i][$key] = (isset($value[$i]))? $value[$i] : null;
+	foreach($array as $value)
+		$out[] = $value;
 	return $out;
 }
 /*************************************************/
