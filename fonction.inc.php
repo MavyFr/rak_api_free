@@ -11,7 +11,7 @@ if(empty($page_index))
 // fonction sort un array de la lecture d une string
 function loader($string=null)
 {
-	if(!($ligne_array = explode("\n", str_replace("\r",'',$string))))
+	if(!($ligne_array = explode("\n", str_replace("\n\n","\n", str_replace("\r","\n",$string)))))
 		return -1;
 	if(!($const = explode(' ', $ligne_array[0])))
 		return -2;
@@ -26,6 +26,9 @@ function loader($string=null)
 		if($ligne != '#' and $ligne != null)
 		{
 			$elem = explode(' ', $ligne);
+			//-2	longN	shortN	firstC	lastC	firstT	lastT	StatGnR	info	chapsp
+			//	[0]	[1]	[2]	[3]	[4]	[5]	[6]	[7]	[8]
+			//-1	longN	shortN	firstC	lastC	StatGnR	info
 			$check_elem['LONG_PROJECT_NAME'] = isset($elem[0])? str_replace('_',' ',$elem[0]) : null;
 			$check_elem['SHORT_PROJECT_NAME'] = isset($elem[1])? str_replace('_',' ',$elem[1]) : null;
 			$check_elem['FIRST_CHAPTER'] = isset($elem[2])? $elem[2] : -1;
@@ -69,7 +72,7 @@ function parser_to_ressource($input=null)
 	}
 	
 	if(empty($out)){
-		$_SESSION['error']['data'][] = 'Merci de bien remplir vos s&eacute;rie.';
+		$_SESSION['error']['data'][] = 'Merci de remplire correctement vos s&eacute;rie.';
 		return false;
 	}
 	
@@ -88,50 +91,70 @@ function check_manga_line($input, $id)
 		$_SESSION['error'][$id]['SHORT_PROJECT_NAME'][] = 'Merci de remplir le "Nom Courts" de cette s&eacute;rie.';
 	if(strlen($input['SHORT_PROJECT_NAME']) > 10)
 		$_SESSION['error'][$id]['SHORT_PROJECT_NAME'][] = 'Le "Nom Cours" de cette s&eacute;rie fait plus de 10 caract&egrave;res.';
-	if(empty($input['STATE']))
-		$_SESSION['error'][$id]['STATE'][] = 'Merci de choisir un "&eacute;tat".';
-	if(empty($input['GENDER']))
-		$_SESSION['error'][$id]['GENDER'][] = 'Merci de choisir un "Genre".';
-	
-	if 	(	(!isset($input['FIRST_CHAPTER']) 
-			|| $input['FIRST_CHAPTER'] == null
-			|| !isset($input['LAST_CHAPTER'])
-			|| $input['LAST_CHAPTER'] == null
-			)
-		&& // error si chap et tome vide
-			(!isset($input['FIRST_TOME']) 
-			|| $input['FIRST_TOME'] == null
-			|| !isset($input['LAST_TOME'])
-			|| $input['LAST_TOME'] == null
-			)
+	if	(empty($input['STATE']) 
+		|| empty($input['GENDER']) 
+		|| !isset($input['FIRST_CHAPTER']) 
+		|| !isset($input['LAST_CHAPTER']) 
+		|| !isset($input['FIRST_TOME']) 
+		|| !isset($input['LAST_TOME'])
 		)
-	return false;
+		$_SESSION['error'][$id]['champs'][] = 'Pour Uncle Jhon ses champs c\'est comme sa femme : il aime pas qu\'on y touche...';
+	if(	(isset($input['FIRST_CHAPTER']) && $input['FIRST_CHAPTER'] != null) 
+		xor (isset($input['LAST_CHAPTER']) && $input['LAST_CHAPTER'] != null)
+	)
+	{
+		if(!isset($input['FIRST_CHAPTER']) || $input['FIRST_CHAPTER'] == null) 
+			$_SESSION['error'][$id]['FIRST_CHAPTER'][] = 'Merci de remplire "Premier chapitre".';
+		if(!isset($input['LAST_CHAPTER']) || $input['LAST_CHAPTER'] == null)
+			$_SESSION['error'][$id]['LAST_CHAPTER'][] = 'Merci de remplire "Dernier chapitre".';
+	}
+	if(	(isset($input['FIRST_TOME']) && $input['FIRST_TOME'] != '')
+		xor (isset($input['LAST_TOME']) && $input['LAST_TOME'] != '')
+	)
+	{
+		if(!isset($input['FIRST_TOME']) || $input['FIRST_TOME'] == null)
+			$_SESSION['error'][$id]['FIRST_TOME'][] = 'Merci de remplire "Premier tome".';
+		if(!isset($input['LAST_TOME']) || $input['LAST_TOME'] == null)
+			$_SESSION['error'][$id]['LAST_TOME'][] = 'Merci de remplire "Dernier tome".';
+	}
+	if (	(!isset($input['FIRST_CHAPTER']) || $input['FIRST_CHAPTER'] == null)
+		&& (!isset($input['LAST_CHAPTER']) || $input['LAST_CHAPTER'] == null)
+		&& (!isset($input['FIRST_TOME']) || $input['FIRST_TOME'] == null)
+		&& (!isset($input['LAST_TOME']) || $input['LAST_TOME'] == null)
+	)
+		$_SESSION['error'][$id]['sortie'][] = 'Merci de remplire les champs "Tome" ou "Chapitre".';
+
 	if(!empty($_SESSION['error'][$id]))
 		return false;
-	// on met les 0 pour les valeurs vide
+	
+	if($input['FIRST_CHAPTER'] > $input['LAST_CHAPTER'])
+		$_SESSION['error'][$id]['STATE'][] = 'Votre n° de premier chapitre est plus grand que votre dernier...';
+	if(!is_numeric($input['FIRST_CHAPTER']))
+		$_SESSION['error'][$id]['FIRST_CHAPTER'][] = 'Merci de remplire correctement "Premier chapitre".';
+	if(!is_numeric($input['LAST_CHAPTER']))
+		$_SESSION['error'][$id]['LAST_CHAPTER'][] = 'Merci de remplire correctement "Dernier chapitre".';
+	if($input['FIRST_TOME'] > $input['LAST_TOME'])
+		$_SESSION['error'][$id]['STATE'][] = 'Votre n° de premier tome est plus grand que votre dernier...';
+	if(!is_numeric($input['FIRST_TOME']))
+		$_SESSION['error'][$id]['FIRST_TOME'][] = 'Merci de remplire correctement "Premier tome".';
+	if(!is_numeric($input['LAST_TOME']))
+		$_SESSION['error'][$id]['LAST_TOME'][] = 'Merci de remplire correctement "Dernier tome".';
+		
+	if(!empty($_SESSION['error'][$id]))
+		return false;
+	
+	// on met les par def pour les valeurs vide
 	$input['SHORT_PROJECT_NAME'] = str_replace(' ', '_', $input['SHORT_PROJECT_NAME']);
 	$input['LONG_PROJECT_NAME'] = str_replace(' ', '_', $input['LONG_PROJECT_NAME']);
-	$input['CHAPTER_SPECIALS'] =(int) (empty($input['CHAPTER_SPECIALS']))? 0 : $input['CHAPTER_SPECIALS'];	
-	$input['FIRST_CHAPTER'] =(int) (empty($input['FIRST_CHAPTER']))? -1 : $input['FIRST_CHAPTER'];	
-	$input['LAST_CHAPTER'] =(int) (empty($input['LAST_CHAPTER']))? -1 : $input['LAST_CHAPTER'];	
-	$input['FIRST_TOME'] =(int) (empty($input['FIRST_TOME']))? -1 : $input['FIRST_TOME'];	
-	$input['LAST_TOME'] =(int) (empty($input['LAST_TOME']))? -1 : $input['LAST_TOME'];
-	$input['INFOPNG'] =(int) (empty($input['INFOPNG']))? 0 : 1;
-	$input['GENDER'] =(int) ($input['GENDER'] < 1 || $input['GENDER'] > 4)? 1 : $input['GENDER'];
-	$input['STATE'] =(int) ($input['STATE'] < 1 || $input['STATE'] > 3)? 1 : $input['STATE'];
+	$input['CHAPTER_SPECIALS'] =(int) empty($input['CHAPTER_SPECIALS'])? 0 : $input['CHAPTER_SPECIALS'];
+	$input['FIRST_CHAPTER'] =(int) ($input['FIRST_CHAPTER'] == null)? -1 : $input['FIRST_CHAPTER'];
+	$input['LAST_CHAPTER'] =(int) ($input['LAST_CHAPTER'] == null)? -1 : $input['LAST_CHAPTER'];
+	$input['FIRST_TOME'] =(int) ($input['FIRST_TOME'] == null)? -1 : $input['FIRST_TOME'];
+	$input['LAST_TOME'] =(int) ($input['LAST_TOME'] == null)? -1 : $input['LAST_TOME'];
+	$input['INFOPNG'] =(int) empty($input['INFOPNG'])? 0 : 1;
+	$input['GENDER'] =(int) (!is_numeric($input['GENDER']) || $input['GENDER'] < 1 || $input['GENDER'] > 4)? 1 : $input['GENDER'];
+	$input['STATE'] =(int) (!is_numeric($input['STATE']) || $input['STATE'] < 1 || $input['STATE'] > 3)? 1 : $input['STATE'];
 	
-	if	(!is_numeric($input['FIRST_CHAPTER']) 
-		|| !is_numeric($input['LAST_CHAPTER']) 
-		|| !is_numeric($input['FIRST_TOME']) 
-		|| !is_numeric($input['LAST_TOME']) 
-		|| !is_numeric($input['STATE']) 
-		|| !is_numeric($input['GENDER']) 
-		|| !is_numeric($input['INFOPNG']) 
-		|| !is_numeric($input['CHAPTER_SPECIALS'])
-		|| $input['FIRST_CHAPTER'] > $input['LAST_CHAPTER']
-		|| $input['FIRST_TOME'] > $input['LAST_TOME']
-		)
-		return false;
 	return $input;
 }
 /*************************************************/
@@ -190,17 +213,17 @@ function show_error($mixed)
 {
 	if(is_array($mixed))
 	{
-		echo '<div class="error">'."\n";
+		echo '<span class="error">'."\n";
 		foreach($mixed as $echo_error) // parcours la liste des error
 		{
 			echo isset($i)? "<br />\n":null;
 			echo $echo_error;
 			$i = 1;
 		}
-		echo "\n".'</div>';
+		echo "\n".'</span>'."\n";
 	}
 	else
-		echo '<div class="error">'.$mixed.'</div>';
+		echo '<span class="error">'.$mixed.'</span>'."\n";
 		
 }
 /*************************************************/
