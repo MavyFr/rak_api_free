@@ -101,7 +101,8 @@ hr
 .error
 {
 	color: #B84700;
-	background-color: #cccccc;
+	background-color: #eeeeee;
+	display: block;
 }
 .red
 {

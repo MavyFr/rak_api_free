@@ -16,22 +16,22 @@ elseif(!empty($_POST))
 /**elseif(!empty($_COOKIE['old']))
 	$old = $_COOKIE['old'];**/
 
+//var_dump($_SESSION);die;
 if(!empty($_POST['const']) and empty($_FILES['old-repo']['size']))
 {
 	$manga_array['const'] = $_POST['const'];
 	if(($manga_array['data'] = sort_array($_POST['data'])))
 	{
-		//var_dump($_SESSION);die;
-		if( ($ressource = parser_to_ressource($manga_array)) )
+		if( ($ressource = parser_to_ressource(switch_utf8_ascii($manga_array))) )
 		{
 			/**if(!empty($_POST['remember']))
 			{
 				$manga_array['remember'] = true;
-				set_cookie(switch_utf8_ascii(switch_utf8_ascii($manga_array), 'UTF-8', 'ISO-8859-1//TRANSLIT'),'old');
+				set_cookie(switch_utf8_ascii($ressource, 'UTF-8', 'ISO-8859-1//TRANSLIT'),'old');
 			}
 			elseif(!empty($_COOKIE['old']))
 				set_cookie($_COOKIE['old'], 'old', 0);**/
-			set_download(switch_utf8_ascii($ressource));
+			set_download($ressource);
 		}
 	}
 }
@@ -184,5 +184,8 @@ function delet_line(line_id)
 </body>
 </html>
 <?php
+echo '<pre>';
+var_dump($_SESSION['error']);
+echo '</pre>';
 unset($_SESSION['error']);
 ?>
