@@ -98,7 +98,7 @@ function check_manga_line($input, $id)
 		|| !isset($input['FIRST_TOME']) 
 		|| !isset($input['LAST_TOME'])
 		)
-		$_SESSION['error'][$id]['champs'][] = 'Pour Uncle Jhon ses champs c\'est comme sa femme : il aime pas qu\'on y touche...';
+		$_SESSION['error'][$id]['champs'][] = 'Pour Uncle Joe ses champs c\'est comme sa femme : il aime pas qu\'on y touche...';
 	if(	(isset($input['FIRST_CHAPTER']) && $input['FIRST_CHAPTER'] != null) 
 		xor (isset($input['LAST_CHAPTER']) && $input['LAST_CHAPTER'] != null)
 	)
@@ -225,6 +225,16 @@ function show_error($mixed)
 	else
 		echo '<span class="error">'.$mixed.'</span>'."\n";
 		
+}
+/*************************************************/
+// fonction faire un echo des erreurs de l'array passee
+function help($string, $bool = false)
+{
+	$string = htmlspecialchars($string, ENT_COMPAT, 'UTF-8', false);
+	if($bool)
+		echo '<span class=\"help\" title=\"'.$string.'\" onclick=\"alert(\''.addslashes(addslashes($string)).'\')\">(?)</span>';
+	else
+		echo '<span class="help" title="'.$string.'" onclick="alert(\''.addslashes($string).'\')">(?)</span>';		
 }
 /*************************************************/
 // fonction echape les " du csv
