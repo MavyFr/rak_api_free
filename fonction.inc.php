@@ -56,7 +56,7 @@ function parser_to_ressource($input=null)
 	if(empty($input['const']['SHORT_MANAGER_NAME']))
 		$_SESSION['error']['SHORT_MANAGER_NAME'][] = 'Merci de remplir le "Nom Court" de votre d&eacute;p&ocirc;t.';
 	if(empty($input['data']))
-		$_SESSION['error']['data'][] = 'Merci de remplir vos s&eacute;rie.';
+		$_SESSION['error']['data'][] = 'Merci de remplir vos s&eacute;ries.';
 	if(strlen($input['const']['LONG_MANAGER_NAME']) > 25)
 		$_SESSION['error']['LONG_MANAGER_NAME'][] = 'Le "Nom Long" de votre d&eacute;p&ocirc;t fait plus de 25 caract&egrave;res.';
 	if(strlen($input['const']['SHORT_MANAGER_NAME']) > 5)
@@ -72,7 +72,7 @@ function parser_to_ressource($input=null)
 	}
 	
 	if(empty($out)){
-		$_SESSION['error']['data'][] = 'Merci de remplire correctement vos s&eacute;rie.';
+		$_SESSION['error']['data'][] = 'Merci de remplire correctement vos s&eacute;ries.';
 		return false;
 	}
 	
@@ -108,8 +108,8 @@ function check_manga_line($input, $id)
 		if(!isset($input['LAST_CHAPTER']) || $input['LAST_CHAPTER'] == null)
 			$_SESSION['error'][$id]['LAST_CHAPTER'][] = 'Merci de remplire "Dernier chapitre".';
 	}
-	if(	(isset($input['FIRST_TOME']) && $input['FIRST_TOME'] != '')
-		xor (isset($input['LAST_TOME']) && $input['LAST_TOME'] != '')
+	if(	(isset($input['FIRST_TOME']) && $input['FIRST_TOME'] != null)
+		xor (isset($input['LAST_TOME']) && $input['LAST_TOME'] != null)
 	)
 	{
 		if(!isset($input['FIRST_TOME']) || $input['FIRST_TOME'] == null)
@@ -128,13 +128,13 @@ function check_manga_line($input, $id)
 		return false;
 	
 	if($input['FIRST_CHAPTER'] > $input['LAST_CHAPTER'])
-		$_SESSION['error'][$id]['STATE'][] = 'Votre n° de premier chapitre est plus grand que votre dernier...';
+		$_SESSION['error'][$id]['chapitre'][] = 'Votre n° de premier chapitre est plus grand que votre dernier...';
 	if(!empty($input['FIRST_CHAPTER']) && !is_numeric($input['FIRST_CHAPTER']))
 		$_SESSION['error'][$id]['FIRST_CHAPTER'][] = 'Merci de remplire correctement "Premier chapitre".';
 	if(!empty($input['LAST_CHAPTER']) && !is_numeric($input['LAST_CHAPTER']))
 		$_SESSION['error'][$id]['LAST_CHAPTER'][] = 'Merci de remplire correctement "Dernier chapitre".';
 	if($input['FIRST_TOME'] > $input['LAST_TOME'])
-		$_SESSION['error'][$id]['STATE'][] = 'Votre n° de premier tome est plus grand que votre dernier...';
+		$_SESSION['error'][$id]['tome'][] = 'Votre n° de premier tome est plus grand que votre dernier...';
 	if(!empty($input['FIRST_TOME']) && !is_numeric($input['FIRST_TOME']))
 		$_SESSION['error'][$id]['FIRST_TOME'][] = 'Merci de remplire correctement "Premier tome".';
 	if(!empty($input['LAST_TOME']) && !is_numeric($input['LAST_TOME']))
@@ -178,7 +178,7 @@ function set_cookie($mixed=null,$name=null, $time_out=30758400)
 {
 	if(is_array($mixed))
 		foreach($mixed as $key=>$value)
-			set_cookie($value, $name.'['.$key.']');
+			set_cookie($value, $name.'['.$key.']', $time_out);
 	else
 		setcookie($name, $mixed, time() + $time_out, null, null, false, true);
 }

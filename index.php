@@ -13,10 +13,9 @@ elseif(!empty($_POST))
 	$old['data'] = !empty($_POST['data'])? switch_utf8_ascii(switch_utf8_ascii(sort_array($_POST['data'])), 'UTF-8', 'ISO-8859-1//TRANSLIT') : null;
 	$old['remember'] = !empty($_POST['remember'])? $_POST['remember'] : null;
 }
-/**elseif(!empty($_COOKIE['old']))
-	$old = $_COOKIE['old'];**/
+elseif(!empty($_COOKIE['old']))
+	$old = $_COOKIE['old'];
 
-//var_dump($_SESSION);die;
 if(!empty($_POST['const']) and empty($_FILES['old-repo']['size']))
 {
 	$manga_array['const'] = $_POST['const'];
@@ -24,13 +23,13 @@ if(!empty($_POST['const']) and empty($_FILES['old-repo']['size']))
 	{
 		if( ($ressource = parser_to_ressource(switch_utf8_ascii($manga_array))) )
 		{
-			/**if(!empty($_POST['remember']))
+			if(!empty($_POST['remember']))
 			{
 				$manga_array['remember'] = true;
-				set_cookie(switch_utf8_ascii($ressource, 'UTF-8', 'ISO-8859-1//TRANSLIT'),'old');
+				set_cookie(switch_utf8_ascii(switch_utf8_ascii($manga_array), 'UTF-8', 'ISO-8859-1//TRANSLIT'),'old');
 			}
 			elseif(!empty($_COOKIE['old']))
-				set_cookie($_COOKIE['old'], 'old', 0);**/
+				set_cookie($_COOKIE['old'], 'old', 0);
 			set_download($ressource);
 		}
 	}
@@ -62,10 +61,12 @@ if(!empty($_POST['const']) and empty($_FILES['old-repo']['size']))
 		</p>
 		<h1>D&eacute;p&ocirc;t</h1>
 		<p>
+		<?php if(!empty($_SESSION['error']['LONG_MANAGER_NAME'])) show_error($_SESSION['error']['LONG_MANAGER_NAME']); ?>
 		<label>Nom long de votre d&eacute;p&ocirc;t (&lt; 26 caract&egrave;res) : <span class="red">*</span></label>
 		<br />
 		<input type="text" name="const[LONG_MANAGER_NAME]" <?php if(isset($old['const']['LONG_MANAGER_NAME']))echo 'value="'.$old['const']['LONG_MANAGER_NAME'].'"';?>/>
 		<br />
+		<?php if(!empty($_SESSION['error']['SHORT_MANAGER_NAME'])) show_error($_SESSION['error']['SHORT_MANAGER_NAME']); ?>
 		<label>Nom cours de votre d&eacute;p&ocirc;t (&lt; 6 caract&egrave;res) : <span class="red">*</span></label>
 		<br />
 		<input type="text" name="const[SHORT_MANAGER_NAME]" <?php if(isset($old['const']['SHORT_MANAGER_NAME']))echo 'value="'.$old['const']['SHORT_MANAGER_NAME'].'"';?>/>
@@ -74,32 +75,43 @@ if(!empty($_POST['const']) and empty($_FILES['old-repo']['size']))
 		<h1>S&eacute;rie</h1>
 		<div id="list_serie">
 		<?php
+		if(!empty($_SESSION['error']['data'])){ echo '<p>'; show_error($_SESSION['error']['data']); echo '</p>';}
 		$i = 0;
 		do
 		{
 			?>
 			<p id="line_<?php echo $i; ?>" class="hr">
 			<a href="#" class="delet" onclick="delet_line('line_<?php echo $i; ?>'); return false;">(Supprimer)</a>
+			<?php if(!empty($_SESSION['error'][$i]['champs'])) show_error($_SESSION['error'][$i]['champs']); ?>
+			<?php if(!empty($_SESSION['error'][$i]['LONG_PROJECT_NAME'])) show_error($_SESSION['error'][$i]['LONG_PROJECT_NAME']); ?>
 			<label>Nom long de votre s&eacute;rie (&lt; 51 caract&egrave;res) : <span class="red">*</span></label>
 			<br />
 			<input type="text" name="data[<?php echo $i;?>][LONG_PROJECT_NAME]" <?php if(isset($old['data'][$i]['LONG_PROJECT_NAME']))echo 'value="'.$old['data'][$i]['LONG_PROJECT_NAME'].'"';?>/>
 			<br />
+			<?php if(!empty($_SESSION['error'][$i]['SHORT_PROJECT_NAME'])) show_error($_SESSION['error'][$i]['SHORT_PROJECT_NAME']); ?>
 			<label>Nom cours de votre s&eacute;rie (&lt; 11 caract&egrave;res) : <span class="red">*</span></label>
 			<br />
 			<input type="text" name="data[<?php echo $i;?>][SHORT_PROJECT_NAME]" <?php if(isset($old['data'][$i]['SHORT_PROJECT_NAME']))echo 'value="'.$old['data'][$i]['SHORT_PROJECT_NAME'].'"';?>/>
 			<br/>
+			<?php if(!empty($_SESSION['error'][$i]['sortie'])) show_error($_SESSION['error'][$i]['sortie']); ?>
+			<?php if(!empty($_SESSION['error'][$i]['chapitre'])) show_error($_SESSION['error'][$i]['chapitre']); ?>
+			<?php if(!empty($_SESSION['error'][$i]['FIRST_CHAPTER'])) show_error($_SESSION['error'][$i]['FIRST_CHAPTER']); ?>
 			<label>Premier chapitre (vide si non-sorti) : </label>
 			<br />
 			<input type="text" name="data[<?php echo $i;?>][FIRST_CHAPTER]" <?php if(isset($old['data'][$i]['FIRST_CHAPTER']) && $old['data'][$i]['FIRST_CHAPTER']>=0)echo 'value="'.$old['data'][$i]['FIRST_CHAPTER'].'"';?>/>
 			<br/>
+			<?php if(!empty($_SESSION['error'][$i]['LAST_CHAPTER'])) show_error($_SESSION['error'][$i]['LAST_CHAPTER']); ?>
 			<label>Dernier chapitre : </label>
 			<br />
 			<input type="text" name="data[<?php echo $i;?>][LAST_CHAPTER]" <?php if(isset($old['data'][$i]['LAST_CHAPTER']) && $old['data'][$i]['LAST_CHAPTER']>=0)echo 'value="'.$old['data'][$i]['LAST_CHAPTER'].'"';?>/>
 			<br/>
+			<?php if(!empty($_SESSION['error'][$i]['tome'])) show_error($_SESSION['error'][$i]['tome']); ?>
+			<?php if(!empty($_SESSION['error'][$i]['FIRST_TOME'])) show_error($_SESSION['error'][$i]['FIRST_TOME']); ?>
 			<label>Premier tome (vide si non-sorti) :</label>
 			<br />
 			<input type="text" name="data[<?php echo $i;?>][FIRST_TOME]" <?php if(isset($old['data'][$i]['FIRST_TOME']) && $old['data'][$i]['FIRST_TOME']>=0)echo 'value="'.$old['data'][$i]['FIRST_TOME'].'"';?>/>
 			<br/>
+			<?php if(!empty($_SESSION['error'][$i]['LAST_TOME'])) show_error($_SESSION['error'][$i]['LAST_TOME']); ?>
 			<label>Dernier tome : </label>
 			<br />
 			<input type="text" name="data[<?php echo $i;?>][LAST_TOME]" <?php if(isset($old['data'][$i]['LAST_TOME']) && $old['data'][$i]['LAST_TOME']>=0)echo 'value="'.$old['data'][$i]['LAST_TOME'].'"';?>/>
@@ -143,8 +155,9 @@ if(!empty($_POST['const']) and empty($_FILES['old-repo']['size']))
 		<input type="button" value="ajouter une s&eacute;rie" onclick="i = add_ligne(i);return false;"/>
 		<br />
 		<br />
-		<?php /**<input type="checkbox" name="remember" id="remember" <?php echo !empty($old['remember'])? 'checked="checked"':'';?> /><label for="remember">Se souvenir </label> 
-		<br />**/?>
+		<input type="checkbox" name="remember" id="remember" <?php if(!empty($old['remember']))echo'checked="checked"';?> />
+			<label for="remember">Se souvenir </label> 
+		<br />
 		<input type="submit" value="cr&eacute;er" />
 		</p>
 		</form>
@@ -186,6 +199,6 @@ function delet_line(line_id)
 <?php /*
 echo '<pre>';
 var_dump($_SESSION['error']);
-echo '</pre>';
-unset($_SESSION['error']);*/
+echo '</pre>';*/
+unset($_SESSION['error']);
 ?>
