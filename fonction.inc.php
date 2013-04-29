@@ -129,15 +129,15 @@ function check_manga_line($input, $id)
 	
 	if($input['FIRST_CHAPTER'] > $input['LAST_CHAPTER'])
 		$_SESSION['error'][$id]['STATE'][] = 'Votre n° de premier chapitre est plus grand que votre dernier...';
-	if(!is_numeric($input['FIRST_CHAPTER']))
+	if(!empty($input['FIRST_CHAPTER']) && !is_numeric($input['FIRST_CHAPTER']))
 		$_SESSION['error'][$id]['FIRST_CHAPTER'][] = 'Merci de remplire correctement "Premier chapitre".';
-	if(!is_numeric($input['LAST_CHAPTER']))
+	if(!empty($input['LAST_CHAPTER']) && !is_numeric($input['LAST_CHAPTER']))
 		$_SESSION['error'][$id]['LAST_CHAPTER'][] = 'Merci de remplire correctement "Dernier chapitre".';
 	if($input['FIRST_TOME'] > $input['LAST_TOME'])
 		$_SESSION['error'][$id]['STATE'][] = 'Votre n° de premier tome est plus grand que votre dernier...';
-	if(!is_numeric($input['FIRST_TOME']))
+	if(!empty($input['FIRST_TOME']) && !is_numeric($input['FIRST_TOME']))
 		$_SESSION['error'][$id]['FIRST_TOME'][] = 'Merci de remplire correctement "Premier tome".';
-	if(!is_numeric($input['LAST_TOME']))
+	if(!empty($input['LAST_TOME']) && !is_numeric($input['LAST_TOME']))
 		$_SESSION['error'][$id]['LAST_TOME'][] = 'Merci de remplire correctement "Dernier tome".';
 		
 	if(!empty($_SESSION['error'][$id]))
