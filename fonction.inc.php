@@ -55,33 +55,47 @@ function parser_to_ressource($input=null)
 		$_SESSION['error']['LONG_MANAGER_NAME'][] = 'Merci de remplir le "Nom Long" de votre d&eacute;p&ocirc;t.';
 	if(empty($input['const']['SHORT_MANAGER_NAME']))
 		$_SESSION['error']['SHORT_MANAGER_NAME'][] = 'Merci de remplir le "Nom Court" de votre d&eacute;p&ocirc;t.';
-	if(empty($input['data']))
-		$_SESSION['error']['data'][] = 'Merci de remplir vos s&eacute;ries.';
 	if(strlen($input['const']['LONG_MANAGER_NAME']) > 25)
 		$_SESSION['error']['LONG_MANAGER_NAME'][] = 'Le "Nom Long" de votre d&eacute;p&ocirc;t fait plus de 25 caract&egrave;res.';
 	if(strlen($input['const']['SHORT_MANAGER_NAME']) > 5)
 		$_SESSION['error']['SHORT_MANAGER_NAME'][] = 'Le "Nom Cours" de votre d&eacute;p&ocirc;t fait plus de 5 caract&egrave;res';
+	
+	if(empty($input['data']) || !is_array($input['data']))
+		$_SESSION['error']['data'][] = 'Merci de remplir vos s&eacute;ries.';
+	else
+	{
+		$out = null;
+		foreach($input['data'] as $key => $array){
+			if(($array = check_manga_line($array, $key)))
+				$out.=$array['LONG_PROJECT_NAME'].' '.$array['SHORT_PROJECT_NAME'].' '.$array['FIRST_CHAPTER'].' '.
+					$array['LAST_CHAPTER'].' '.$array['FIRST_TOME'].' '.$array['LAST_TOME'].' '.$array['STATE'].
+					$array['GENDER'].' '.$array['INFOPNG'].' '.$array['CHAPTER_SPECIALS']."\n";
+		}
+	}
+	if(empty($out))
+		$_SESSION['error']['data'][] = 'Merci de remplire correctement vos s&eacute;ries.';
+	
 	if(!empty($_SESSION['error']))
 		return false;
 	
 	$head = str_replace(' ','_',$input['const']['LONG_MANAGER_NAME']). ' ' .str_replace(' ','_',$input['const']['SHORT_MANAGER_NAME']). "\n";
-	$out = null;
-	foreach($input['data'] as $key => $array){
-		if(($array = check_manga_line($array, $key)))
-			$out.=$array['LONG_PROJECT_NAME'].' '.$array['SHORT_PROJECT_NAME'].' '.$array['FIRST_CHAPTER'].' '.$array['LAST_CHAPTER'].' '.$array['FIRST_TOME'].' '.$array['LAST_TOME'].' '.$array['STATE'].$array['GENDER'].' '.$array['INFOPNG'].' '.$array['CHAPTER_SPECIALS']."\n";
-	}
-	
-	if(empty($out)){
-		$_SESSION['error']['data'][] = 'Merci de remplire correctement vos s&eacute;ries.';
-		return false;
-	}
-	
 	return $head . $out;
 }
 /*************************************************/
 // fonction check si les valeur de la ligne sont correcte
 function check_manga_line($input, $id)
 {
+	// projet vide : on saute
+	if	(  empty($input['LONG_PROJECT_NAME']) 
+		&& empty($input['SHORT_PROJECT_NAME']) 
+		&& empty($input['FIRST_CHAPTER']) 
+		&& empty($input['LAST_CHAPTER']) 
+		&& empty($input['FIRST_TOME']) 
+		&& empty($input['LAST_TOME']) 
+		&& empty($input['INFOPNG']) 
+		&& empty($input['CHAPTER_SPECIALS'])
+		)
+		return false;
 	// Check que toutes les variables sont remplies & correctment
 	if(!isset($input['LONG_PROJECT_NAME']) || $input['LONG_PROJECT_NAME'] == null)
 		$_SESSION['error'][$id]['LONG_PROJECT_NAME'][] = 'Merci de remplir le "Nom Long" de cette s&eacute;rie.';
@@ -91,7 +105,7 @@ function check_manga_line($input, $id)
 		$_SESSION['error'][$id]['SHORT_PROJECT_NAME'][] = 'Merci de remplir le "Nom Courts" de cette s&eacute;rie.';
 	if(strlen($input['SHORT_PROJECT_NAME']) > 10)
 		$_SESSION['error'][$id]['SHORT_PROJECT_NAME'][] = 'Le "Nom Cours" de cette s&eacute;rie fait plus de 10 caract&egrave;res.';
-	if	(empty($input['STATE']) 
+	if	(  empty($input['STATE']) 
 		|| empty($input['GENDER']) 
 		|| !isset($input['FIRST_CHAPTER']) 
 		|| !isset($input['LAST_CHAPTER']) 
@@ -123,22 +137,30 @@ function check_manga_line($input, $id)
 		&& (!isset($input['LAST_TOME']) || $input['LAST_TOME'] == null)
 	)
 		$_SESSION['error'][$id]['sortie'][] = 'Merci de remplire les champs "Tome" ou "Chapitre".';
-
-	if(!empty($_SESSION['error'][$id]))
-		return false;
-	
-	if($input['FIRST_CHAPTER'] > $input['LAST_CHAPTER'])
-		$_SESSION['error'][$id]['chapitre'][] = 'Votre n° de premier chapitre est plus grand que votre dernier...';
 	if(!empty($input['FIRST_CHAPTER']) && !is_numeric($input['FIRST_CHAPTER']))
 		$_SESSION['error'][$id]['FIRST_CHAPTER'][] = 'Merci de remplire correctement "Premier chapitre".';
 	if(!empty($input['LAST_CHAPTER']) && !is_numeric($input['LAST_CHAPTER']))
 		$_SESSION['error'][$id]['LAST_CHAPTER'][] = 'Merci de remplire correctement "Dernier chapitre".';
-	if($input['FIRST_TOME'] > $input['LAST_TOME'])
-		$_SESSION['error'][$id]['tome'][] = 'Votre n° de premier tome est plus grand que votre dernier...';
 	if(!empty($input['FIRST_TOME']) && !is_numeric($input['FIRST_TOME']))
 		$_SESSION['error'][$id]['FIRST_TOME'][] = 'Merci de remplire correctement "Premier tome".';
 	if(!empty($input['LAST_TOME']) && !is_numeric($input['LAST_TOME']))
 		$_SESSION['error'][$id]['LAST_TOME'][] = 'Merci de remplire correctement "Dernier tome".';
+
+	if(!empty($_SESSION['error'][$id]))
+		return false;
+	
+	if(intval($input['FIRST_CHAPTER']) > intval($input['LAST_CHAPTER']))
+		$_SESSION['error'][$id]['chapitre'][] = 'Votre n° de premier chapitre est plus grand que votre dernier...';
+	if(intval($input['FIRST_TOME']) > intval($input['LAST_TOME']))
+		$_SESSION['error'][$id]['tome'][] = 'Votre n° de premier tome est plus grand que votre dernier...';
+	if(intval($input['FIRST_CHAPTER']) > 999999999 || intval($input['FIRST_CHAPTER']) < 0)
+		$_SESSION['error'][$id]['chapitre'][] = 'Votre premier chapitre est hors de la limite 0 / 999 999 999...';
+	if(intval($input['LAST_CHAPTER']) > 999999999 || intval($input['LAST_CHAPTER']) < 0)
+		$_SESSION['error'][$id]['chapitre'][] = 'Votre dernier chapitre est hors de la limite 0 / 999 999 999...';
+	if(intval($input['FIRST_TOME']) > 999999999 || intval($input['FIRST_TOME']) < 0)
+		$_SESSION['error'][$id]['chapitre'][] = 'Votre premier tome est hors de la limite 0 / 999 999 999...';
+	if(intval($input['LAST_TOME']) > 999999999 || intval($input['LAST_TOME']) < 0)
+		$_SESSION['error'][$id]['chapitre'][] = 'Votre dernier tome est hors de la limite 0 / 999 999 999...';
 		
 	if(!empty($_SESSION['error'][$id]))
 		return false;
