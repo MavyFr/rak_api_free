@@ -114,7 +114,6 @@ hr
 	height: 10px;
 	border-bottom: 3px solid #B84700;
 }
-
 .hr
 {
 	padding-bottom: 10px;
@@ -124,6 +123,11 @@ hr
 {
 	color: #B84700;
 	cursor: help;
+}
+.tree
+{
+	color: #B84700;
+	font-family: monospace;
 }
 .delet
 {
