@@ -90,11 +90,11 @@ if(!empty($_POST['const']) and !empty($_POST['data']) and empty($_FILES['old-rep
 			<a href="#" class="delet" onclick="delet_line('line_<?php echo $i;?>'); return false;">(Supprimer)</a>
 			<?php if(!empty($_SESSION['error'][$i]['champs'])) show_error($_SESSION['error'][$i]['champs']);?>
 			<?php if(!empty($_SESSION['error'][$i]['LONG_PROJECT_NAME'])) show_error($_SESSION['error'][$i]['LONG_PROJECT_NAME']);?>
-			<span class="tree" onclick="show(this);">-|</span>
+			<span class="tree" style="cursor:pointer;" onclick="show(this, <?php echo $i;?>);">-|</span>
 			<label for="LONG_PROJECT_NAME_<?php echo $i;?>">Nom long de votre s&eacute;rie (50 caract&egrave;res max) : <span class="red">*</span></label>
 			<input type="text" id="LONG_PROJECT_NAME_<?php echo $i;?>" name="data[<?php echo $i;?>][LONG_PROJECT_NAME]" <?php 
 				if(isset($old['data'][$i]['LONG_PROJECT_NAME']))echo 'value="'.$old['data'][$i]['LONG_PROJECT_NAME'].'"';?>/>
-			<span class="show_<?php echo $i;?>">
+			<span id="show_<?php echo $i;?>">
 				<br />
 				<?php if(!empty($_SESSION['error'][$i]['SHORT_PROJECT_NAME'])) show_error($_SESSION['error'][$i]['SHORT_PROJECT_NAME']);?>
 				<span class="tree" >&nbsp;|</span>
@@ -199,6 +199,20 @@ if(!empty($_POST['const']) and !empty($_POST['data']) and empty($_FILES['old-rep
 	</div>
 <script type="text/javascript">
 <!--
+function show(obj, id)
+{
+	var show = document.getElementById("show_"+id);
+	if(obj.innerHTML=='+|')
+	{
+		obj.innerHTML='-|';
+		show.style.display = '';
+	}
+	else
+	{
+		obj.innerHTML='+|';
+		show.style.display = 'none';
+	}
+}
 function add_ligne(i)
 {
 	var p = document.createElement('p');
@@ -212,6 +226,14 @@ function add_ligne(i)
 	a.innerHTML = "(Supprimer)";
 	
 	p.appendChild(a);
+	
+	var span_tree_LONG_PROJECT_NAME = document.createElement('span');
+	span_tree_LONG_PROJECT_NAME.className = 'tree';
+	span_tree_LONG_PROJECT_NAME.style.cursor = 'pointer';
+	span_tree_LONG_PROJECT_NAME.setAttribute("onclick", "show(this, "+i+");");
+	span_tree_LONG_PROJECT_NAME.innerHTML = "-|";
+	
+	p.appendChild(span_tree_LONG_PROJECT_NAME);
 	
 	var label_LONG_PROJECT_NAME = document.createElement("label");
 	label_LONG_PROJECT_NAME.setAttribute("for", "LONG_PROJECT_NAME_"+i);
@@ -230,7 +252,18 @@ function add_ligne(i)
 	input_LONG_PROJECT_NAME.name = "data["+i+"][LONG_PROJECT_NAME]";
 	
 	p.appendChild(input_LONG_PROJECT_NAME);
-	p.appendChild(document.createElement('br'));
+	
+	var span_show = document.createElement("span");
+	span_show.id = "show_"+i;
+	
+	p.appendChild(span_show);
+	span_show.appendChild(document.createElement('br'));
+	
+	var span_tree_SHORT_PROJECT_NAME = document.createElement('span');
+	span_tree_SHORT_PROJECT_NAME.className = 'tree';
+	span_tree_SHORT_PROJECT_NAME.innerHTML = "&nbsp;|";
+	
+	span_show.appendChild(span_tree_SHORT_PROJECT_NAME);
 	
 	var label_SHORT_PROJECT_NAME = document.createElement("label");
 	label_SHORT_PROJECT_NAME.setAttribute("for", "SHORT_PROJECT_NAME_"+i);
@@ -241,71 +274,101 @@ function add_ligne(i)
 	span_SHORT_PROJECT_NAME.innerHTML = "*";
 	
 	label_SHORT_PROJECT_NAME.appendChild(span_SHORT_PROJECT_NAME);
-	p.appendChild(label_SHORT_PROJECT_NAME);
+	span_show.appendChild(label_SHORT_PROJECT_NAME);
 	
 	var input_SHORT_PROJECT_NAME = document.createElement("input");
 	input_SHORT_PROJECT_NAME.type = "text";
 	input_SHORT_PROJECT_NAME.id = "SHORT_PROJECT_NAME_"+i;
 	input_SHORT_PROJECT_NAME.name = "data["+i+"][SHORT_PROJECT_NAME]";
 	
-	p.appendChild(input_SHORT_PROJECT_NAME);
-	p.appendChild(document.createElement('br'));
+	span_show.appendChild(input_SHORT_PROJECT_NAME);
+	span_show.appendChild(document.createElement('br'));
+	
+	var span_tree_FIRST_CHAPTER = document.createElement('span');
+	span_tree_FIRST_CHAPTER.className = 'tree';
+	span_tree_FIRST_CHAPTER.innerHTML = "&nbsp;|";
+	
+	span_show.appendChild(span_tree_FIRST_CHAPTER);
 	
 	var label_FIRST_CHAPTER = document.createElement("label");
 	label_FIRST_CHAPTER.setAttribute("for", "FIRST_CHAPTER_"+i);
 	label_FIRST_CHAPTER.innerHTML = "Premier chapitre (vide si non-sorti) : ";
 	
-	p.appendChild(label_FIRST_CHAPTER);
+	span_show.appendChild(label_FIRST_CHAPTER);
 	
 	var input_FIRST_CHAPTER = document.createElement("input");
 	input_FIRST_CHAPTER.type = "text";
 	input_FIRST_CHAPTER.id = "FIRST_CHAPTER_"+i;
 	input_FIRST_CHAPTER.name = "data["+i+"][FIRST_CHAPTER]";
 	
-	p.appendChild(input_FIRST_CHAPTER);
-	p.appendChild(document.createElement('br'));
+	span_show.appendChild(input_FIRST_CHAPTER);
+	span_show.appendChild(document.createElement('br'));
+	
+	var span_tree_LAST_CHAPTER = document.createElement('span');
+	span_tree_LAST_CHAPTER.className = 'tree';
+	span_tree_LAST_CHAPTER.innerHTML = "&nbsp;|";
+	
+	span_show.appendChild(span_tree_LAST_CHAPTER);
 	
 	var label_LAST_CHAPTER = document.createElement("label");
 	label_LAST_CHAPTER.setAttribute("for", "LAST_CHAPTER_"+i);
 	label_LAST_CHAPTER.innerHTML = "Dernier chapitre : ";
 	
-	p.appendChild(label_LAST_CHAPTER);
+	span_show.appendChild(label_LAST_CHAPTER);
 	
 	var input_LAST_CHAPTER = document.createElement("input");
 	input_LAST_CHAPTER.type = "text";
 	input_LAST_CHAPTER.id = "LAST_CHAPTER_"+i;
 	input_LAST_CHAPTER.name = "data["+i+"][LAST_CHAPTER]";
 	
-	p.appendChild(input_LAST_CHAPTER);
-	p.appendChild(document.createElement('br'));
+	span_show.appendChild(input_LAST_CHAPTER);
+	span_show.appendChild(document.createElement('br'));
+	
+	var span_tree_FIRST_TOME = document.createElement('span');
+	span_tree_FIRST_TOME.className = 'tree';
+	span_tree_FIRST_TOME.innerHTML = "&nbsp;|";
+	
+	span_show.appendChild(span_tree_FIRST_TOME);
 	
 	var label_FIRST_TOME = document.createElement("label");
 	label_FIRST_TOME.setAttribute("for", "FIRST_TOME_"+i);
 	label_FIRST_TOME.innerHTML = "Premier tome (vide si non-sorti) : ";
 	
-	p.appendChild(label_FIRST_TOME);
+	span_show.appendChild(label_FIRST_TOME);
 	
 	var input_FIRST_TOME = document.createElement("input");
 	input_FIRST_TOME.type = "text";
 	input_FIRST_TOME.id = "FIRST_TOME_"+i;
 	input_FIRST_TOME.name = "data["+i+"][FIRST_TOME]";
 	
-	p.appendChild(input_FIRST_TOME);
-	p.appendChild(document.createElement('br'));
+	span_show.appendChild(input_FIRST_TOME);
+	span_show.appendChild(document.createElement('br'));
+	
+	var span_tree_LAST_TOME = document.createElement('span');
+	span_tree_LAST_TOME.className = 'tree';
+	span_tree_LAST_TOME.innerHTML = "&nbsp;|";
+	
+	span_show.appendChild(span_tree_LAST_TOME);
 	
 	var label_LAST_TOME = document.createElement("label");
 	label_LAST_TOME.setAttribute("for", "LAST_TOME_"+i);
 	label_LAST_TOME.innerHTML = "Dernier tome : ";
 	
-	p.appendChild(label_LAST_TOME);
+	span_show.appendChild(label_LAST_TOME);
 	
 	var input_LAST_TOME = document.createElement("input");
 	input_LAST_TOME.type = "text";
 	input_LAST_TOME.id = "LAST_TOME_"+i;
 	input_LAST_TOME.name = "data["+i+"][LAST_TOME]";
 	
-	p.appendChild(input_LAST_TOME);
-	p.appendChild(document.createElement('br'));
+	span_show.appendChild(input_LAST_TOME);
+	span_show.appendChild(document.createElement('br'));
+	
+	var span_tree_STATE = document.createElement('span');
+	span_tree_STATE.className = 'tree';
+	span_tree_STATE.innerHTML = "&nbsp;|";
+	
+	span_show.appendChild(span_tree_STATE);
 	
 	var label_STATE = document.createElement("label");
 	label_STATE.setAttribute("for", "STATE_"+i);
@@ -316,14 +379,14 @@ function add_ligne(i)
 	span_STATE.innerHTML = "*";
 	
 	label_STATE.appendChild(span_STATE);
-	p.appendChild(label_STATE);
+	span_show.appendChild(label_STATE);
 	
 	var select_STATE = document.createElement("select");
 	select_STATE.id = "STATE_"+i;
 	select_STATE.name = "data["+i+"][STATE]";
 	
-	p.appendChild(select_STATE);
-	p.appendChild(document.createElement('br'));
+	span_show.appendChild(select_STATE);
+	span_show.appendChild(document.createElement('br'));
 	
 	var option_STATE_1 = document.createElement("option");
 	option_STATE_1.value = "1";
@@ -343,6 +406,12 @@ function add_ligne(i)
 	
 	select_STATE.appendChild(option_STATE_3);
 	
+	var span_tree_GENDER = document.createElement('span');
+	span_tree_GENDER.className = 'tree';
+	span_tree_GENDER.innerHTML = "&nbsp;|";
+	
+	span_show.appendChild(span_tree_GENDER);
+	
 	var label_GENDER = document.createElement("label");
 	label_GENDER.setAttribute("for", "GENDER_"+i);
 	label_GENDER.innerHTML = "Type de la s&eacute;rie : ";
@@ -352,14 +421,14 @@ function add_ligne(i)
 	span_GENDER.innerHTML = "*";
 	
 	label_GENDER.appendChild(span_GENDER);
-	p.appendChild(label_GENDER);
+	span_show.appendChild(label_GENDER);
 	
 	var select_GENDER = document.createElement("select");
 	select_GENDER.id = "GENDER_"+i;
 	select_GENDER.name = "data["+i+"][GENDER]";
 	
-	p.appendChild(select_GENDER);
-	p.appendChild(document.createElement('br'));
+	span_show.appendChild(select_GENDER);
+	span_show.appendChild(document.createElement('br'));
 	
 	var option_GENDER_1 = document.createElement("option");
 	option_GENDER_1.value = "1";
@@ -385,10 +454,16 @@ function add_ligne(i)
 	
 	select_GENDER.appendChild(option_GENDER_4);
 	
+	var span_tree_info = document.createElement('span');
+	span_tree_info.className = 'tree';
+	span_tree_info.innerHTML = "&nbsp;|";
+	
+	span_show.appendChild(span_tree_info);
+	
 	var label_info = document.createElement("label");
 	label_info.innerHTML = "Page d'information : ";
 	
-	p.appendChild(label_info);
+	span_show.appendChild(label_info);
 	
 	var span_help_INFOPNG = document.createElement('span');
 	span_help_INFOPNG.className = 'help';
@@ -396,27 +471,33 @@ function add_ligne(i)
 	span_help_INFOPNG.setAttribute("onclick", "alert('Utilisez-vous une page \\\'info.png\\\' pour cette série ?');");
 	span_help_INFOPNG.innerHTML = "(?)";
 	
-	p.appendChild(span_help_INFOPNG);
+	span_show.appendChild(span_help_INFOPNG);
 	
 	var input_INFOPNG = document.createElement("input");
 	input_INFOPNG.type = "checkbox";
 	input_INFOPNG.id = "INFOPNG_"+i;
 	input_INFOPNG.name = "data["+i+"][INFOPNG]";
 	
-	p.appendChild(input_INFOPNG);
+	span_show.appendChild(input_INFOPNG);
 	
 	var label_INFOPNG = document.createElement("label");
 	label_INFOPNG.setAttribute("for", "INFOPNG_"+i);
 	label_INFOPNG.innerHTML = "Oui";
 	
-	p.appendChild(label_INFOPNG);
-	p.appendChild(document.createElement('br'));
+	span_show.appendChild(label_INFOPNG);
+	span_show.appendChild(document.createElement('br'));
+	
+	var span_tree_CHAPTER_SPECIALS = document.createElement('span');
+	span_tree_CHAPTER_SPECIALS.className = 'tree';
+	span_tree_CHAPTER_SPECIALS.innerHTML = "&nbsp;|";
+	
+	span_show.appendChild(span_tree_CHAPTER_SPECIALS);
 	
 	var label_CHAPTER_SPECIALS = document.createElement("label");
 	label_CHAPTER_SPECIALS.setAttribute("for", "CHAPTER_SPECIALS_"+i);
 	label_CHAPTER_SPECIALS.innerHTML = "Nombre de chapitre sp&eacute;ciaux : ";
 	
-	p.appendChild(label_CHAPTER_SPECIALS);
+	span_show.appendChild(label_CHAPTER_SPECIALS);
 	
 	var span_help_CHAPTER_SPECIALS = document.createElement('span');
 	span_help_CHAPTER_SPECIALS.className = 'help';
@@ -424,14 +505,14 @@ function add_ligne(i)
 	span_help_CHAPTER_SPECIALS.setAttribute("onclick", "alert('Avez-vous des inter-chapitre de type \\\'10.5\\\' ? Donnez le nombre de ces chapitres');");
 	span_help_CHAPTER_SPECIALS.innerHTML = "(?)";
 	
-	p.appendChild(span_help_CHAPTER_SPECIALS);
+	span_show.appendChild(span_help_CHAPTER_SPECIALS);
 	
 	var input_CHAPTER_SPECIALS = document.createElement("input");
 	input_CHAPTER_SPECIALS.type = "text";
 	input_CHAPTER_SPECIALS.id = "CHAPTER_SPECIALS_"+i;
 	input_CHAPTER_SPECIALS.name = "data["+i+"][CHAPTER_SPECIALS]";
 	
-	p.appendChild(input_CHAPTER_SPECIALS);
+	span_show.appendChild(input_CHAPTER_SPECIALS);
 	
 	// ajout de notre balise principale dans la page
 	document.getElementById("list_serie").appendChild(p);
