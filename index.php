@@ -90,11 +90,13 @@ if(!empty($_POST['const']) and !empty($_POST['data']) and empty($_FILES['old-rep
 			<a href="#" class="delet" onclick="delet_line('line_<?php echo $i;?>'); return false;">(Supprimer)</a>
 			<?php if(!empty($_SESSION['error'][$i]['champs'])) show_error($_SESSION['error'][$i]['champs']);?>
 			<?php if(!empty($_SESSION['error'][$i]['LONG_PROJECT_NAME'])) show_error($_SESSION['error'][$i]['LONG_PROJECT_NAME']);?>
-			<span class="tree" style="cursor:pointer;" onclick="show(this, <?php echo $i;?>);">-|</span>
+			<span class="tree" style="cursor:pointer;" onclick="show(this, <?php echo $i;?>);"><?php
+				if(!empty($old['data'][$i]['LONG_PROJECT_NAME']) and empty($_SESSION['error'][$i])) echo '+|';else echo '-|';?></span>
 			<label for="LONG_PROJECT_NAME_<?php echo $i;?>">Nom long de votre s&eacute;rie (50 caract&egrave;res max) : <span class="red">*</span></label>
 			<input type="text" id="LONG_PROJECT_NAME_<?php echo $i;?>" name="data[<?php echo $i;?>][LONG_PROJECT_NAME]" <?php 
 				if(isset($old['data'][$i]['LONG_PROJECT_NAME']))echo 'value="'.$old['data'][$i]['LONG_PROJECT_NAME'].'"';?>/>
-			<span id="show_<?php echo $i;?>">
+			<span id="show_<?php echo $i;?>" <?php
+			 if(!empty($old['data'][$i]['LONG_PROJECT_NAME']) and empty($_SESSION['error'][$i])) echo 'style="display:none;"';?> >
 				<br />
 				<?php if(!empty($_SESSION['error'][$i]['SHORT_PROJECT_NAME'])) show_error($_SESSION['error'][$i]['SHORT_PROJECT_NAME']);?>
 				<span class="tree" >&nbsp;|</span>
