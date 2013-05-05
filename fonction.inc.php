@@ -137,14 +137,16 @@ function check_manga_line($input, $id)
 		&& (!isset($input['LAST_TOME']) || $input['LAST_TOME'] == null)
 	)
 		$_SESSION['error'][$id]['sortie'][] = 'Merci de remplire les champs "Tome" ou "Chapitre".';
-	if(!empty($input['FIRST_CHAPTER']) && !is_numeric($input['FIRST_CHAPTER']))
+	if(!empty($input['FIRST_CHAPTER']) && !is_num($input['FIRST_CHAPTER']))
 		$_SESSION['error'][$id]['FIRST_CHAPTER'][] = 'Merci de remplire correctement "Premier chapitre".';
-	if(!empty($input['LAST_CHAPTER']) && !is_numeric($input['LAST_CHAPTER']))
+	if(!empty($input['LAST_CHAPTER']) && !is_num($input['LAST_CHAPTER']))
 		$_SESSION['error'][$id]['LAST_CHAPTER'][] = 'Merci de remplire correctement "Dernier chapitre".';
-	if(!empty($input['FIRST_TOME']) && !is_numeric($input['FIRST_TOME']))
+	if(!empty($input['FIRST_TOME']) && !is_num($input['FIRST_TOME']))
 		$_SESSION['error'][$id]['FIRST_TOME'][] = 'Merci de remplire correctement "Premier tome".';
-	if(!empty($input['LAST_TOME']) && !is_numeric($input['LAST_TOME']))
+	if(!empty($input['LAST_TOME']) && !is_num($input['LAST_TOME']))
 		$_SESSION['error'][$id]['LAST_TOME'][] = 'Merci de remplire correctement "Dernier tome".';
+	if(!empty($input['CHAPTER_SPECIALS']) && !is_num($input['CHAPTER_SPECIALS']))
+		$_SESSION['error'][$id]['CHAPTER_SPECIALS'][] = 'Merci de remplire correctement "Chapitre sp&eacute;ciaux".';
 
 	if(!empty($_SESSION['error'][$id]))
 		return false;
@@ -168,14 +170,14 @@ function check_manga_line($input, $id)
 	// on met les par def pour les valeurs vide
 	$input['SHORT_PROJECT_NAME'] = str_replace(' ', '_', $input['SHORT_PROJECT_NAME']);
 	$input['LONG_PROJECT_NAME'] = str_replace(' ', '_', $input['LONG_PROJECT_NAME']);
-	$input['CHAPTER_SPECIALS'] =(int) empty($input['CHAPTER_SPECIALS'])? 0 : $input['CHAPTER_SPECIALS'];
-	$input['FIRST_CHAPTER'] =(int) ($input['FIRST_CHAPTER'] == null)? -1 : $input['FIRST_CHAPTER'];
-	$input['LAST_CHAPTER'] =(int) ($input['LAST_CHAPTER'] == null)? -1 : $input['LAST_CHAPTER'];
-	$input['FIRST_TOME'] =(int) ($input['FIRST_TOME'] == null)? -1 : $input['FIRST_TOME'];
-	$input['LAST_TOME'] =(int) ($input['LAST_TOME'] == null)? -1 : $input['LAST_TOME'];
-	$input['INFOPNG'] =(int) empty($input['INFOPNG'])? 0 : 1;
-	$input['GENDER'] =(int) (!is_numeric($input['GENDER']) || $input['GENDER'] < 1 || $input['GENDER'] > 4)? 1 : $input['GENDER'];
-	$input['STATE'] =(int) (!is_numeric($input['STATE']) || $input['STATE'] < 1 || $input['STATE'] > 3)? 1 : $input['STATE'];
+	$input['CHAPTER_SPECIALS'] = empty($input['CHAPTER_SPECIALS'])? 0 : intval($input['CHAPTER_SPECIALS']);
+	$input['FIRST_CHAPTER'] = ($input['FIRST_CHAPTER'] == null)? -1 : intval($input['FIRST_CHAPTER']);
+	$input['LAST_CHAPTER'] = ($input['LAST_CHAPTER'] == null)? -1 : intval($input['LAST_CHAPTER']);
+	$input['FIRST_TOME'] = ($input['FIRST_TOME'] == null)? -1 : intval($input['FIRST_TOME']);
+	$input['LAST_TOME'] = ($input['LAST_TOME'] == null)? -1 : intval($input['LAST_TOME']);
+	$input['INFOPNG'] = empty($input['INFOPNG'])? 0 : 1;
+	$input['GENDER'] = (!is_num($input['GENDER']) || $input['GENDER'] < 1 || $input['GENDER'] > 4)? 1 : intval($input['GENDER']);
+	$input['STATE'] = (!is_num($input['STATE']) || $input['STATE'] < 1 || $input['STATE'] > 3)? 1 : intval($input['STATE']);
 	
 	return $input;
 }
@@ -219,6 +221,12 @@ function switch_utf8_ascii($mixed, $out_enc='ISO-8859-1//TRANSLIT', $in_enc='UTF
 	else
 		$out = iconv($in_enc, $out_enc, $mixed);
 	return $out;
+}
+/*************************************************/
+// fonction remet les output_value[] en output[]value
+function is_num($string=null)
+{
+	return ($string == strval(intval($string)));
 }
 /*************************************************/
 // fonction remet les output_value[] en output[]value

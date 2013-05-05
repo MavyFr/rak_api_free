@@ -16,7 +16,7 @@ elseif(!empty($_POST))
 elseif(!empty($_COOKIE['old']))
 	$old = $_COOKIE['old'];
 // si on a un envois, on lance la procedure de set download
-if(!empty($_POST['const']) and empty($_FILES['old-repo']['size']))
+if(!empty($_POST['const']) and !empty($_POST['data']) and empty($_FILES['old-repo']['size']))
 {
 	$manga_array['const'] = $_POST['const'];
 	if(($manga_array['data'] = sort_array($_POST['data'])))
@@ -42,7 +42,7 @@ if(!empty($_POST['const']) and empty($_FILES['old-repo']['size']))
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="fr" >
 <head>
-	<title>Config-Gen</title>
+	<title>Generateur d'index pour depot gratuit Rakshata: v0.1 [BETA]</title>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 	<link rel="stylesheet" media="screen" type="text/css" title="style" href="design.css" />
 	<link rel="shortcut icon" type="image/x-icon" href="favicon.ico" />
@@ -131,6 +131,7 @@ if(!empty($_POST['const']) and empty($_FILES['old-repo']['size']))
 			<label>Page d'information : </label><?php help("Utilisez-vous une page 'info.png' pour cette s&eacute;rie ?");?>
 			<input type="checkbox" id="infopng_<?php echo $i;?>" name="data[<?php echo $i;?>][INFOPNG]" <?php if(!empty($old['data'][$i]['INFOPNG']))echo 'checked="checked"';?>/><label for="infopng_<?php echo $i;?>">Oui</label>
 			<br/>
+			<?php if(!empty($_SESSION['error'][$i]['CHAPTER_SPECIALS'])) show_error($_SESSION['error'][$i]['CHAPTER_SPECIALS']);?>
 			<label for="CHAPTER_SPECIALS_<?php echo $i;?>">Nombre de chapitre sp&eacute;ciaux : </label><?php help("Avez-vous des inter-chapitre de type '10.5' ? Donnez le nombre de ces chapitres");?>
 			<input type="text" id="CHAPTER_SPECIALS_<?php echo $i;?>" name="data[<?php echo $i;?>][CHAPTER_SPECIALS]" <?php if(isset($old['data'][$i]['CHAPTER_SPECIALS']))echo 'value="'.$old['data'][$i]['CHAPTER_SPECIALS'].'"';?>/>
 			<br/>
