@@ -129,7 +129,7 @@ if(!empty($_POST['const']) and !empty($_POST['data']) and empty($_FILES['old-rep
 			</select>
 			<br/>
 			<label>Page d'information : </label><?php help("Utilisez-vous une page 'info.png' pour cette s&eacute;rie ?");?>
-			<input type="checkbox" id="infopng_<?php echo $i;?>" name="data[<?php echo $i;?>][INFOPNG]" <?php if(!empty($old['data'][$i]['INFOPNG']))echo 'checked="checked"';?>/><label for="infopng_<?php echo $i;?>">Oui</label>
+			<input type="checkbox" id="INFOPNG_<?php echo $i;?>" name="data[<?php echo $i;?>][INFOPNG]" <?php if(!empty($old['data'][$i]['INFOPNG']))echo 'checked="checked"';?>/><label for="INFOPNG_<?php echo $i;?>">Oui</label>
 			<br/>
 			<?php if(!empty($_SESSION['error'][$i]['CHAPTER_SPECIALS'])) show_error($_SESSION['error'][$i]['CHAPTER_SPECIALS']);?>
 			<label for="CHAPTER_SPECIALS_<?php echo $i;?>">Nombre de chapitre sp&eacute;ciaux : </label><?php help("Avez-vous des inter-chapitre de type '10.5' ? Donnez le nombre de ces chapitres");?>
@@ -168,13 +168,239 @@ function add_ligne(i)
 	p.className = 'hr';
 	p.id = 'line_'+i;
 	
-	p.innerHTML="\t\t\t<a href=\"#\" class=\"delet\" onclick=\"delet_line('line_"+i+"'); return false;\">(Supprimer)</a>\n\t\t\t<label>Nom long de votre s&eacute;rie (&lt; 51 caract&egrave;res) : <span class=\"red\">*</span></label>\n\t\t\t<br />\n\t\t\t<input type=\"text\" name=\"data["+i+"][LONG_PROJECT_NAME]\" />\n\t\t\t<br />\n\t\t\t<label>Nom cours de votre s&eacute;rie (&lt; 11 caract&egrave;res) : <span class=\"red\">*</span></label>\n\t\t\t<br />\n\t\t\t<input type=\"text\" name=\"data["+i+"][SHORT_PROJECT_NAME]\" />\n\t\t\t<br/>\n\t\t\t<label>Premier chapitre (vide si non-sorti) : </label>\n\t\t\t<br />\n\t\t\t<input type=\"text\" name=\"data["+i+"][FIRST_CHAPTER]\" />\n\t\t\t<br/>\n\t\t\t<label>Dernier chapitre : </label>\n\t\t\t<br />\n\t\t\t<input type=\"text\" name=\"data["+i+"][LAST_CHAPTER]\" />\n\t\t\t<br/>\n\t\t\t<label>Premier tome (vide si non-sorti) :</label>\n\t\t\t<br />\n\t\t\t<input type=\"text\" name=\"data["+i+"][FIRST_TOME]\" />\n\t\t\t<br/>\n\t\t\t<label>Dernier tome : </label>\n\t\t\t<br />\n\t\t\t<input type=\"text\" name=\"data["+i+"][LAST_TOME]\" />\n\t\t\t<br/>\n\t\t\t<label>&Eacute;tat de la s&eacute;rie : <span class=\"red\">*</span></label>\n\t\t\t<br />\n\t\t\t<select name=\"data["+i+"][STATE]\" >\n\t\t\t\t<option value=\"1\">En cours</option>\n\t\t\t\t<option value=\"2\">Suspendu</option>\n\t\t\t\t<option value=\"3\">Termin&eacute;</option>\n\t\t\t</select>\n\t\t\t<br/>\n\t\t\t<label>Type de la s&eacute;rie : <span class=\"red\">*</span></label>\n\t\t\t<br />\n\t\t\t<select name=\"data["+i+"][GENDER]\" >\n\t\t\t\t<option value=\"1\">Shonen</option>\n\t\t\t\t<option value=\"2\">Shojo</option>\n\t\t\t\t<option value=\"3\">Seinen</option>\n\t\t\t\t<option value=\"4\">Hentai (-16/-18)</option>\n\t\t\t</select>\n\t\t\t<br/>\n\t\t\t<label>Page d'information : <?php help("Utilisez-vous une page 'info.png' pour cette s&eacute;rie ?", 1);?></label>\n\t\t\t<br />\n\t\t\t<input type=\"checkbox\" id=\"infopng_"+i+"\" name=\"data["+i+"][INFOPNG]\" /><label for=\"infopng_"+i+"\">Oui</label>\n\t\t\t<br/>\n\t\t\t<label>Nombre de chapitre sp&eacute;ciaux : <?php help("Avez-vous des inter-chapitre de type '10.5' ? Donnez le nombre de ces chapitres", 1);?></label>\n\t\t\t<br />\n\t\t\t<input type=\"text\" name=\"data["+i+"][CHAPTER_SPECIALS]\" />\n\t\t\t<br/>\n\t\t\t";
-	// l'ajoute a la fin
+	var a = document.createElement('a');
+	a.href = "#";
+	a.className = 'delet';
+	a.setAttribute("onclick", "delet_line('line_"+i+"'); return false;");
+	a.innerHTML = "(Supprimer)";
+	
+	p.appendChild(a);
+	
+	var label_LONG_PROJECT_NAME = document.createElement("label");
+	label_LONG_PROJECT_NAME.setAttribute("for", "LONG_PROJECT_NAME_"+i);
+	label_LONG_PROJECT_NAME.innerHTML = "Nom long de votre s&eacute;rie (50 caract&egrave;res max) : ";
+	
+	var span_LONG_PROJECT_NAME = document.createElement('span');
+	span_LONG_PROJECT_NAME.className = 'red';
+	span_LONG_PROJECT_NAME.innerHTML = "*";
+	
+	label_LONG_PROJECT_NAME.appendChild(span_LONG_PROJECT_NAME);
+	p.appendChild(label_LONG_PROJECT_NAME);
+	
+	var input_LONG_PROJECT_NAME = document.createElement("input");
+	input_LONG_PROJECT_NAME.type = "text";
+	input_LONG_PROJECT_NAME.id = "LONG_PROJECT_NAME_"+i;
+	input_LONG_PROJECT_NAME.name = "data["+i+"][LONG_PROJECT_NAME]";
+	
+	p.appendChild(input_LONG_PROJECT_NAME);
+	p.appendChild(document.createElement('br'));
+	
+	var label_SHORT_PROJECT_NAME = document.createElement("label");
+	label_SHORT_PROJECT_NAME.setAttribute("for", "SHORT_PROJECT_NAME_"+i);
+	label_SHORT_PROJECT_NAME.innerHTML = "Nom cours de votre s&eacute;rie (10 caract&egrave;res max) : ";
+	
+	var span_SHORT_PROJECT_NAME = document.createElement('span');
+	span_SHORT_PROJECT_NAME.className = 'red';
+	span_SHORT_PROJECT_NAME.innerHTML = "*";
+	
+	label_SHORT_PROJECT_NAME.appendChild(span_SHORT_PROJECT_NAME);
+	p.appendChild(label_SHORT_PROJECT_NAME);
+	
+	var input_SHORT_PROJECT_NAME = document.createElement("input");
+	input_SHORT_PROJECT_NAME.type = "text";
+	input_SHORT_PROJECT_NAME.id = "SHORT_PROJECT_NAME_"+i;
+	input_SHORT_PROJECT_NAME.name = "data["+i+"][SHORT_PROJECT_NAME]";
+	
+	p.appendChild(input_SHORT_PROJECT_NAME);
+	p.appendChild(document.createElement('br'));
+	
+	var label_FIRST_CHAPTER = document.createElement("label");
+	label_FIRST_CHAPTER.setAttribute("for", "FIRST_CHAPTER_"+i);
+	label_FIRST_CHAPTER.innerHTML = "Premier chapitre (vide si non-sorti) : ";
+	
+	p.appendChild(label_FIRST_CHAPTER);
+	
+	var input_FIRST_CHAPTER = document.createElement("input");
+	input_FIRST_CHAPTER.type = "text";
+	input_FIRST_CHAPTER.id = "FIRST_CHAPTER_"+i;
+	input_FIRST_CHAPTER.name = "data["+i+"][FIRST_CHAPTER]";
+	
+	p.appendChild(input_FIRST_CHAPTER);
+	p.appendChild(document.createElement('br'));
+	
+	var label_LAST_CHAPTER = document.createElement("label");
+	label_LAST_CHAPTER.setAttribute("for", "LAST_CHAPTER_"+i);
+	label_LAST_CHAPTER.innerHTML = "Dernier chapitre : ";
+	
+	p.appendChild(label_LAST_CHAPTER);
+	
+	var input_LAST_CHAPTER = document.createElement("input");
+	input_LAST_CHAPTER.type = "text";
+	input_LAST_CHAPTER.id = "LAST_CHAPTER_"+i;
+	input_LAST_CHAPTER.name = "data["+i+"][LAST_CHAPTER]";
+	
+	p.appendChild(input_LAST_CHAPTER);
+	p.appendChild(document.createElement('br'));
+	
+	var label_FIRST_TOME = document.createElement("label");
+	label_FIRST_TOME.setAttribute("for", "FIRST_TOME_"+i);
+	label_FIRST_TOME.innerHTML = "Premier tome (vide si non-sorti) : ";
+	
+	p.appendChild(label_FIRST_TOME);
+	
+	var input_FIRST_TOME = document.createElement("input");
+	input_FIRST_TOME.type = "text";
+	input_FIRST_TOME.id = "FIRST_TOME_"+i;
+	input_FIRST_TOME.name = "data["+i+"][FIRST_TOME]";
+	
+	p.appendChild(input_FIRST_TOME);
+	p.appendChild(document.createElement('br'));
+	
+	var label_LAST_TOME = document.createElement("label");
+	label_LAST_TOME.setAttribute("for", "LAST_TOME_"+i);
+	label_LAST_TOME.innerHTML = "Dernier tome : ";
+	
+	p.appendChild(label_LAST_TOME);
+	
+	var input_LAST_TOME = document.createElement("input");
+	input_LAST_TOME.type = "text";
+	input_LAST_TOME.id = "LAST_TOME_"+i;
+	input_LAST_TOME.name = "data["+i+"][LAST_TOME]";
+	
+	p.appendChild(input_LAST_TOME);
+	p.appendChild(document.createElement('br'));
+	
+	var label_STATE = document.createElement("label");
+	label_STATE.setAttribute("for", "STATE_"+i);
+	label_STATE.innerHTML = "&Eacute;tat de la s&eacute;rie : ";
+	
+	var span_STATE = document.createElement('span');
+	span_STATE.className = 'red';
+	span_STATE.innerHTML = "*";
+	
+	label_STATE.appendChild(span_STATE);
+	p.appendChild(label_STATE);
+	
+	var select_STATE = document.createElement("select");
+	select_STATE.id = "STATE_"+i;
+	select_STATE.name = "data["+i+"][STATE]";
+	
+	p.appendChild(select_STATE);
+	p.appendChild(document.createElement('br'));
+	
+	var option_STATE_1 = document.createElement("option");
+	option_STATE_1.value = "1";
+	option_STATE_1.innerHTML = "En cours";
+	
+	select_STATE.appendChild(option_STATE_1);
+	
+	var option_STATE_2 = document.createElement("option");
+	option_STATE_2.value = "2";
+	option_STATE_2.innerHTML = "Suspendu";
+	
+	select_STATE.appendChild(option_STATE_2);
+	
+	var option_STATE_3 = document.createElement("option");
+	option_STATE_3.value = "3";
+	option_STATE_3.innerHTML = "Termin&eacute;";
+	
+	select_STATE.appendChild(option_STATE_3);
+	
+	var label_GENDER = document.createElement("label");
+	label_GENDER.setAttribute("for", "GENDER_"+i);
+	label_GENDER.innerHTML = "Type de la s&eacute;rie : ";
+	
+	var span_GENDER = document.createElement('span');
+	span_GENDER.className = 'red';
+	span_GENDER.innerHTML = "*";
+	
+	label_GENDER.appendChild(span_GENDER);
+	p.appendChild(label_GENDER);
+	
+	var select_GENDER = document.createElement("select");
+	select_GENDER.id = "GENDER_"+i;
+	select_GENDER.name = "data["+i+"][GENDER]";
+	
+	p.appendChild(select_GENDER);
+	p.appendChild(document.createElement('br'));
+	
+	var option_GENDER_1 = document.createElement("option");
+	option_GENDER_1.value = "1";
+	option_GENDER_1.innerHTML = "Shonen";
+	
+	select_GENDER.appendChild(option_GENDER_1);
+	
+	var option_GENDER_2 = document.createElement("option");
+	option_GENDER_2.value = "2";
+	option_GENDER_2.innerHTML = "Shojo";
+	
+	select_GENDER.appendChild(option_GENDER_2);
+	
+	var option_GENDER_3 = document.createElement("option");
+	option_GENDER_3.value = "3";
+	option_GENDER_3.innerHTML = "Seinen";
+	
+	select_GENDER.appendChild(option_GENDER_3);
+	
+	var option_GENDER_4 = document.createElement("option");
+	option_GENDER_4.value = "4";
+	option_GENDER_4.innerHTML = "Hentai (-16/-18)";
+	
+	select_GENDER.appendChild(option_GENDER_4);
+	
+	var label_info = document.createElement("label");
+	label_info.innerHTML = "Page d'information : ";
+	
+	p.appendChild(label_info);
+	
+	var span_help_INFOPNG = document.createElement('span');
+	span_help_INFOPNG.className = 'help';
+	span_help_INFOPNG.title = "Utilisez-vous une page 'info.png' pour cette série ?";
+	span_help_INFOPNG.setAttribute("onclick", "alert('Utilisez-vous une page \\\'info.png\\\' pour cette série ?');");
+	span_help_INFOPNG.innerHTML = "(?)";
+	
+	p.appendChild(span_help_INFOPNG);
+	
+	var input_INFOPNG = document.createElement("input");
+	input_INFOPNG.type = "checkbox";
+	input_INFOPNG.id = "INFOPNG_"+i;
+	input_INFOPNG.name = "data["+i+"][INFOPNG]";
+	
+	p.appendChild(input_INFOPNG);
+	
+	var label_INFOPNG = document.createElement("label");
+	label_INFOPNG.setAttribute("for", "INFOPNG_"+i);
+	label_INFOPNG.innerHTML = "Oui";
+	
+	p.appendChild(label_INFOPNG);
+	p.appendChild(document.createElement('br'));
+	
+	var label_CHAPTER_SPECIALS = document.createElement("label");
+	label_CHAPTER_SPECIALS.setAttribute("for", "CHAPTER_SPECIALS_"+i);
+	label_CHAPTER_SPECIALS.innerHTML = "Nombre de chapitre sp&eacute;ciaux : ";
+	
+	p.appendChild(label_CHAPTER_SPECIALS);
+	
+	var span_help_CHAPTER_SPECIALS = document.createElement('span');
+	span_help_CHAPTER_SPECIALS.className = 'help';
+	span_help_CHAPTER_SPECIALS.title = "Avez-vous des inter-chapitre de type '10.5' ? Donnez le nombre de ces chapitres";
+	span_help_CHAPTER_SPECIALS.setAttribute("onclick", "alert('Avez-vous des inter-chapitre de type \\\'10.5\\\' ? Donnez le nombre de ces chapitres');");
+	span_help_CHAPTER_SPECIALS.innerHTML = "(?)";
+	
+	p.appendChild(span_help_CHAPTER_SPECIALS);
+	
+	var input_CHAPTER_SPECIALS = document.createElement("input");
+	input_CHAPTER_SPECIALS.type = "text";
+	input_CHAPTER_SPECIALS.id = "CHAPTER_SPECIALS_"+i;
+	input_CHAPTER_SPECIALS.name = "data["+i+"][CHAPTER_SPECIALS]";
+	
+	p.appendChild(input_CHAPTER_SPECIALS);
+	
+	// ajout de notre balise principale dans la page
 	document.getElementById("list_serie").appendChild(p);
 	
 	i++;
 	return i;
-	
 }
 function delet_line(line_id)
 {
