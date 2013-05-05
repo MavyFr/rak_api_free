@@ -58,7 +58,7 @@ function parser_to_ressource($input=null)
 	if(strlen($input['const']['LONG_MANAGER_NAME']) > 25)
 		$_SESSION['error']['LONG_MANAGER_NAME'][] = 'Le "Nom Long" de votre d&eacute;p&ocirc;t fait plus de 25 caract&egrave;res.';
 	if(strlen($input['const']['SHORT_MANAGER_NAME']) > 10)
-		$_SESSION['error']['SHORT_MANAGER_NAME'][] = 'Le "Nom Cours" de votre d&eacute;p&ocirc;t fait plus de 10 caract&egrave;res';
+		$_SESSION['error']['SHORT_MANAGER_NAME'][] = 'Le "Nom Court" de votre d&eacute;p&ocirc;t fait plus de 10 caract&egrave;res';
 	
 	if(empty($input['data']) || !is_array($input['data']))
 		$_SESSION['error']['data'][] = 'Merci de remplir vos s&eacute;ries.';
@@ -104,7 +104,7 @@ function check_manga_line($input, $id)
 	if(!isset($input['SHORT_PROJECT_NAME']) || $input['SHORT_PROJECT_NAME'] == null)
 		$_SESSION['error'][$id]['SHORT_PROJECT_NAME'][] = 'Merci de remplir le "Nom Courts" de cette s&eacute;rie.';
 	if(strlen($input['SHORT_PROJECT_NAME']) > 10)
-		$_SESSION['error'][$id]['SHORT_PROJECT_NAME'][] = 'Le "Nom Cours" de cette s&eacute;rie fait plus de 10 caract&egrave;res.';
+		$_SESSION['error'][$id]['SHORT_PROJECT_NAME'][] = 'Le "Nom Court" de cette s&eacute;rie fait plus de 10 caract&egrave;res.';
 	if	(  empty($input['STATE']) 
 		|| empty($input['GENDER']) 
 		|| !isset($input['FIRST_CHAPTER']) 

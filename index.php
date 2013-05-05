@@ -72,7 +72,7 @@ if(!empty($_POST['const']) and !empty($_POST['data']) and empty($_FILES['old-rep
 			if(isset($old['const']['LONG_MANAGER_NAME']))echo 'value="'.$old['const']['LONG_MANAGER_NAME'].'"';?>/>
 		<br />
 		<?php if(!empty($_SESSION['error']['SHORT_MANAGER_NAME'])) show_error($_SESSION['error']['SHORT_MANAGER_NAME']);?>
-		<label for="SHORT_MANAGER_NAME">Nom cours de votre d&eacute;p&ocirc;t (10 caract&egrave;res max) : <span class="red">*</span></label>
+		<label for="SHORT_MANAGER_NAME">Nom court de votre d&eacute;p&ocirc;t (10 caract&egrave;res max) : <span class="red">*</span></label>
 		<br />
 		<input type="text" id="SHORT_MANAGER_NAME" name="const[SHORT_MANAGER_NAME]" <?php 
 			if(isset($old['const']['SHORT_MANAGER_NAME']))echo 'value="'.$old['const']['SHORT_MANAGER_NAME'].'"';?>/>
@@ -101,7 +101,7 @@ if(!empty($_POST['const']) and !empty($_POST['data']) and empty($_FILES['old-rep
 				<?php if(!empty($_SESSION['error'][$i]['SHORT_PROJECT_NAME'])) show_error($_SESSION['error'][$i]['SHORT_PROJECT_NAME']);?>
 				<span class="tree" >&nbsp;|</span>
 				<label for="SHORT_PROJECT_NAME_<?php echo $i;?>">
-					Nom cours de votre s&eacute;rie (10 caract&egrave;res max) : <span class="red">*</span></label>
+					Nom court de votre s&eacute;rie (10 caract&egrave;res max) : <span class="red">*</span></label>
 				<input type="text" id="SHORT_PROJECT_NAME_<?php echo $i;?>" name="data[<?php echo $i;?>][SHORT_PROJECT_NAME]" <?php 
 					if(isset($old['data'][$i]['SHORT_PROJECT_NAME']))echo 'value="'.$old['data'][$i]['SHORT_PROJECT_NAME'].'"';?>/>
 				<br/>
@@ -282,7 +282,7 @@ function add_ligne(i)
 	
 	var label_SHORT_PROJECT_NAME = document.createElement("label");
 	label_SHORT_PROJECT_NAME.setAttribute("for", "SHORT_PROJECT_NAME_"+i);
-	label_SHORT_PROJECT_NAME.innerHTML = "Nom cours de votre s&eacute;rie (10 caract&egrave;res max) : ";
+	label_SHORT_PROJECT_NAME.innerHTML = "Nom court de votre s&eacute;rie (10 caract&egrave;res max) : ";
 	
 	var span_SHORT_PROJECT_NAME = document.createElement('span');
 	span_SHORT_PROJECT_NAME.className = 'red';
