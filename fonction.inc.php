@@ -204,7 +204,7 @@ function set_cookie($mixed=null,$name=null, $time_out=30758400)
 		foreach($mixed as $key=>$value)
 			set_cookie($value, $name.'['.$key.']', $time_out);
 	else
-		setcookie($name, $mixed, time() + $time_out, null, null, false, true);
+		setcookie($name, $mixed, time() + $time_out);
 }
 /*************************************************/
 // fonction convertire utf8 en ascii
