@@ -250,13 +250,10 @@ function show_error($mixed)
 }
 /*************************************************/
 // fonction faire un echo des erreurs de l'array passee
-function help($string, $bool = false)
+function help($string)
 {
 	$string = htmlspecialchars($string, ENT_COMPAT, 'UTF-8', false);
-	if($bool)
-		echo '<span class=\"help\" title=\"'.$string.'\" onclick=\"alert(\''.addslashes(addslashes($string)).'\')\">(?)</span>';
-	else
-		echo '<span class="help" title="'.$string.'" onclick="alert(\''.addslashes($string).'\')">(?)</span>';		
+	echo '<span class="help" title="'.$string.'" onclick="alert(\''.addslashes($string).'\')">(?)</span>';		
 }
 /*************************************************/
 // fonction echape les " du csv
