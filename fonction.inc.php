@@ -57,8 +57,8 @@ function parser_to_ressource($input=null)
 		$_SESSION['error']['SHORT_MANAGER_NAME'][] = 'Merci de remplir le "Nom Court" de votre d&eacute;p&ocirc;t.';
 	if(strlen($input['const']['LONG_MANAGER_NAME']) > 25)
 		$_SESSION['error']['LONG_MANAGER_NAME'][] = 'Le "Nom Long" de votre d&eacute;p&ocirc;t fait plus de 25 caract&egrave;res.';
-	if(strlen($input['const']['SHORT_MANAGER_NAME']) > 5)
-		$_SESSION['error']['SHORT_MANAGER_NAME'][] = 'Le "Nom Cours" de votre d&eacute;p&ocirc;t fait plus de 5 caract&egrave;res';
+	if(strlen($input['const']['SHORT_MANAGER_NAME']) > 10)
+		$_SESSION['error']['SHORT_MANAGER_NAME'][] = 'Le "Nom Cours" de votre d&eacute;p&ocirc;t fait plus de 10 caract&egrave;res';
 	
 	if(empty($input['data']) || !is_array($input['data']))
 		$_SESSION['error']['data'][] = 'Merci de remplir vos s&eacute;ries.';
