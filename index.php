@@ -129,7 +129,7 @@ if(!empty($_POST['const']) and empty($_FILES['old-repo']['size']))
 			</select>
 			<br/>
 			<label>Page d'information : </label><?php help("Utilisez-vous une page 'info.png' pour cette s&eacute;rie ?");?>
-			<input type="checkbox" id="infopng_<?php echo $i;?>" name="data[<?php echo $i;?>][INFOPNG]" <?php if(!empty($old['data'][$i]['INFOPNG']))echo 'checked="checked"';?>/><label for="infopng_<?php echo $i;?>">Oui</label>
+			<input type="checkbox" id="INFOPNG_<?php echo $i;?>" name="data[<?php echo $i;?>][INFOPNG]" <?php if(!empty($old['data'][$i]['INFOPNG']))echo 'checked="checked"';?>/><label for="INFOPNG_<?php echo $i;?>">Oui</label>
 			<br/>
 			<label for="CHAPTER_SPECIALS_<?php echo $i;?>">Nombre de chapitre sp&eacute;ciaux : </label><?php help("Avez-vous des inter-chapitre de type '10.5' ? Donnez le nombre de ces chapitres");?>
 			<input type="text" id="CHAPTER_SPECIALS_<?php echo $i;?>" name="data[<?php echo $i;?>][CHAPTER_SPECIALS]" <?php if(isset($old['data'][$i]['CHAPTER_SPECIALS']))echo 'value="'.$old['data'][$i]['CHAPTER_SPECIALS'].'"';?>/>
@@ -352,21 +352,50 @@ function add_ligne(i)
 	
 	p.appendChild(label_info);
 	
-	var span_help_info = document.createElement('span');
-	span_help_info.className = 'help';
-	span_help_info.title = "Utilisez-vous une page 'info.png' pour cette série ?";
-	span_help_info.setAttribute("onclick", "alert('Utilisez-vous une page \\\'info.png\\\' pour cette série ?');");
-	span_help_info.innerHTML = "(?)";
+	var span_help_INFOPNG = document.createElement('span');
+	span_help_INFOPNG.className = 'help';
+	span_help_INFOPNG.title = "Utilisez-vous une page 'info.png' pour cette série ?";
+	span_help_INFOPNG.setAttribute("onclick", "alert('Utilisez-vous une page \\\'info.png\\\' pour cette série ?');");
+	span_help_INFOPNG.innerHTML = "(?)";
 	
-	p.appendChild(span_help_info);
+	p.appendChild(span_help_INFOPNG);
 	
-	/*
-	var input_FIRST_TOME = document.createElement("input");
-	input_FIRST_TOME.type = "text";
-	input_FIRST_TOME.id = "FIRST_TOME_"+i;
-	input_FIRST_TOME.name = "data["+i+"][FIRST_TOME]";
-	/**/
+	var input_INFOPNG = document.createElement("input");
+	input_INFOPNG.type = "checkbox";
+	input_INFOPNG.id = "INFOPNG_"+i;
+	input_INFOPNG.name = "data["+i+"][INFOPNG]";
 	
+	p.appendChild(input_INFOPNG);
+	
+	var label_INFOPNG = document.createElement("label");
+	label_INFOPNG.setAttribute("for", "INFOPNG_"+i);
+	label_INFOPNG.innerHTML = "Oui";
+	
+	p.appendChild(label_INFOPNG);
+	p.appendChild(document.createElement('br'));
+	
+	var label_CHAPTER_SPECIALS = document.createElement("label");
+	label_CHAPTER_SPECIALS.setAttribute("for", "CHAPTER_SPECIALS_"+i);
+	label_CHAPTER_SPECIALS.innerHTML = "Nombre de chapitre sp&eacute;ciaux : ";
+	
+	p.appendChild(label_CHAPTER_SPECIALS);
+	
+	var span_help_CHAPTER_SPECIALS = document.createElement('span');
+	span_help_CHAPTER_SPECIALS.className = 'help';
+	span_help_CHAPTER_SPECIALS.title = "Avez-vous des inter-chapitre de type '10.5' ? Donnez le nombre de ces chapitres";
+	span_help_CHAPTER_SPECIALS.setAttribute("onclick", "alert('Avez-vous des inter-chapitre de type \\\'10.5\\\' ? Donnez le nombre de ces chapitres');");
+	span_help_CHAPTER_SPECIALS.innerHTML = "(?)";
+	
+	p.appendChild(span_help_CHAPTER_SPECIALS);
+	
+	var input_CHAPTER_SPECIALS = document.createElement("input");
+	input_CHAPTER_SPECIALS.type = "text";
+	input_CHAPTER_SPECIALS.id = "CHAPTER_SPECIALS_"+i;
+	input_CHAPTER_SPECIALS.name = "data["+i+"][CHAPTER_SPECIALS]";
+	
+	p.appendChild(input_CHAPTER_SPECIALS);
+	
+	// ajout de notre balise principale dans la page
 	document.getElementById("list_serie").appendChild(p);
 	
 	i++;
