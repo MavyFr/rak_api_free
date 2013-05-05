@@ -189,7 +189,9 @@ if(!empty($_POST['const']) and !empty($_POST['data']) and empty($_FILES['old-rep
 		<br />
 		<br />
 		<input type="checkbox" name="remember" id="remember" <?php if(!empty($old['remember']))echo'checked="checked"';?> />
-			<label for="remember">Se souvenir de moi ! </label><?php help("Les informations de ce d&eacute;p&ocirc;t serons retenues par votre ordinateur pour pr&eacute;-remplir le formulaire &agrave; votre prochaine visite.");?>
+			<label for="remember">Se souvenir de moi ! </label><?php 
+			help("Les informations de ce d&eacute;p&ocirc;t serons retenues par votre ordinateur pour pr&eacute;-remplir le formulaire &agrave; votre prochaine visite.");?>
+			(<a href="#" onclick="forget(); return false;">m'oublier</a>)
 		<br />
 		<input type="submit" value="cr&eacute;er" />
 		</p>
@@ -201,6 +203,17 @@ if(!empty($_POST['const']) and !empty($_POST['data']) and empty($_FILES['old-rep
 	</div>
 <script type="text/javascript">
 <!--
+function forget()
+{
+	var array_cookie = document.cookie.split(';'); 
+	var today = new Date();
+	for (var id in array_cookie)
+	{
+		var obj_cookie = array_cookie[id].split('=');
+		document.cookie = obj_cookie[0]+"="+null+";expires=" + today.toGMTString();
+		document.getElementById("remember").checked = null;
+	}
+}
 function show(obj, id)
 {
 	var show = document.getElementById("show_"+id);
