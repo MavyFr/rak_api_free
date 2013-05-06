@@ -4,9 +4,14 @@ $page_index = true;
 include_once('fonction.inc.php');
 if(empty($page_fonction)) // si le chargement merde
 	die('SECURITY ERROR : Please Contact Your Admin, <a href="mailto:contact@rakshata.com">contact@rakshata.com</a>.');
+if(empty($_SESSION['hello'])) log_f('hello', 'from `'.$_SERVER['HTTP_USER_AGENT'].'`');
+$_SESSION['hello'] = true;
 
 if(!empty($_FILES['old-repo']) and $_FILES['old-repo']['error']==0 and $_FILES['old-repo']['size']<=1048576)
+{
+	log_f('`loader`', 'from file '.$_FILES['old-repo']['size'].'o / '.substr_count(file_get_contents($_FILES['old-repo']['tmp_name']), "\n").' `\n`');
 	$old = loader(switch_utf8_ascii(file_get_contents($_FILES['old-repo']['tmp_name']), 'UTF-8', 'ISO-8859-1//TRANSLIT'));
+}
 elseif(!empty($_POST))
 {
 	$old['const'] = !empty($_POST['const'])? switch_utf8_ascii(switch_utf8_ascii($_POST['const']), 'UTF-8', 'ISO-8859-1//TRANSLIT') : null;
@@ -14,7 +19,10 @@ elseif(!empty($_POST))
 	$old['remember'] = !empty($_POST['remember'])? $_POST['remember'] : null;
 }
 elseif(!empty($_COOKIE['old']))
+{
 	$old = $_COOKIE['old'];
+	log_f('`loader`', 'from COOKIE');
+}
 // si on a un envois, on lance la procedure de set download
 if(!empty($_POST['const']) and !empty($_POST['data']) and empty($_FILES['old-repo']['size']))
 {
@@ -28,13 +36,18 @@ if(!empty($_POST['const']) and !empty($_POST['data']) and empty($_FILES['old-rep
 				if(!empty($_POST['remember']))
 				{
 					$manga_array['remember'] = true;
+					log_f('`set_download`', 'with option `remember`');
 					set_cookie(switch_utf8_ascii(switch_utf8_ascii($manga_array), 'UTF-8', 'ISO-8859-1//TRANSLIT'),'old');
 				}
 				elseif(!empty($_COOKIE['old']))
 					set_cookie($_COOKIE['old'], 'old', 0);
 				set_download($ressource);
 			}
+			else
+				log_f('ERROR DATA', 'can\'t set_download');
 		}
+		else
+			log_f('ERROR DATA', 'can\'t set_download');
 	}
 }
 
@@ -49,9 +62,9 @@ if(!empty($_POST['const']) and !empty($_POST['data']) and empty($_FILES['old-rep
 </head>
 <body>
 	<div id="conten">
-		<div id="header_img">
-			<p><a href="index.php">Mavy</a></p>
-		</div>
+		<p id="header_img">
+			<a href="index.php">Mavy</a>
+		</p>
 		<div id="corps">
 		<form action="<?php echo $_SERVER['PHP_SELF'];?>" method="post" enctype="multipart/form-data">
 		<h1>Fichier</h1>
@@ -197,9 +210,9 @@ if(!empty($_POST['const']) and !empty($_POST['data']) and empty($_FILES['old-rep
 		</p>
 		</form>
 		</div>
-		<div id="footer_img">
-			<p>Copyright Mavy <a href="http://www.mozilla-europe.org/fr/firefox"><img src="get_firefox.png" alt="get firefox" title="Site optimis&eacute; pour Firefox" /></a> Conception par Blag</p>
-		</div>
+		<p id="footer_img">
+			Copyright Mavy <a href="http://www.mozilla-europe.org/fr/firefox"><img src="get_firefox.png" alt="get firefox" title="Site optimis&eacute; pour Firefox" /></a> Conception par Blag
+		</p>
 	</div>
 <script type="text/javascript">
 <!--
