@@ -188,6 +188,7 @@ function check_manga_line($input, $id)
 function set_download($str_file=null, $name = 'rakshata-manga-2')
 {
 	$size = strlen($str_file);
+	log_f('`set_download`', 'file '.$size.'o / '.substr_count($str_file, "\n").' `\n`');
 	header("Content-Type: application/octet-stream; charset=ISO-8859-1;");
 	header("Content-Transfer-Encoding: binary");
 	header("Content-Length: $size");
@@ -279,16 +280,23 @@ function csv($texte)
 }
 /*************************************************/
 // fonction de mise en log
-function log_f($pseudo, $action)
+function log_f($title=null, $action=null)
 {
 		//ouverture ou creation du fichier de log
+	if(!is_dir('log') and !mkdir('log', 0300, true))
+		die('CONFIGURATION ERROR : Please Contact Your Admin, <a href="mailto:contact@rakshata.com">contact@rakshata.com</a>.');
 	$file = 'log/log_' .date('y-m'). '.csv';
-	if(!($fichier_log = @fopen($file, 'a+')))
+	if(!is_file($file))
+	{
+		if(!touch($file))
+			die('CONFIGURATION ERROR : Please Contact Your Admin, <a href="mailto:contact@rakshata.com">contact@rakshata.com</a>.');
+		chmod($file, 0200);
+	}
+	if(!($fichier_log = @fopen($file, 'a')))
 		die('CONFIGURATION ERROR : Please Contact Your Admin, <a href="mailto:contact@rakshata.com">contact@rakshata.com</a>.');
 
-	chmod($file, 0606);
 		//enregistrement de l'entree
-	fputs($fichier_log , '"' .date('Y-m-d-H:i:s'). '","' .$_SERVER['REMOTE_ADDR']. '","' .csv($pseudo). '","' .csv($action). "\"\n");
+	fputs($fichier_log , '"' .date('Y-m-d-H:i:s'). '","' .$_SERVER['REMOTE_ADDR']. '","' .csv($title). '","' .csv($action). "\"\n");
 		//fermeture du fichier
 	fclose($fichier_log);
 }
