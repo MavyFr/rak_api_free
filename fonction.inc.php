@@ -283,14 +283,14 @@ function csv($texte)
 function log_f($title=null, $action=null)
 {
 		//ouverture ou creation du fichier de log
-	if(!is_dir('log') and !mkdir('log', 0300, true))
+	if(!is_dir('log') and !mkdir('log', 0700, true))
 		die('CONFIGURATION ERROR : Please Contact Your Admin, <a href="mailto:contact@rakshata.com">contact@rakshata.com</a>.');
 	$file = 'log/log_' .date('y-m'). '.csv';
 	if(!is_file($file))
 	{
 		if(!touch($file))
 			die('CONFIGURATION ERROR : Please Contact Your Admin, <a href="mailto:contact@rakshata.com">contact@rakshata.com</a>.');
-		chmod($file, 0200);
+		chmod($file, 0600);
 	}
 	if(!($fichier_log = @fopen($file, 'a')))
 		die('CONFIGURATION ERROR : Please Contact Your Admin, <a href="mailto:contact@rakshata.com">contact@rakshata.com</a>.');
