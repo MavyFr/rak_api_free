@@ -45,6 +45,8 @@ function loader($string=null)
 			unset($elem, $check_elem);
 		}
 	}
+	if(isset($out['data']))
+		$out['data'] = sort_array($out['data']);
 	return $out;
 }
 /*************************************************/
@@ -58,7 +60,7 @@ function parser_to_ressource($input=null)
 	if(strlen($input['const']['LONG_MANAGER_NAME']) > 25)
 		$_SESSION['error']['LONG_MANAGER_NAME'][] = 'Le "Nom Long" de votre d&eacute;p&ocirc;t fait plus de 25 caract&egrave;res.';
 	if(strlen($input['const']['SHORT_MANAGER_NAME']) > 10)
-		$_SESSION['error']['SHORT_MANAGER_NAME'][] = 'Le "Nom Cours" de votre d&eacute;p&ocirc;t fait plus de 10 caract&egrave;res';
+		$_SESSION['error']['SHORT_MANAGER_NAME'][] = 'Le "Nom Court" de votre d&eacute;p&ocirc;t fait plus de 10 caract&egrave;res';
 	
 	if(empty($input['data']) || !is_array($input['data']))
 		$_SESSION['error']['data'][] = 'Merci de remplir vos s&eacute;ries.';
@@ -104,7 +106,7 @@ function check_manga_line($input, $id)
 	if(!isset($input['SHORT_PROJECT_NAME']) || $input['SHORT_PROJECT_NAME'] == null)
 		$_SESSION['error'][$id]['SHORT_PROJECT_NAME'][] = 'Merci de remplir le "Nom Courts" de cette s&eacute;rie.';
 	if(strlen($input['SHORT_PROJECT_NAME']) > 10)
-		$_SESSION['error'][$id]['SHORT_PROJECT_NAME'][] = 'Le "Nom Cours" de cette s&eacute;rie fait plus de 10 caract&egrave;res.';
+		$_SESSION['error'][$id]['SHORT_PROJECT_NAME'][] = 'Le "Nom Court" de cette s&eacute;rie fait plus de 10 caract&egrave;res.';
 	if	(  empty($input['STATE']) 
 		|| empty($input['GENDER']) 
 		|| !isset($input['FIRST_CHAPTER']) 
@@ -230,11 +232,17 @@ function is_num($string=null)
 }
 /*************************************************/
 // fonction remet les output_value[] en output[]value
-function sort_array($array=null)
+function sort_array($array=array())
 {
-	$out = null;
-	foreach($array as $value)
-		$out[] = $value;
+	$in = null;
+	$add = array();
+	foreach($array as $value){
+		$in[] = $value;
+		$add[] = (isset($value['LONG_PROJECT_NAME']) && $value['LONG_PROJECT_NAME'] != null)? $value['LONG_PROJECT_NAME'] : '';
+	}
+	natcasesort($add);
+	foreach($add as $clef=>$valeur)
+		$out[] = $in[$clef];
 	return $out;
 }
 /*************************************************/
