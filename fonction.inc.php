@@ -45,6 +45,8 @@ function loader($string=null)
 			unset($elem, $check_elem);
 		}
 	}
+	if(isset($out['data']))
+		$out['data'] = sort_array($out['data']);
 	return $out;
 }
 /*************************************************/
@@ -230,11 +232,17 @@ function is_num($string=null)
 }
 /*************************************************/
 // fonction remet les output_value[] en output[]value
-function sort_array($array=null)
+function sort_array($array=array())
 {
-	$out = null;
-	foreach($array as $value)
-		$out[] = $value;
+	$in = null;
+	$add = array();
+	foreach($array as $value){
+		$in[] = $value;
+		$add[] = (isset($value['LONG_PROJECT_NAME']) && $value['LONG_PROJECT_NAME'] != null)? $value['LONG_PROJECT_NAME'] : '';
+	}
+	natcasesort($add);
+	foreach($add as $clef=>$valeur)
+		$out[] = $in[$clef];
 	return $out;
 }
 /*************************************************/
