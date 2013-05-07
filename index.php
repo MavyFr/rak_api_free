@@ -77,18 +77,18 @@ if(!empty($_POST['const']) and !empty($_POST['data']) and empty($_FILES['old-rep
 			<input type="submit" value="charger" />
 		</p>
 		<h1>D&eacute;p&ocirc;t</h1>
-		<p>
-		<?php if(!empty($_SESSION['error']['LONG_MANAGER_NAME'])) show_error($_SESSION['error']['LONG_MANAGER_NAME']);?>
-		<label for="LONG_MANAGER_NAME">Nom long de votre d&eacute;p&ocirc;t (25 caract&egrave;res max) : <span class="red">*</span></label>
-		<br />
-		<input type="text" id="LONG_MANAGER_NAME" name="const[LONG_MANAGER_NAME]" <?php 
-			if(isset($old['const']['LONG_MANAGER_NAME']))echo 'value="'.$old['const']['LONG_MANAGER_NAME'].'"';?>/>
-		<br />
-		<?php if(!empty($_SESSION['error']['SHORT_MANAGER_NAME'])) show_error($_SESSION['error']['SHORT_MANAGER_NAME']);?>
-		<label for="SHORT_MANAGER_NAME">Nom court de votre d&eacute;p&ocirc;t (10 caract&egrave;res max) : <span class="red">*</span></label>
-		<br />
-		<input type="text" id="SHORT_MANAGER_NAME" name="const[SHORT_MANAGER_NAME]" <?php 
-			if(isset($old['const']['SHORT_MANAGER_NAME']))echo 'value="'.$old['const']['SHORT_MANAGER_NAME'].'"';?>/>
+		<p id="depot">
+			<?php if(!empty($_SESSION['error']['LONG_MANAGER_NAME'])) show_error($_SESSION['error']['LONG_MANAGER_NAME']);?>
+			<label for="LONG_MANAGER_NAME">Nom long de votre d&eacute;p&ocirc;t (25 caract&egrave;res max) : <span class="red">*</span></label>
+			<br />
+			<input type="text" id="LONG_MANAGER_NAME" name="const[LONG_MANAGER_NAME]" <?php 
+				if(isset($old['const']['LONG_MANAGER_NAME']))echo 'value="'.$old['const']['LONG_MANAGER_NAME'].'"';?>/>
+			<br />
+			<?php if(!empty($_SESSION['error']['SHORT_MANAGER_NAME'])) show_error($_SESSION['error']['SHORT_MANAGER_NAME']);?>
+			<label for="SHORT_MANAGER_NAME">Nom court de votre d&eacute;p&ocirc;t (10 caract&egrave;res max) : <span class="red">*</span></label>
+			<br />
+			<input type="text" id="SHORT_MANAGER_NAME" name="const[SHORT_MANAGER_NAME]" <?php 
+				if(isset($old['const']['SHORT_MANAGER_NAME']))echo 'value="'.$old['const']['SHORT_MANAGER_NAME'].'"';?>/>
 		</p>
 		<div class="separator"></div>
 		<h1>S&eacute;rie</h1>
@@ -216,6 +216,8 @@ if(!empty($_POST['const']) and !empty($_POST['data']) and empty($_FILES['old-rep
 	</div>
 <script type="text/javascript">
 <!--
+autofocus();
+///////////////
 function forget()
 {
 	var array_cookie = document.cookie.split(';'); 
@@ -239,6 +241,30 @@ function show(obj, id)
 	{
 		obj.innerHTML='+|';
 		show.style.display = 'none';
+	}
+}
+function autofocus()
+{
+	var a = true;
+	var elem = new Array('LONG_PROJECT_NAME_', 'SHORT_PROJECT_NAME_', 'FIRST_CHAPTER_', 'LAST_CHAPTER_', 'FIRST_TOME_', 
+				'LAST_TOME_', 'STATE_', 'GENDER_', 'INFOPNG_', 'CHAPTER_SPECIALS_');
+	for(var i = 0; i < document.getElementById('list_serie').getElementsByClassName('hr').length && a; i++)
+	{
+		if(document.getElementById('list_serie').getElementsByClassName('hr')[i].getElementsByClassName('error').length)
+		{
+			a = false;
+			var tree = 0;
+			for(var t=0; t < document.getElementById('list_serie').getElementsByClassName('hr')[i].getElementsByTagName('span').length; t++)
+			{
+				if(document.getElementById('list_serie').getElementsByClassName('hr')[i].getElementsByTagName('span')[t].className == 'tree')
+					tree++;
+				else if(document.getElementById('list_serie').getElementsByClassName('hr')[i].getElementsByTagName('span')[t].className == 'error')
+				{
+					document.getElementById(elem[tree]+i).focus()
+					break;
+				}
+			}
+		}
 	}
 }
 function add_ligne(i)
