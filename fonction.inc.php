@@ -252,14 +252,14 @@ function show_error($mixed)
 {
 	if(is_array($mixed))
 	{
-		echo '<span class="error">'."\n";
+		echo '<span class="error">';
 		foreach($mixed as $echo_error) // parcours la liste des error
 		{
 			echo isset($i)? "<br />\n":null;
 			echo $echo_error;
 			$i = 1;
 		}
-		echo "\n".'</span>'."\n";
+		echo '</span>'."\n";
 	}
 	else
 		echo '<span class="error">'.$mixed.'</span>'."\n";
