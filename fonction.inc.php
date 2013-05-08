@@ -53,6 +53,7 @@ function loader($string=null)
 // fonction met en forme les valeur pour l output
 function parser_to_ressource($input=null)
 {
+	$version = 1;
 	if(empty($input['const']['LONG_MANAGER_NAME']))
 		$_SESSION['error']['LONG_MANAGER_NAME'][] = 'Merci de remplir le "Nom Long" de votre d&eacute;p&ocirc;t.';
 	if(empty($input['const']['SHORT_MANAGER_NAME']))
@@ -80,7 +81,7 @@ function parser_to_ressource($input=null)
 	if(!empty($_SESSION['error']))
 		return false;
 	
-	$head = str_replace(' ','_',$input['const']['LONG_MANAGER_NAME']). ' ' .str_replace(' ','_',$input['const']['SHORT_MANAGER_NAME']). "\n";
+	$head = str_replace(' ','_',$input['const']['LONG_MANAGER_NAME']). ' ' .str_replace(' ','_',$input['const']['SHORT_MANAGER_NAME']).' '.$version."\n";
 	return $head . $out;
 }
 /*************************************************/
