@@ -7,6 +7,9 @@ if(empty($page_fonction)) // si le chargement merde
 if(empty($_SESSION['hello'])) log_f('hello', 'from `'.$_SERVER['HTTP_USER_AGENT'].'`');
 $_SESSION['hello'] = true;
 
+if (get_magic_quotes_gpc())
+	mq_stripslashes(); // on vire l effet magic-quote
+
 if(!empty($_FILES['old-repo']) and $_FILES['old-repo']['error']==0 and $_FILES['old-repo']['size']<=1048576)
 {
 	log_f('`loader`', 'from file '.$_FILES['old-repo']['size'].'o / '.substr_count(file_get_contents($_FILES['old-repo']['tmp_name']), "\n").' `\n`');
@@ -29,7 +32,7 @@ if(!empty($_POST['const']) and !empty($_POST['data']) and empty($_FILES['old-rep
 	$manga_array['const'] = $_POST['const'];
 	if(($manga_array['data'] = sort_array($_POST['data'])))
 	{
-		if( ($ressource = parser_to_ressource(switch_utf8_ascii($manga_array))) )
+		if( ($ressource = parser(switch_utf8_ascii($manga_array))) )
 		{
 			if(empty($_SESSION['error']))
 			{
