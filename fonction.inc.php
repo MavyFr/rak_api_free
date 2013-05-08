@@ -140,23 +140,23 @@ function check_manga_line($input, $id)
 		&& (!isset($input['LAST_TOME']) || $input['LAST_TOME'] == null)
 	)
 		$_SESSION['error'][$id]['sortie'][] = 'Merci de remplire les champs "Tome" ou "Chapitre".';
-	if(!empty($input['FIRST_CHAPTER']) && !is_num($input['FIRST_CHAPTER']))
+	if(!empty($input['FIRST_CHAPTER']) && !ctype_digit($input['FIRST_CHAPTER']))
 		$_SESSION['error'][$id]['FIRST_CHAPTER'][] = 'Merci de remplire correctement "Premier chapitre".';
 	elseif(intval($input['FIRST_CHAPTER']) > 999999999 || intval($input['FIRST_CHAPTER']) < 0)
 		$_SESSION['error'][$id]['chapitre'][] = 'Votre premier chapitre est hors de la limite 0 / 999 999 999...';
-	if(!empty($input['LAST_CHAPTER']) && !is_num($input['LAST_CHAPTER']))
+	if(!empty($input['LAST_CHAPTER']) && !ctype_digit($input['LAST_CHAPTER']))
 		$_SESSION['error'][$id]['LAST_CHAPTER'][] = 'Merci de remplire correctement "Dernier chapitre".';
 	elseif(intval($input['LAST_CHAPTER']) > 999999999 || intval($input['LAST_CHAPTER']) < 0)
 		$_SESSION['error'][$id]['chapitre'][] = 'Votre dernier chapitre est hors de la limite 0 / 999 999 999...';
-	if(!empty($input['FIRST_TOME']) && !is_num($input['FIRST_TOME']))
+	if(!empty($input['FIRST_TOME']) && !ctype_digit($input['FIRST_TOME']))
 		$_SESSION['error'][$id]['FIRST_TOME'][] = 'Merci de remplire correctement "Premier tome".';
 	elseif(intval($input['FIRST_TOME']) > 999999999 || intval($input['FIRST_TOME']) < 0)
 		$_SESSION['error'][$id]['chapitre'][] = 'Votre premier tome est hors de la limite 0 / 999 999 999...';
-	if(!empty($input['LAST_TOME']) && !is_num($input['LAST_TOME']))
+	if(!empty($input['LAST_TOME']) && !ctype_digit($input['LAST_TOME']))
 		$_SESSION['error'][$id]['LAST_TOME'][] = 'Merci de remplire correctement "Dernier tome".';
 	elseif(intval($input['LAST_TOME']) > 999999999 || intval($input['LAST_TOME']) < 0)
 		$_SESSION['error'][$id]['chapitre'][] = 'Votre dernier tome est hors de la limite 0 / 999 999 999...';
-	if(!empty($input['CHAPTER_SPECIALS']) && !is_num($input['CHAPTER_SPECIALS']))
+	if(!empty($input['CHAPTER_SPECIALS']) && !ctype_digit($input['CHAPTER_SPECIALS']))
 		$_SESSION['error'][$id]['CHAPTER_SPECIALS'][] = 'Merci de remplire correctement "Chapitre sp&eacute;ciaux".';
 
 	if(!empty($_SESSION['error'][$id]))
@@ -179,8 +179,8 @@ function check_manga_line($input, $id)
 	$input['FIRST_TOME'] = ($input['FIRST_TOME'] == null)? -1 : intval($input['FIRST_TOME']);
 	$input['LAST_TOME'] = ($input['LAST_TOME'] == null)? -1 : intval($input['LAST_TOME']);
 	$input['INFOPNG'] = empty($input['INFOPNG'])? 0 : 1;
-	$input['GENDER'] = (!is_num($input['GENDER']) || $input['GENDER'] < 1 || $input['GENDER'] > 4)? 1 : intval($input['GENDER']);
-	$input['STATE'] = (!is_num($input['STATE']) || $input['STATE'] < 1 || $input['STATE'] > 3)? 1 : intval($input['STATE']);
+	$input['GENDER'] = (!ctype_digit($input['GENDER']) || $input['GENDER'] < 1 || $input['GENDER'] > 4)? 1 : intval($input['GENDER']);
+	$input['STATE'] = (!ctype_digit($input['STATE']) || $input['STATE'] < 1 || $input['STATE'] > 3)? 1 : intval($input['STATE']);
 	
 	return $input;
 }
@@ -225,12 +225,6 @@ function switch_utf8_ascii($mixed, $out_enc='ISO-8859-1//TRANSLIT', $in_enc='UTF
 	else
 		$out = iconv($in_enc, $out_enc, $mixed);
 	return $out;
-}
-/*************************************************/
-// fonction remet les output_value[] en output[]value
-function is_num($string=null)
-{
-	return ($string == strval(intval($string)));
 }
 /*************************************************/
 // fonction remet les output_value[] en output[]value

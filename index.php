@@ -4,7 +4,9 @@ $page_index = true;
 include_once('fonction.inc.php');
 if(empty($page_fonction)) // si le chargement merde
 	die('SECURITY ERROR : Please Contact Your Admin, <a href="mailto:contact@rakshata.com">contact@rakshata.com</a>.');
-if(empty($_SESSION['hello'])) log_f('hello', 'from `'.$_SERVER['HTTP_USER_AGENT'].'`');
+
+if(empty($_SESSION['hello']))
+	log_f('hello', 'from `'.$_SERVER['HTTP_USER_AGENT'].'`');
 $_SESSION['hello'] = true;
 
 if(!empty($_FILES['old-repo']) and $_FILES['old-repo']['error']==0 and $_FILES['old-repo']['size']<=1048576)
