@@ -80,7 +80,7 @@ function parser_to_ressource($input=null)
 	if(!empty($_SESSION['error']))
 		return false;
 	
-	$head = str_replace(' ','_',$input['const']['LONG_MANAGER_NAME']). ' ' .str_replace(' ','_',$input['const']['SHORT_MANAGER_NAME']). "\n";
+	$head = str_replace(' ','_',$input['const']['LONG_MANAGER_NAME']). ' ' .str_replace(' ','_',$input['const']['SHORT_MANAGER_NAME']). " 1\n";
 	return $head . $out;
 }
 /*************************************************/
