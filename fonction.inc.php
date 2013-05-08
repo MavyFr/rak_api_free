@@ -141,12 +141,20 @@ function check_manga_line($input, $id)
 		$_SESSION['error'][$id]['sortie'][] = 'Merci de remplire les champs "Tome" ou "Chapitre".';
 	if(!empty($input['FIRST_CHAPTER']) && !is_num($input['FIRST_CHAPTER']))
 		$_SESSION['error'][$id]['FIRST_CHAPTER'][] = 'Merci de remplire correctement "Premier chapitre".';
+	elseif(intval($input['FIRST_CHAPTER']) > 999999999 || intval($input['FIRST_CHAPTER']) < 0)
+		$_SESSION['error'][$id]['chapitre'][] = 'Votre premier chapitre est hors de la limite 0 / 999 999 999...';
 	if(!empty($input['LAST_CHAPTER']) && !is_num($input['LAST_CHAPTER']))
 		$_SESSION['error'][$id]['LAST_CHAPTER'][] = 'Merci de remplire correctement "Dernier chapitre".';
+	elseif(intval($input['LAST_CHAPTER']) > 999999999 || intval($input['LAST_CHAPTER']) < 0)
+		$_SESSION['error'][$id]['chapitre'][] = 'Votre dernier chapitre est hors de la limite 0 / 999 999 999...';
 	if(!empty($input['FIRST_TOME']) && !is_num($input['FIRST_TOME']))
 		$_SESSION['error'][$id]['FIRST_TOME'][] = 'Merci de remplire correctement "Premier tome".';
+	elseif(intval($input['FIRST_TOME']) > 999999999 || intval($input['FIRST_TOME']) < 0)
+		$_SESSION['error'][$id]['chapitre'][] = 'Votre premier tome est hors de la limite 0 / 999 999 999...';
 	if(!empty($input['LAST_TOME']) && !is_num($input['LAST_TOME']))
 		$_SESSION['error'][$id]['LAST_TOME'][] = 'Merci de remplire correctement "Dernier tome".';
+	elseif(intval($input['LAST_TOME']) > 999999999 || intval($input['LAST_TOME']) < 0)
+		$_SESSION['error'][$id]['chapitre'][] = 'Votre dernier tome est hors de la limite 0 / 999 999 999...';
 	if(!empty($input['CHAPTER_SPECIALS']) && !is_num($input['CHAPTER_SPECIALS']))
 		$_SESSION['error'][$id]['CHAPTER_SPECIALS'][] = 'Merci de remplire correctement "Chapitre sp&eacute;ciaux".';
 
@@ -157,14 +165,6 @@ function check_manga_line($input, $id)
 		$_SESSION['error'][$id]['chapitre'][] = 'Votre n° de premier chapitre est plus grand que votre dernier...';
 	if(intval($input['FIRST_TOME']) > intval($input['LAST_TOME']))
 		$_SESSION['error'][$id]['tome'][] = 'Votre n° de premier tome est plus grand que votre dernier...';
-	if(intval($input['FIRST_CHAPTER']) > 999999999 || intval($input['FIRST_CHAPTER']) < 0)
-		$_SESSION['error'][$id]['chapitre'][] = 'Votre premier chapitre est hors de la limite 0 / 999 999 999...';
-	if(intval($input['LAST_CHAPTER']) > 999999999 || intval($input['LAST_CHAPTER']) < 0)
-		$_SESSION['error'][$id]['chapitre'][] = 'Votre dernier chapitre est hors de la limite 0 / 999 999 999...';
-	if(intval($input['FIRST_TOME']) > 999999999 || intval($input['FIRST_TOME']) < 0)
-		$_SESSION['error'][$id]['chapitre'][] = 'Votre premier tome est hors de la limite 0 / 999 999 999...';
-	if(intval($input['LAST_TOME']) > 999999999 || intval($input['LAST_TOME']) < 0)
-		$_SESSION['error'][$id]['chapitre'][] = 'Votre dernier tome est hors de la limite 0 / 999 999 999...';
 		
 	if(!empty($_SESSION['error'][$id]))
 		return false;
