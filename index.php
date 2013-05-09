@@ -1,11 +1,17 @@
 <?php
 session_start();
+$curent_version = '0.9 [beta]';
 $page_index = true;
 include_once('fonction.inc.php');
 if(empty($page_fonction)) // si le chargement merde
 	die('SECURITY ERROR : Please Contact Your Admin, <a href="mailto:contact@rakshata.com">contact@rakshata.com</a>.');
-if(empty($_SESSION['hello'])) log_f('hello', 'from `'.$_SERVER['HTTP_USER_AGENT'].'`');
+
+if(empty($_SESSION['hello']))
+	log_f('hello', 'from `'.$_SERVER['HTTP_USER_AGENT'].'`');
 $_SESSION['hello'] = true;
+
+if (get_magic_quotes_gpc())
+	mq_stripslashes(); // on vire l effet magic-quote
 
 if(!empty($_FILES['old-repo']) and $_FILES['old-repo']['error']==0 and $_FILES['old-repo']['size']<=1048576)
 {
@@ -29,7 +35,7 @@ if(!empty($_POST['const']) and !empty($_POST['data']) and empty($_FILES['old-rep
 	$manga_array['const'] = $_POST['const'];
 	if(($manga_array['data'] = sort_array($_POST['data'])))
 	{
-		if( ($ressource = parser_to_ressource(switch_utf8_ascii($manga_array))) )
+		if( ($ressource = parser(switch_utf8_ascii($manga_array))) )
 		{
 			if(empty($_SESSION['error']))
 			{
@@ -55,7 +61,7 @@ if(!empty($_POST['const']) and !empty($_POST['data']) and empty($_FILES['old-rep
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="fr" >
 <head>
-	<title>Generateur d'index pour depot gratuit Rakshata: v0.1 [BETA]</title>
+	<title>Generateur d'index pour depot gratuit Rakshata: v<?php echo $curent_version;?></title>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 	<link rel="stylesheet" media="screen" type="text/css" title="style" href="design.css" />
 	<link rel="shortcut icon" type="image/x-icon" href="favicon.ico" />
@@ -69,7 +75,7 @@ if(!empty($_POST['const']) and !empty($_POST['data']) and empty($_FILES['old-rep
 		<form action="<?php echo $_SERVER['PHP_SELF'];?>" method="post" enctype="multipart/form-data">
 		<h1>Fichier</h1>
 		<p>
-			<label for="old-repo">Votre fichier <kbd>rakshata-manga-2</kbd> actuel : </label>
+			<label for="old-repo">Votre fichier de configuration <kbd>rakshata-manga-2</kbd> actuel : </label>
 				<?php help("Si vous avez d&eacute;j&agrave; un d&eacute;p&ocirc;t, chargez ici votre fichier 'rakshata-manga-2' (ou 'rakshata-manga-1') pour pr&eacute;-remplir le formulaire.");?>
 			<br />
 			<input type="file" name="old-repo" id="old-repo" />
@@ -122,14 +128,14 @@ if(!empty($_POST['const']) and !empty($_POST['data']) and empty($_FILES['old-rep
 				<?php if(!empty($_SESSION['error'][$i]['chapitre'])) show_error($_SESSION['error'][$i]['chapitre']);?>
 				<?php if(!empty($_SESSION['error'][$i]['FIRST_CHAPTER'])) show_error($_SESSION['error'][$i]['FIRST_CHAPTER']);?>
 				<span class="tree" >&nbsp;|</span>
-				<label for="FIRST_CHAPTER_<?php echo $i;?>">Premier chapitre (vide si non-sorti) : </label>
+				<label for="FIRST_CHAPTER_<?php echo $i;?>">Premier chapitre sorti (vide si non-sorti) : </label>
 				<input type="text" id="FIRST_CHAPTER_<?php echo $i;?>" name="data[<?php echo $i;?>][FIRST_CHAPTER]" <?php 
 					if(isset($old['data'][$i]['FIRST_CHAPTER']) && $old['data'][$i]['FIRST_CHAPTER']>=0)
 						echo 'value="'.$old['data'][$i]['FIRST_CHAPTER'].'"';?>/>
 				<br/>
 				<?php if(!empty($_SESSION['error'][$i]['LAST_CHAPTER'])) show_error($_SESSION['error'][$i]['LAST_CHAPTER']);?>
 				<span class="tree" >&nbsp;|</span>
-				<label for="LAST_CHAPTER_<?php echo $i;?>">Dernier chapitre : </label>
+				<label for="LAST_CHAPTER_<?php echo $i;?>">Dernier chapitre sorti : </label>
 				<input type="text" id="LAST_CHAPTER_<?php echo $i;?>" name="data[<?php echo $i;?>][LAST_CHAPTER]" <?php 
 					if(isset($old['data'][$i]['LAST_CHAPTER']) && $old['data'][$i]['LAST_CHAPTER']>=0)
 						echo 'value="'.$old['data'][$i]['LAST_CHAPTER'].'"';?>/>
@@ -137,14 +143,14 @@ if(!empty($_POST['const']) and !empty($_POST['data']) and empty($_FILES['old-rep
 				<?php if(!empty($_SESSION['error'][$i]['tome'])) show_error($_SESSION['error'][$i]['tome']);?>
 				<?php if(!empty($_SESSION['error'][$i]['FIRST_TOME'])) show_error($_SESSION['error'][$i]['FIRST_TOME']);?>
 				<span class="tree" >&nbsp;|</span>
-				<label for="FIRST_TOME_<?php echo $i;?>">Premier tome (vide si non-sorti) :</label>
+				<label for="FIRST_TOME_<?php echo $i;?>">Premier tome sorti (vide si non-sorti) :</label>
 				<input type="text" id="FIRST_TOME_<?php echo $i;?>" name="data[<?php echo $i;?>][FIRST_TOME]" <?php 
 					if(isset($old['data'][$i]['FIRST_TOME']) && $old['data'][$i]['FIRST_TOME']>=0)
 						echo 'value="'.$old['data'][$i]['FIRST_TOME'].'"';?>/>
 				<br/>
 				<?php if(!empty($_SESSION['error'][$i]['LAST_TOME'])) show_error($_SESSION['error'][$i]['LAST_TOME']);?>
 				<span class="tree" >&nbsp;|</span>
-				<label for="LAST_TOME_<?php echo $i;?>">Dernier tome : </label>
+				<label for="LAST_TOME_<?php echo $i;?>">Dernier tome sorti : </label>
 				<input type="text" id="LAST_TOME_<?php echo $i;?>" name="data[<?php echo $i;?>][LAST_TOME]" <?php 
 					if(isset($old['data'][$i]['LAST_TOME']) && $old['data'][$i]['LAST_TOME']>=0)
 						echo 'value="'.$old['data'][$i]['LAST_TOME'].'"';?>/>
@@ -182,7 +188,7 @@ if(!empty($_POST['const']) and !empty($_POST['data']) and empty($_FILES['old-rep
 				<?php if(!empty($_SESSION['error'][$i]['CHAPTER_SPECIALS'])) show_error($_SESSION['error'][$i]['CHAPTER_SPECIALS']);?>
 				<span class="tree" >&nbsp;|</span>
 				<label for="CHAPTER_SPECIALS_<?php echo $i;?>">Nombre de chapitre sp&eacute;ciaux : </label>
-					<?php help("Avez-vous des inter-chapitre de type '10.5' ? Donnez le nombre de ces chapitres");?>
+					<?php help("Avez-vous des inter-chapitres de type '10.5' ? Donnez le nombre de ces chapitres");?>
 				<input type="text" id="CHAPTER_SPECIALS_<?php echo $i;?>" name="data[<?php echo $i;?>][CHAPTER_SPECIALS]" <?php 
 					if(isset($old['data'][$i]['CHAPTER_SPECIALS']))
 						echo 'value="'.$old['data'][$i]['CHAPTER_SPECIALS'].'"';?>/>
@@ -225,7 +231,8 @@ function forget()
 	for (var id in array_cookie)
 	{
 		var obj_cookie = array_cookie[id].split('=');
-		document.cookie = obj_cookie[0]+"="+null+";expires=" + today.toGMTString();
+		if(obj_cookie[0] != 'PHPSESSID')
+			document.cookie = obj_cookie[0]+"="+null+";expires=" + today.toGMTString();
 		document.getElementById("remember").checked = null;
 	}
 }
@@ -555,8 +562,8 @@ function add_ligne(i)
 	
 	var span_help_CHAPTER_SPECIALS = document.createElement('span');
 	span_help_CHAPTER_SPECIALS.className = 'help';
-	span_help_CHAPTER_SPECIALS.title = "Avez-vous des inter-chapitre de type '10.5' ? Donnez le nombre de ces chapitres";
-	span_help_CHAPTER_SPECIALS.setAttribute("onclick", "alert('Avez-vous des inter-chapitre de type \\\'10.5\\\' ? Donnez le nombre de ces chapitres');");
+	span_help_CHAPTER_SPECIALS.title = "Avez-vous des inter-chapitres de type '10.5' ? Donnez le nombre de ces chapitres";
+	span_help_CHAPTER_SPECIALS.setAttribute("onclick", "alert('Avez-vous des inter-chapitres de type \\\'10.5\\\' ? Donnez le nombre de ces chapitres');");
 	span_help_CHAPTER_SPECIALS.innerHTML = "(?)";
 	
 	span_show.appendChild(span_help_CHAPTER_SPECIALS);

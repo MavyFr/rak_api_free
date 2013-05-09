@@ -3,18 +3,16 @@
 $page_fonction = true;
 if(empty($page_index))
 	die('SECURITY ERROR : Please Contact Your Admin, <a href="mailto:contact@rakshata.com">contact@rakshata.com</a>.');
-////////////////////////////
-// gestion des membres :
-////////////////////////////
+////////////////////////////////////////////////////////
 
 /*************************************************/
-// fonction sort un array de la lecture d une string
+// fonction cree un array de la lecture d une string
 function loader($string=null)
 {
 	if(!($ligne_array = explode("\n", str_replace("\n\n","\n", str_replace("\r","\n",$string)))))
-		return -1;
+		return false;
 	if(!($const = explode(' ', $ligne_array[0])))
-		return -2;
+		return false;
 	
 	unset($ligne_array[0]);
 
@@ -51,7 +49,7 @@ function loader($string=null)
 }
 /*************************************************/
 // fonction met en forme les valeur pour l output
-function parser_to_ressource($input=null)
+function parser($input=null)
 {
 	$version = 1;
 	if(empty($input['const']['LONG_MANAGER_NAME']))
@@ -140,23 +138,23 @@ function check_manga_line($input, $id)
 		&& (!isset($input['LAST_TOME']) || $input['LAST_TOME'] == null)
 	)
 		$_SESSION['error'][$id]['sortie'][] = 'Merci de remplire les champs "Tome" ou "Chapitre".';
-	if(!empty($input['FIRST_CHAPTER']) && !is_num($input['FIRST_CHAPTER']))
+	if(!empty($input['FIRST_CHAPTER']) && !ctype_digit($input['FIRST_CHAPTER']))
 		$_SESSION['error'][$id]['FIRST_CHAPTER'][] = 'Merci de remplire correctement "Premier chapitre".';
 	elseif(intval($input['FIRST_CHAPTER']) > 999999999 || intval($input['FIRST_CHAPTER']) < 0)
 		$_SESSION['error'][$id]['chapitre'][] = 'Votre premier chapitre est hors de la limite 0 / 999 999 999...';
-	if(!empty($input['LAST_CHAPTER']) && !is_num($input['LAST_CHAPTER']))
+	if(!empty($input['LAST_CHAPTER']) && !ctype_digit($input['LAST_CHAPTER']))
 		$_SESSION['error'][$id]['LAST_CHAPTER'][] = 'Merci de remplire correctement "Dernier chapitre".';
 	elseif(intval($input['LAST_CHAPTER']) > 999999999 || intval($input['LAST_CHAPTER']) < 0)
 		$_SESSION['error'][$id]['chapitre'][] = 'Votre dernier chapitre est hors de la limite 0 / 999 999 999...';
-	if(!empty($input['FIRST_TOME']) && !is_num($input['FIRST_TOME']))
+	if(!empty($input['FIRST_TOME']) && !ctype_digit($input['FIRST_TOME']))
 		$_SESSION['error'][$id]['FIRST_TOME'][] = 'Merci de remplire correctement "Premier tome".';
 	elseif(intval($input['FIRST_TOME']) > 999999999 || intval($input['FIRST_TOME']) < 0)
 		$_SESSION['error'][$id]['chapitre'][] = 'Votre premier tome est hors de la limite 0 / 999 999 999...';
-	if(!empty($input['LAST_TOME']) && !is_num($input['LAST_TOME']))
+	if(!empty($input['LAST_TOME']) && !ctype_digit($input['LAST_TOME']))
 		$_SESSION['error'][$id]['LAST_TOME'][] = 'Merci de remplire correctement "Dernier tome".';
 	elseif(intval($input['LAST_TOME']) > 999999999 || intval($input['LAST_TOME']) < 0)
 		$_SESSION['error'][$id]['chapitre'][] = 'Votre dernier tome est hors de la limite 0 / 999 999 999...';
-	if(!empty($input['CHAPTER_SPECIALS']) && !is_num($input['CHAPTER_SPECIALS']))
+	if(!empty($input['CHAPTER_SPECIALS']) && !ctype_digit($input['CHAPTER_SPECIALS']))
 		$_SESSION['error'][$id]['CHAPTER_SPECIALS'][] = 'Merci de remplire correctement "Chapitre sp&eacute;ciaux".';
 
 	if(!empty($_SESSION['error'][$id]))
@@ -179,8 +177,8 @@ function check_manga_line($input, $id)
 	$input['FIRST_TOME'] = ($input['FIRST_TOME'] == null)? -1 : intval($input['FIRST_TOME']);
 	$input['LAST_TOME'] = ($input['LAST_TOME'] == null)? -1 : intval($input['LAST_TOME']);
 	$input['INFOPNG'] = empty($input['INFOPNG'])? 0 : 1;
-	$input['GENDER'] = (!is_num($input['GENDER']) || $input['GENDER'] < 1 || $input['GENDER'] > 4)? 1 : intval($input['GENDER']);
-	$input['STATE'] = (!is_num($input['STATE']) || $input['STATE'] < 1 || $input['STATE'] > 3)? 1 : intval($input['STATE']);
+	$input['GENDER'] = (!ctype_digit($input['GENDER']) || $input['GENDER'] < 1 || $input['GENDER'] > 4)? 1 : intval($input['GENDER']);
+	$input['STATE'] = (!ctype_digit($input['STATE']) || $input['STATE'] < 1 || $input['STATE'] > 3)? 1 : intval($input['STATE']);
 	
 	return $input;
 }
@@ -201,7 +199,7 @@ function set_download($str_file=null, $name = 'rakshata-manga-2')
 	die();
 }
 /*************************************************/
-// fonction convertire utf8 en ascii
+// fonction creer ou modifier les cookie de maniere recursive
 function set_cookie($mixed=null,$name=null, $time_out=30758400)
 {
 	if(is_array($mixed))
@@ -227,13 +225,7 @@ function switch_utf8_ascii($mixed, $out_enc='ISO-8859-1//TRANSLIT', $in_enc='UTF
 	return $out;
 }
 /*************************************************/
-// fonction remet les output_value[] en output[]value
-function is_num($string=null)
-{
-	return ($string == strval(intval($string)));
-}
-/*************************************************/
-// fonction remet les output_value[] en output[]value
+// fonction fait le tri naturel des nom long; re-index les serie
 function sort_array($array=array())
 {
 	$in = null;
@@ -267,11 +259,22 @@ function show_error($mixed)
 		
 }
 /*************************************************/
-// fonction faire un echo des erreurs de l'array passee
+// fonction faire un echo formate de la string d aide
 function help($string)
 {
 	$string = htmlspecialchars($string, ENT_COMPAT, 'UTF-8', false);
 	echo '<span class="help" title="'.$string.'" onclick="alert(\''.addslashes($string).'\')">(?)</span>';		
+}
+/*************************************************/
+// fonction desactive l effet de magic_quotes_gpc
+function mq_stripslashes()
+{
+	function mq_loc_stripslashes(&$value, $key){
+		$value = stripslashes($value);
+	}
+
+	$super_glob = array(&$_GET, &$_POST, &$_COOKIE); // liste des var traitees
+	array_walk_recursive($super_glob, 'mq_loc_stripslashes');
 }
 /*************************************************/
 // fonction echape les " du csv
@@ -301,5 +304,4 @@ function log_f($title=null, $action=null)
 		//fermeture du fichier
 	fclose($fichier_log);
 }
-
 
