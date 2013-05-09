@@ -10,9 +10,9 @@ if(empty($page_index))
 function loader($string=null)
 {
 	if(!($ligne_array = explode("\n", str_replace("\n\n","\n", str_replace("\r","\n",$string)))))
-		return -1;
+		return false;
 	if(!($const = explode(' ', $ligne_array[0])))
-		return -2;
+		return false;
 	
 	unset($ligne_array[0]);
 
