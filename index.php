@@ -1,5 +1,6 @@
 <?php
 session_start();
+$curent_version = '0.9 [beta]';
 $page_index = true;
 include_once('fonction.inc.php');
 if(empty($page_fonction)) // si le chargement merde
@@ -57,7 +58,7 @@ if(!empty($_POST['const']) and !empty($_POST['data']) and empty($_FILES['old-rep
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="fr" >
 <head>
-	<title>Generateur d'index pour depot gratuit Rakshata: v0.1 [BETA]</title>
+	<title>Generateur d'index pour depot gratuit Rakshata: v<?php echo $curent_version;?></title>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 	<link rel="stylesheet" media="screen" type="text/css" title="style" href="design.css" />
 	<link rel="shortcut icon" type="image/x-icon" href="favicon.ico" />
@@ -184,7 +185,7 @@ if(!empty($_POST['const']) and !empty($_POST['data']) and empty($_FILES['old-rep
 				<?php if(!empty($_SESSION['error'][$i]['CHAPTER_SPECIALS'])) show_error($_SESSION['error'][$i]['CHAPTER_SPECIALS']);?>
 				<span class="tree" >&nbsp;|</span>
 				<label for="CHAPTER_SPECIALS_<?php echo $i;?>">Nombre de chapitre sp&eacute;ciaux : </label>
-					<?php help("Avez-vous des inter-chapitre de type '10.5' ? Donnez le nombre de ces chapitres");?>
+					<?php help("Avez-vous des inter-chapitres de type '10.5' ? Donnez le nombre de ces chapitres");?>
 				<input type="text" id="CHAPTER_SPECIALS_<?php echo $i;?>" name="data[<?php echo $i;?>][CHAPTER_SPECIALS]" <?php 
 					if(isset($old['data'][$i]['CHAPTER_SPECIALS']))
 						echo 'value="'.$old['data'][$i]['CHAPTER_SPECIALS'].'"';?>/>
@@ -227,7 +228,8 @@ function forget()
 	for (var id in array_cookie)
 	{
 		var obj_cookie = array_cookie[id].split('=');
-		document.cookie = obj_cookie[0]+"="+null+";expires=" + today.toGMTString();
+		if(obj_cookie[0] != 'PHPSESSID')
+			document.cookie = obj_cookie[0]+"="+null+";expires=" + today.toGMTString();
 		document.getElementById("remember").checked = null;
 	}
 }
@@ -557,8 +559,8 @@ function add_ligne(i)
 	
 	var span_help_CHAPTER_SPECIALS = document.createElement('span');
 	span_help_CHAPTER_SPECIALS.className = 'help';
-	span_help_CHAPTER_SPECIALS.title = "Avez-vous des inter-chapitre de type '10.5' ? Donnez le nombre de ces chapitres";
-	span_help_CHAPTER_SPECIALS.setAttribute("onclick", "alert('Avez-vous des inter-chapitre de type \\\'10.5\\\' ? Donnez le nombre de ces chapitres');");
+	span_help_CHAPTER_SPECIALS.title = "Avez-vous des inter-chapitres de type '10.5' ? Donnez le nombre de ces chapitres";
+	span_help_CHAPTER_SPECIALS.setAttribute("onclick", "alert('Avez-vous des inter-chapitres de type \\\'10.5\\\' ? Donnez le nombre de ces chapitres');");
 	span_help_CHAPTER_SPECIALS.innerHTML = "(?)";
 	
 	span_show.appendChild(span_help_CHAPTER_SPECIALS);
