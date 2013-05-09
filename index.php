@@ -71,7 +71,7 @@ if(!empty($_POST['const']) and !empty($_POST['data']) and empty($_FILES['old-rep
 		<form action="<?php echo $_SERVER['PHP_SELF'];?>" method="post" enctype="multipart/form-data">
 		<h1>Fichier</h1>
 		<p>
-			<label for="old-repo">Votre fichier <kbd>rakshata-manga-2</kbd> actuel : </label>
+			<label for="old-repo">Votre fichier de configuration <kbd>rakshata-manga-2</kbd> actuel : </label>
 				<?php help("Si vous avez d&eacute;j&agrave; un d&eacute;p&ocirc;t, chargez ici votre fichier 'rakshata-manga-2' (ou 'rakshata-manga-1') pour pr&eacute;-remplir le formulaire.");?>
 			<br />
 			<input type="file" name="old-repo" id="old-repo" />
@@ -124,14 +124,14 @@ if(!empty($_POST['const']) and !empty($_POST['data']) and empty($_FILES['old-rep
 				<?php if(!empty($_SESSION['error'][$i]['chapitre'])) show_error($_SESSION['error'][$i]['chapitre']);?>
 				<?php if(!empty($_SESSION['error'][$i]['FIRST_CHAPTER'])) show_error($_SESSION['error'][$i]['FIRST_CHAPTER']);?>
 				<span class="tree" >&nbsp;|</span>
-				<label for="FIRST_CHAPTER_<?php echo $i;?>">Premier chapitre (vide si non-sorti) : </label>
+				<label for="FIRST_CHAPTER_<?php echo $i;?>">Premier chapitre sorti (vide si non-sorti) : </label>
 				<input type="text" id="FIRST_CHAPTER_<?php echo $i;?>" name="data[<?php echo $i;?>][FIRST_CHAPTER]" <?php 
 					if(isset($old['data'][$i]['FIRST_CHAPTER']) && $old['data'][$i]['FIRST_CHAPTER']>=0)
 						echo 'value="'.$old['data'][$i]['FIRST_CHAPTER'].'"';?>/>
 				<br/>
 				<?php if(!empty($_SESSION['error'][$i]['LAST_CHAPTER'])) show_error($_SESSION['error'][$i]['LAST_CHAPTER']);?>
 				<span class="tree" >&nbsp;|</span>
-				<label for="LAST_CHAPTER_<?php echo $i;?>">Dernier chapitre : </label>
+				<label for="LAST_CHAPTER_<?php echo $i;?>">Dernier chapitre sorti : </label>
 				<input type="text" id="LAST_CHAPTER_<?php echo $i;?>" name="data[<?php echo $i;?>][LAST_CHAPTER]" <?php 
 					if(isset($old['data'][$i]['LAST_CHAPTER']) && $old['data'][$i]['LAST_CHAPTER']>=0)
 						echo 'value="'.$old['data'][$i]['LAST_CHAPTER'].'"';?>/>
@@ -139,14 +139,14 @@ if(!empty($_POST['const']) and !empty($_POST['data']) and empty($_FILES['old-rep
 				<?php if(!empty($_SESSION['error'][$i]['tome'])) show_error($_SESSION['error'][$i]['tome']);?>
 				<?php if(!empty($_SESSION['error'][$i]['FIRST_TOME'])) show_error($_SESSION['error'][$i]['FIRST_TOME']);?>
 				<span class="tree" >&nbsp;|</span>
-				<label for="FIRST_TOME_<?php echo $i;?>">Premier tome (vide si non-sorti) :</label>
+				<label for="FIRST_TOME_<?php echo $i;?>">Premier tome sorti (vide si non-sorti) :</label>
 				<input type="text" id="FIRST_TOME_<?php echo $i;?>" name="data[<?php echo $i;?>][FIRST_TOME]" <?php 
 					if(isset($old['data'][$i]['FIRST_TOME']) && $old['data'][$i]['FIRST_TOME']>=0)
 						echo 'value="'.$old['data'][$i]['FIRST_TOME'].'"';?>/>
 				<br/>
 				<?php if(!empty($_SESSION['error'][$i]['LAST_TOME'])) show_error($_SESSION['error'][$i]['LAST_TOME']);?>
 				<span class="tree" >&nbsp;|</span>
-				<label for="LAST_TOME_<?php echo $i;?>">Dernier tome : </label>
+				<label for="LAST_TOME_<?php echo $i;?>">Dernier tome sorti : </label>
 				<input type="text" id="LAST_TOME_<?php echo $i;?>" name="data[<?php echo $i;?>][LAST_TOME]" <?php 
 					if(isset($old['data'][$i]['LAST_TOME']) && $old['data'][$i]['LAST_TOME']>=0)
 						echo 'value="'.$old['data'][$i]['LAST_TOME'].'"';?>/>
