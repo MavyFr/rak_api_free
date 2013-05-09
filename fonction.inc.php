@@ -60,7 +60,6 @@ function parser($input=null)
 		$_SESSION['error']['LONG_MANAGER_NAME'][] = 'Le "Nom Long" de votre d&eacute;p&ocirc;t fait plus de 25 caract&egrave;res.';
 	if(strlen($input['const']['SHORT_MANAGER_NAME']) > 10)
 		$_SESSION['error']['SHORT_MANAGER_NAME'][] = 'Le "Nom Court" de votre d&eacute;p&ocirc;t fait plus de 10 caract&egrave;res';
-	
 	if(empty($input['data']) || !is_array($input['data']))
 		$_SESSION['error']['data'][] = 'Merci de remplir vos s&eacute;ries.';
 	else
