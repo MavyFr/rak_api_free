@@ -3,12 +3,10 @@
 $page_fonction = true;
 if(empty($page_index))
 	die('SECURITY ERROR : Please Contact Your Admin, <a href="mailto:contact@rakshata.com">contact@rakshata.com</a>.');
-////////////////////////////
-// gestion des membres :
-////////////////////////////
+////////////////////////////////////////////////////////
 
 /*************************************************/
-// fonction sort un array de la lecture d une string
+// fonction cree un array de la lecture d une string
 function loader($string=null)
 {
 	if(!($ligne_array = explode("\n", str_replace("\n\n","\n", str_replace("\r","\n",$string)))))
@@ -51,7 +49,7 @@ function loader($string=null)
 }
 /*************************************************/
 // fonction met en forme les valeur pour l output
-function parser_to_ressource($input=null)
+function parser($input=null)
 {
 	$version = 1;
 	if(empty($input['const']['LONG_MANAGER_NAME']))
@@ -201,7 +199,7 @@ function set_download($str_file=null, $name = 'rakshata-manga-2')
 	die();
 }
 /*************************************************/
-// fonction convertire utf8 en ascii
+// fonction creer ou modifier les cookie de maniere recursive
 function set_cookie($mixed=null,$name=null, $time_out=30758400)
 {
 	if(is_array($mixed))
@@ -227,7 +225,7 @@ function switch_utf8_ascii($mixed, $out_enc='ISO-8859-1//TRANSLIT', $in_enc='UTF
 	return $out;
 }
 /*************************************************/
-// fonction remet les output_value[] en output[]value
+// fonction fait le tri naturel des nom long; re-index les serie
 function sort_array($array=array())
 {
 	$in = null;
@@ -261,11 +259,22 @@ function show_error($mixed)
 		
 }
 /*************************************************/
-// fonction faire un echo des erreurs de l'array passee
+// fonction faire un echo formate de la string d aide
 function help($string)
 {
 	$string = htmlspecialchars($string, ENT_COMPAT, 'UTF-8', false);
 	echo '<span class="help" title="'.$string.'" onclick="alert(\''.addslashes($string).'\')">(?)</span>';		
+}
+/*************************************************/
+// fonction desactive l effet de magic_quotes_gpc
+function mq_stripslashes()
+{
+	function mq_loc_stripslashes(&$value, $key){
+		$value = stripslashes($value);
+	}
+
+	$super_glob = array(&$_GET, &$_POST, &$_COOKIE); // liste des var traitees
+	array_walk_recursive($super_glob, 'mq_loc_stripslashes');
 }
 /*************************************************/
 // fonction echape les " du csv
@@ -295,5 +304,4 @@ function log_f($title=null, $action=null)
 		//fermeture du fichier
 	fclose($fichier_log);
 }
-
 
