@@ -39,6 +39,16 @@ h1
 	font-size: 23px;
 	color: #B84700;
 }
+h2
+{
+	padding: 0px;
+	margin: 0px;
+}
+p
+{
+	padding: 0px;
+	margin: 0px;
+}
 a
 {
 	text-decoration: none;
@@ -121,13 +131,28 @@ hr
 	color: #B84700;
 	font-family: monospace;
 	font-weight: bold;
+	font-size: 15px;
+}
+.tree_head
+{
+	cursor:pointer;
+	float: left;
+	font-family: "Ace Futurism Regular", "Deja vu" , Helvetica , Verdana , sans-serif;
+	text-decoration: none;
+	font-style: normal;
+	font-weight: bold;
+	font-size: 22px;
+	color: #B84700;
+	
 }
 .delet
 {
-	display: block;
 	font-style: normal;
 	margin: 0px;
 	padding: 0px;
-	text-align: center;
-	background-color: #999999;
+	text-align: right;
+}
+.break_float
+{
+	clear: both;
 }
