@@ -9,42 +9,82 @@ if(empty($page_index))
 // fonction cree un array de la lecture d une string
 function loader($string=null)
 {
-	if(!($ligne_array = explode("\n", str_replace("\n\n","\n", str_replace("\r","\n",$string)))))
-		return false;
-	if(!($const = explode(' ', $ligne_array[0])))
-		return false;
+	$string = str_replace("\n\n","\n", str_replace("\r","\n",$string)); // vire les \r et \n\n
+	$out = null;
+	$alloc_long = array(); // array d allocaltion Clef-NomLong pour les check de doublon
+	$alloc_short = array(); // array d allocaltion Clef-Nomcourt pour les check de doublon
 	
-	unset($ligne_array[0]);
-
-	$out['const']['LONG_MANAGER_NAME'] = (isset($const[0]))? str_replace('_',' ',$const[0]) : null;
-	$out['const']['SHORT_MANAGER_NAME'] = (isset($const[1]))? str_replace('_',' ',$const[1]) : null;
-
-	foreach($ligne_array as $ligne)
+	if(!($partie_array = explode("#\n", $string)))
+		return false;
+	for($i=0; isset($partie_array[$i]); $i++)// on parcours les partie du fichier
 	{
-		if($ligne != '#' and $ligne != null)
+		if(!$i) // si premere ligne
 		{
-			$elem = explode(' ', $ligne);
-			//-2	longN	shortN	firstC	lastC	firstT	lastT	StatGnR	info	chapsp
-			//	[0]	[1]	[2]	[3]	[4]	[5]	[6]	[7]	[8]
-			//-1	longN	shortN	firstC	lastC	StatGnR	info
-			$check_elem['LONG_PROJECT_NAME'] = isset($elem[0])? str_replace('_',' ',$elem[0]) : null;
-			$check_elem['SHORT_PROJECT_NAME'] = isset($elem[1])? str_replace('_',' ',$elem[1]) : null;
-			$check_elem['FIRST_CHAPTER'] = isset($elem[2])? $elem[2] : -1;
-			$check_elem['LAST_CHAPTER'] = isset($elem[3])? $elem[3] : -1;
-			$check_elem['FIRST_TOME'] = isset($elem[4], $elem[6], $elem[7])? $elem[4] : -1;
-			$check_elem['LAST_TOME'] = isset($elem[5], $elem[6], $elem[7])? $elem[5] : -1;
-				$elem['a'] = isset($elem[6])? str_split($elem[6]) : (isset($elem[4])? str_split($elem[4]) : array(1,1));
-			$check_elem['STATE'] = isset($elem['a'][0])? $elem['a'][0] : 1;
-			$check_elem['GENDER'] = isset($elem['a'][1])? $elem['a'][1] : 1;
-			$check_elem['INFOPNG'] = isset($elem[7])? $elem[7] : (isset($elem[5])? $elem[5] : null);
-			$check_elem['CHAPTER_SPECIALS'] = isset($elem[8])? $elem[8] : null;
+			if(!($ligne_array = explode("\n", $partie_array[$i])))
+				return false;
+			if(!($const = explode(' ', $ligne_array[0])))
+				return false;
+	
+			unset($ligne_array[0]);
+			// on charge les constantes du depot 
+			$out['const']['LONG_MANAGER_NAME'] = (isset($const[0]))? str_replace('_',' ',$const[0]) : null;
+			$out['const']['SHORT_MANAGER_NAME'] = (isset($const[1]))? str_replace('_',' ',$const[1]) : null;
+
+			foreach($ligne_array as $ligne)
+			{
+				if($ligne != '#' and $ligne != null)
+				{
+					$elem = explode(' ', $ligne);
+					//-2	longN	shortN	firstC	lastC	firstT	lastT	StatGnR	info	chapsp
+					//	[0]	[1]	[2]	[3]	[4]	[5]	[6]	[7]	[8]
+					//-1	longN	shortN	firstC	lastC	StatGnR	info
+					$check_elem['LONG_PROJECT_NAME'] = isset($elem[0])? str_replace('_',' ',$elem[0]) : null;
+					$check_elem['SHORT_PROJECT_NAME'] = isset($elem[1])? str_replace('_',' ',$elem[1]) : null;
+					$check_elem['FIRST_CHAPTER'] = isset($elem[2])? $elem[2] : -1;
+					$check_elem['LAST_CHAPTER'] = isset($elem[3])? $elem[3] : -1;
+					$check_elem['FIRST_TOME'] = isset($elem[4], $elem[6], $elem[7])? $elem[4] : -1;
+					$check_elem['LAST_TOME'] = isset($elem[5], $elem[6], $elem[7])? $elem[5] : -1;
+						$elem['a'] = isset($elem[6])? str_split($elem[6]) : (isset($elem[4])? str_split($elem[4]) : array(1,1));
+					$check_elem['STATE'] = isset($elem['a'][0])? $elem['a'][0] : 1;
+					$check_elem['GENDER'] = isset($elem['a'][1])? $elem['a'][1] : 1;
+					$check_elem['INFOPNG'] = isset($elem[7])? $elem[7] : (isset($elem[5])? $elem[5] : null);
+					$check_elem['CHAPTER_SPECIALS'] = isset($elem[8])? $elem[8] : null;
 			
-			$out['data'][] = $check_elem;
-			unset($elem, $check_elem);
+					if	(	($check_elem['LONG_PROJECT_NAME'] == null 
+							or !in_array($check_elem['LONG_PROJECT_NAME'], $alloc_long)
+							)
+						and 	($check_elem['SHORT_PROJECT_NAME'] == null 
+							or !in_array($check_elem['SHORT_PROJECT_NAME'], $alloc_short)
+							)
+						) // si le projet est vide ou exsiste pas
+					{
+						$out['data'][] = $check_elem;
+						$alloc_long[] = $check_elem['LONG_PROJECT_NAME'];
+						$alloc_short[] = $check_elem['SHORT_PROJECT_NAME'];
+					}
+					
+					unset($elem, $check_elem);
+				}
+			}
+			if(isset($out['data']))
+				$out['data'] = sort_array($out['data']);
 		}
+		else
+		{
+			if(!($ligne_array = explode("\n", $partie_array[$i])))
+				return false;
+			if(!($head = explode(' ', $ligne_array[0])))
+				return false;
+	
+			unset($ligne_array[0]);
+			
+			if(!empty($alloc) and in_array($head[0], $alloc))
+			{
+				$out['data']['LONG_MANAGER_NAME'] = (isset($const[0]))? str_replace('_',' ',$const[0]) : null;
+			}
+		}
+		
 	}
-	if(isset($out['data']))
-		$out['data'] = sort_array($out['data']);
 	return $out;
 }
 /*************************************************/
