@@ -271,7 +271,7 @@ function autofocus()
 		if(document.getElementById('list_serie').getElementsByClassName('hr')[i].getElementsByClassName('error').length)
 		{
 			a = false;
-			var tree = 0;
+			var tree = -1;
 			for(var t=0; t < document.getElementById('list_serie').getElementsByClassName('hr')[i].getElementsByTagName('span').length; t++)
 			{
 				if(document.getElementById('list_serie').getElementsByClassName('hr')[i].getElementsByTagName('span')[t].className == 'tree')
