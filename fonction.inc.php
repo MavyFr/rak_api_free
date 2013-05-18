@@ -66,21 +66,42 @@ function loader($string=null)
 					unset($elem, $check_elem);
 				}
 			}
+			unset($ligne, $ligne_array);
+			
 			if(isset($out['data']))
 				$out['data'] = sort_array($out['data']);
 		}
 		else
 		{
 			if(!($ligne_array = explode("\n", $partie_array[$i])))
-				return false;
-			if(!($head = explode(' ', $ligne_array[0])))
-				return false;
+				continue;
+			if(!($head = explode(' ', $ligne_array[0]))) // si 1er ligne vide on passe a la partie next
+				continue;
 	
 			unset($ligne_array[0]);
 			
-			if(!empty($alloc) and in_array($head[0], $alloc))
+			if(!empty($alloc_long) and in_array(str_replace('_',' ',$head[0]), $alloc_long)) // si le projet exsite
 			{
-				$out['data']['LONG_MANAGER_NAME'] = (isset($const[0]))? str_replace('_',' ',$const[0]) : null;
+				if($head[1] == 'C') // si c est un/des chapitre(s)
+				{
+					$chap_sp_array_tmp = explode(' ', $ligne_array[1]);
+					natcasesort($chap_sp_array_tmp);
+					foreach($chap_sp_array_tmp as $key=>$value)
+					{
+						if(intval($value))
+							$chap_sp_array[] = intval($value) / 10;
+					}
+					$key_serie = array_keys($alloc_long, str_replace('_',' ',$head[0]));
+					$out['data'][$key_serie[0]]['array_chap_sp'] = $chap_sp_array;
+					$out['data'][$key_serie[0]]['string_chap_sp'] = implode('; ', $chap_sp_array);
+					$out['data'][$key_serie[0]]['CHAPTER_SPECIALS'] = count($chap_sp_array);
+					
+					unset($chap_sp_array_tmp, $chap_sp_array, $key_serie, $key, $value);
+				}
+				elseif($head[1] == 'T') // si c est des tomes
+				{
+					
+				}
 			}
 		}
 		
@@ -92,6 +113,7 @@ function loader($string=null)
 function parser($input=null)
 {
 	$version = 1;
+	$footer = null;
 	if(empty($input['const']['LONG_MANAGER_NAME']))
 		$_SESSION['error']['LONG_MANAGER_NAME'][] = 'Merci de remplir le "Nom Long" de votre d&eacute;p&ocirc;t.';
 	if(empty($input['const']['SHORT_MANAGER_NAME']))
@@ -105,21 +127,27 @@ function parser($input=null)
 	else
 	{
 		$out = null;
-		foreach($input['data'] as $key => $array){
+		foreach($input['data'] as $key => $array)
+		{
 			if(($array = check_manga_line($array, $key)))
+			{
+				// 2eme partie, list serie
 				$out.=$array['LONG_PROJECT_NAME'].' '.$array['SHORT_PROJECT_NAME'].' '.$array['FIRST_CHAPTER'].' '.
 					$array['LAST_CHAPTER'].' '.$array['FIRST_TOME'].' '.$array['LAST_TOME'].' '.$array['STATE'].
 					$array['GENDER'].' '.$array['INFOPNG'].' '.$array['CHAPTER_SPECIALS']."\n";
+				// 3eme partie, chap sp
+				if(!empty($array['string_chap_sp']))
+					$footer .= "#\n".$array['LONG_PROJECT_NAME']." C\n".str_replace(';','',$array['string_chap_sp'])."\n";
+			}
 		}
 	}
 	if(empty($out))
 		$_SESSION['error']['data'][] = 'Merci de remplir correctement vos s&eacute;ries.';
-	
 	if(!empty($_SESSION['error']))
 		return false;
 	
 	$head = str_replace(' ','_',$input['const']['LONG_MANAGER_NAME']). ' ' .str_replace(' ','_',$input['const']['SHORT_MANAGER_NAME']).' '.$version."\n";
-	return $head . $out;
+	return $head . $out . $footer;
 }
 /*************************************************/
 // fonction check si les valeur de la ligne sont correcte
@@ -133,7 +161,7 @@ function check_manga_line($input, $id)
 		&& empty($input['FIRST_TOME']) 
 		&& empty($input['LAST_TOME']) 
 		&& empty($input['INFOPNG']) 
-		&& empty($input['CHAPTER_SPECIALS'])
+		&& empty($input['string_chap_sp'])
 		)
 		return false;
 	// Check que toutes les variables sont remplies & correctment
@@ -199,8 +227,8 @@ function check_manga_line($input, $id)
 		$_SESSION['error'][$id]['LAST_TOME'][] = 'Merci de remplir correctement "Dernier tome".';
 	elseif(intval($input['LAST_TOME']) > 999999999 || intval($input['LAST_TOME']) < 0)
 		$_SESSION['error'][$id]['chapitre'][] = 'Votre dernier tome est hors de la limite 0 / 999 999 999...';
-	if(!empty($input['CHAPTER_SPECIALS']) && !ctype_digit($input['CHAPTER_SPECIALS']))
-		$_SESSION['error'][$id]['CHAPTER_SPECIALS'][] = 'Merci de remplir correctement "Chapitre sp&eacute;ciaux".';
+	if(!empty($input['string_chap_sp']) && preg_match('#[^0-9 ;,.]#', $input['string_chap_sp']))
+		$_SESSION['error'][$id]['string_chap_sp'][] = 'Merci de remplir correctement "Chapitre sp&eacute;ciaux".';
 
 	if(!empty($_SESSION['error'][$id]))
 		return false;
@@ -213,10 +241,21 @@ function check_manga_line($input, $id)
 	if(!empty($_SESSION['error'][$id]))
 		return false;
 	
+	if(!empty($input['string_chap_sp']))
+	{
+		$input['array_chap_sp'] = array();
+		$chap_sp_array_tmp = explode(';', $input['string_chap_sp']);
+		natcasesort($chap_sp_array_tmp);
+		foreach($chap_sp_array_tmp as $key=>$value)
+		{
+				$input['array_chap_sp'][] = intval($value * 10);
+		}
+		$input['string_chap_sp'] = implode('; ', $input['array_chap_sp']);
+	}
 	// on met les par def pour les valeurs vide
 	$input['SHORT_PROJECT_NAME'] = str_replace(' ', '_', $input['SHORT_PROJECT_NAME']);
 	$input['LONG_PROJECT_NAME'] = str_replace(' ', '_', $input['LONG_PROJECT_NAME']);
-	$input['CHAPTER_SPECIALS'] = empty($input['CHAPTER_SPECIALS'])? 0 : intval($input['CHAPTER_SPECIALS']);
+	$input['CHAPTER_SPECIALS'] = empty($input['array_chap_sp'])? 0 : count($input['array_chap_sp']);
 	$input['FIRST_CHAPTER'] = ($input['FIRST_CHAPTER'] == null)? -1 : intval($input['FIRST_CHAPTER']);
 	$input['LAST_CHAPTER'] = ($input['LAST_CHAPTER'] == null)? -1 : intval($input['LAST_CHAPTER']);
 	$input['FIRST_TOME'] = ($input['FIRST_TOME'] == null)? -1 : intval($input['FIRST_TOME']);
