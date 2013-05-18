@@ -114,6 +114,9 @@ function parser($input=null)
 {
 	$version = 1;
 	$footer = null;
+	$alloc_long = array(); // array d allocaltion Clef-NomLong pour les check de doublon
+	$alloc_short = array(); // array d allocaltion Clef-Nomcourt pour les check de doublon
+	
 	if(empty($input['const']['LONG_MANAGER_NAME']))
 		$_SESSION['error']['LONG_MANAGER_NAME'][] = 'Merci de remplir le "Nom Long" de votre d&eacute;p&ocirc;t.';
 	if(empty($input['const']['SHORT_MANAGER_NAME']))
@@ -129,8 +132,14 @@ function parser($input=null)
 		$out = null;
 		foreach($input['data'] as $key => $array)
 		{
-			if(($array = check_manga_line($array, $key)))
+			if	(($array = check_manga_line($array, $key))
+				and !in_array($array['LONG_PROJECT_NAME'], $alloc_long)
+				and !in_array($array['SHORT_PROJECT_NAME'], $alloc_short)
+				)
 			{
+				// les array d allocation :
+				$alloc_long[] = $array['LONG_PROJECT_NAME'];
+				$alloc_short[] = $array['SHORT_PROJECT_NAME'];
 				// 2eme partie, list serie
 				$out.=$array['LONG_PROJECT_NAME'].' '.$array['SHORT_PROJECT_NAME'].' '.$array['FIRST_CHAPTER'].' '.
 					$array['LAST_CHAPTER'].' '.$array['FIRST_TOME'].' '.$array['LAST_TOME'].' '.$array['STATE'].
@@ -248,6 +257,7 @@ function check_manga_line($input, $id)
 		natcasesort($chap_sp_array_tmp);
 		foreach($chap_sp_array_tmp as $key=>$value)
 		{
+			if(!in_array(intval($value * 10), $input['array_chap_sp']))
 				$input['array_chap_sp'][] = intval($value * 10);
 		}
 		$input['string_chap_sp'] = implode('; ', $input['array_chap_sp']);
