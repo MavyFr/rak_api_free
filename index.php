@@ -13,7 +13,7 @@ $_SESSION['hello'] = true;
 if (get_magic_quotes_gpc())
 	mq_stripslashes(); // on vire l effet magic-quote
 
-if(!empty($_FILES['old-repo']) and $_FILES['old-repo']['error']==0 and $_FILES['old-repo']['size']<=1048576)
+if(!empty($_FILES['old-repo']) and $_FILES['old-repo']['error']==0 and $_FILES['old-repo']['size']<=5048576)
 {
 	log_f('`loader`', 'from file '.$_FILES['old-repo']['size'].'o / '.substr_count(file_get_contents($_FILES['old-repo']['tmp_name']), "\n").' `\n`');
 	$old = loader(switch_utf8_ascii(file_get_contents($_FILES['old-repo']['tmp_name']), 'UTF-8', 'ISO-8859-1//TRANSLIT'));
@@ -114,14 +114,14 @@ if(!empty($_POST['const']) and !empty($_POST['data']) and empty($_FILES['old-rep
 			</p>
 			<?php if(!empty($_SESSION['error'][$i]['champs'])) show_error($_SESSION['error'][$i]['champs']);?>
 			<?php if(!empty($_SESSION['error'][$i]['LONG_PROJECT_NAME'])) show_error($_SESSION['error'][$i]['LONG_PROJECT_NAME']);?>
-			<p class="break_float" id="show_<?php echo $i;?>" <?php
+			<div class="break_float" id="show_<?php echo $i;?>" <?php
 			 if(!empty($old['data'][$i]['LONG_PROJECT_NAME']) and empty($_SESSION['error'][$i])) echo 'style="display:none;"';?> >
 				<span class="tree" >&nbsp;|</span>
 				<label for="LONG_PROJECT_NAME_<?php echo $i;?>">
 					Nom long de votre s&eacute;rie (50 caract&egrave;res max) : <span class="red">*</span></label>
 				<input type="text" id="LONG_PROJECT_NAME_<?php echo $i;?>" name="data[<?php echo $i;?>][LONG_PROJECT_NAME]" 
-					onchange="refresh(this, <?php echo $i;?>)"<?php 
-					if(isset($old['data'][$i]['LONG_PROJECT_NAME']))echo 'value="'.$old['data'][$i]['LONG_PROJECT_NAME'].'"';?>/>
+					onchange="refresh(this, <?php echo $i;?>)" <?php 
+					if(isset($old['data'][$i]['LONG_PROJECT_NAME']))echo 'value="'.$old['data'][$i]['LONG_PROJECT_NAME'].'" ';?>/>
 				<br />
 				<?php if(!empty($_SESSION['error'][$i]['SHORT_PROJECT_NAME'])) show_error($_SESSION['error'][$i]['SHORT_PROJECT_NAME']);?>
 				<span class="tree" >&nbsp;|</span>
@@ -146,21 +146,45 @@ if(!empty($_POST['const']) and !empty($_POST['data']) and empty($_FILES['old-rep
 					if(isset($old['data'][$i]['LAST_CHAPTER']) && $old['data'][$i]['LAST_CHAPTER']>=0)
 						echo 'value="'.$old['data'][$i]['LAST_CHAPTER'].'"';?>/>
 				<br/>
-				<?php if(!empty($_SESSION['error'][$i]['tome'])) show_error($_SESSION['error'][$i]['tome']);?>
-				<?php if(!empty($_SESSION['error'][$i]['FIRST_TOME'])) show_error($_SESSION['error'][$i]['FIRST_TOME']);?>
 				<span class="tree" >&nbsp;|</span>
-				<label for="FIRST_TOME_<?php echo $i;?>">Premier tome sorti (vide si non-sorti) :</label>
-				<input type="text" id="FIRST_TOME_<?php echo $i;?>" name="data[<?php echo $i;?>][FIRST_TOME]" <?php 
-					if(isset($old['data'][$i]['FIRST_TOME']) && $old['data'][$i]['FIRST_TOME']>=0)
-						echo 'value="'.$old['data'][$i]['FIRST_TOME'].'"';?>/>
-				<br/>
-				<?php if(!empty($_SESSION['error'][$i]['LAST_TOME'])) show_error($_SESSION['error'][$i]['LAST_TOME']);?>
-				<span class="tree" >&nbsp;|</span>
-				<label for="LAST_TOME_<?php echo $i;?>">Dernier tome sorti : </label>
-				<input type="text" id="LAST_TOME_<?php echo $i;?>" name="data[<?php echo $i;?>][LAST_TOME]" <?php 
-					if(isset($old['data'][$i]['LAST_TOME']) && $old['data'][$i]['LAST_TOME']>=0)
-						echo 'value="'.$old['data'][$i]['LAST_TOME'].'"';?>/>
-				<br/>
+				<label>Tome(s) sorti(s) : </label>
+				<?php help("Si vous avez sorti un ou plusieurs tomes, utilisez le bouton '+' pour ajouter des lignes pour rentrer ces tomes.");?>
+				<input type="button" value="+" onclick="line_<?php echo $i;?>_tome = add_tome(<?php echo $i;?>, line_<?php echo $i;?>_tome);return false;"/>
+				<div id="line_<?php echo $i;?>_tome">
+					<?php
+					$key = 0;
+					if(!empty($old['data'][$i]['array_tome']) and is_array($old['data'][$i]['array_tome']))
+					{
+						foreach($old['data'][$i]['array_tome'] as $key => $value)
+						{
+							?>
+							<span class="tree" >&nbsp;|&nbsp;|</span>
+							<label for="array_tome_<?php echo $i;?>_id_<?php echo $key;?>">n° </label>
+							<input type="text" id="array_tome_<?php echo $i;?>_id_<?php echo $key;?>" name="data[<?php echo $i;?>][array_tome][<?php echo $key;?>][ID]" size="3" <?php 
+								if(isset($key))
+									echo 'value="'.$key.'"';?>/>
+							<label for="array_tome_<?php echo $i;?>_name_<?php echo $key;?>">, titre </label><?php help("Laissez vide les champs suivant pour un affichage 'Tome n°...' dans le lecteur.");?>
+							<input type="text" id="array_tome_<?php echo $i;?>_name_<?php echo $key;?>" name="data[<?php echo $i;?>][array_tome][<?php echo $key;?>][NAME]" size="10" <?php 
+								if(isset($value['NAME']))
+									echo 'value="'.$value['NAME'].'"';?>/>
+							<label for="array_tome_<?php echo $i;?>_def1_<?php echo $key;?>">, d&eacute;f 1 </label><?php help("Vous diposez de 2 lignes de d&eacute;finition, de 50 caract&egrave;res max.");?>
+							<input type="text" id="array_tome_<?php echo $i;?>_def1_<?php echo $key;?>" name="data[<?php echo $i;?>][array_tome][<?php echo $key;?>][DEF_LINE_1]" size="20" <?php 
+								if(isset($value['DEF_LINE_1']))
+									echo 'value="'.$value['DEF_LINE_1'].'"';?>/>
+							<label for="array_tome_<?php echo $i;?>_def2_<?php echo $key;?>">, d&eacute;f 2 </label>
+							<input type="text" id="array_tome_<?php echo $i;?>_def2_<?php echo $key;?>" name="data[<?php echo $i;?>][array_tome][<?php echo $key;?>][DEF_LINE_2]" size="20" <?php 
+								if(isset($value['DEF_LINE_2']))
+									echo 'value="'.$value['DEF_LINE_2'].'"';?>/>
+							<br />
+							<?php
+						}
+						unset($value);
+					}
+					echo "\n<script type=\"text/javascript\"><!--\n var line_".$i."_tome = ".++$key.'; //--></script>'."\n";
+					unset($key);
+					?>
+				</div>
+				
 				<span class="tree" >&nbsp;|</span>
 				<label for="STATE_<?php echo $i;?>">&Eacute;tat de la s&eacute;rie : <span class="red">*</span></label>
 				<select id="STATE_<?php echo $i;?>" name="data[<?php echo $i;?>][STATE]" >
@@ -193,24 +217,24 @@ if(!empty($_POST['const']) and !empty($_POST['data']) and empty($_FILES['old-rep
 				<br/>
 				<?php if(!empty($_SESSION['error'][$i]['string_chap_sp'])) show_error($_SESSION['error'][$i]['string_chap_sp']);?>
 				<span class="tree" >&nbsp;|</span>
-				<label for="string_chap_sp_<?php echo $i;?>">Liste des chapitres sp&eacute;ciaux, s&eacute;par&eacute; par des <kbd>;</kbd> : </label>
+				<label for="string_chap_sp_<?php echo $i;?>">Liste des chapitres sp&eacute;ciaux, s&eacute;par&eacute;s par des <kbd>;</kbd> : </label>
 					<?php help("Avez-vous des inter-chapitres de type '10.5' ? Faite la liste avec des ';' sous la forme '5,7; 10.5;20.2'");?>
 				<input type="text" id="string_chap_sp_<?php echo $i;?>" name="data[<?php echo $i;?>][string_chap_sp]" <?php 
 					if(!empty($old['data'][$i]['string_chap_sp']))
 						echo 'value="'.$old['data'][$i]['string_chap_sp'].'"';?>/>
-			</p>
+			</div>
 			</div>
 			<?php
 			$i++;
 		}
-		while(isset($old['data'][$i]));
-		echo "<script type=\"text/javascript\"><!--\n var i = ".$i.'; //--></script>';
+		while(isset($old['data'][$i])); // boucle do...while
+		echo "\n<script type=\"text/javascript\"><!--\n var line = ".$i.'; //--></script>'."\n";
 		unset($i);
 		?>
 		</div>
 		<p>
 		<br />
-		<input type="button" value="ajouter une s&eacute;rie" onclick="i = add_ligne(i);return false;"/>
+		<input type="button" value="ajouter une s&eacute;rie" onclick="line = add_ligne(line);return false;"/>
 		<br />
 		<br />
 		<input type="checkbox" name="remember" id="remember" <?php if(!empty($old['remember']))echo'checked="checked"';?> />
@@ -223,13 +247,19 @@ if(!empty($_POST['const']) and !empty($_POST['data']) and empty($_FILES['old-rep
 		</form>
 		</div>
 		<p id="footer_img">
-			Copyright Mavy <a href="http://www.mozilla-europe.org/fr/firefox"><img src="get_firefox.png" alt="get firefox" title="Site optimis&eacute; pour Firefox" /></a> Conception par Blag
+			Copyright Mavy <a href="http://www.mozilla-europe.org/fr/firefox">
+			<img src="get_firefox.png" alt="get firefox" title="Site optimis&eacute; pour Firefox" />
+			</a> Conception par Blag
 		</p>
 	</div>
 <script type="text/javascript">
 <!--
-autofocus();
-///////////////
+<?php 
+if(!empty($_SESSION['error']['id']))
+	echo 'document.getElementById("'.$_SESSION['error']['id'].'").focus();';
+?>
+
+///////////////////////////////////////////
 function forget()
 {
 	var array_cookie = document.cookie.split(';'); 
@@ -242,6 +272,7 @@ function forget()
 		document.getElementById("remember").checked = null;
 	}
 }
+//***************************************//
 function show(obj, id)
 {
 	var show = document.getElementById("show_"+id);
@@ -257,34 +288,108 @@ function show(obj, id)
 		show.style.display = 'none';
 	}
 }
+//***************************************//
 function refresh(obj, id)
 {
 	document.getElementById("line_"+id).getElementsByClassName('tree_head')[0].innerHTML='<span class="tree" >-|</span>'+obj.value;
 }
-function autofocus()
+//***************************************//
+function delet_line(line_id)
 {
-	var a = true;
-	var elem = new Array('LONG_PROJECT_NAME_', 'SHORT_PROJECT_NAME_', 'FIRST_CHAPTER_', 'LAST_CHAPTER_', 'FIRST_TOME_', 
-				'LAST_TOME_', 'STATE_', 'GENDER_', 'INFOPNG_', 'string_chap_sp_');
-	for(var i = 0; i < document.getElementById('list_serie').getElementsByClassName('hr').length && a; i++)
-	{
-		if(document.getElementById('list_serie').getElementsByClassName('hr')[i].getElementsByClassName('error').length)
-		{
-			a = false;
-			var tree = 0;
-			for(var t=0; t < document.getElementById('list_serie').getElementsByClassName('hr')[i].getElementsByTagName('span').length; t++)
-			{
-				if(document.getElementById('list_serie').getElementsByClassName('hr')[i].getElementsByTagName('span')[t].className == 'tree')
-					tree++;
-				else if(document.getElementById('list_serie').getElementsByClassName('hr')[i].getElementsByTagName('span')[t].className == 'error')
-				{
-					document.getElementById(elem[tree]+i).focus()
-					break;
-				}
-			}
-		}
-	}
+	var list_serie = document.getElementById("list_serie");
+	var old = document.getElementById(line_id);
+
+	list_serie.removeChild(old);
 }
+//***************************************//
+function add_tome(id, tome)
+{
+	var conten_tome = document.getElementById("line_"+id+"_tome");
+	
+	var span_tree_tome_id = document.createElement('span');
+		span_tree_tome_id.className = 'tree';	
+		span_tree_tome_id.innerHTML = "&nbsp;|&nbsp;|";
+	
+	conten_tome.appendChild(span_tree_tome_id);
+	
+	var label_array_tome_id = document.createElement("label");
+		label_array_tome_id.setAttribute("for", "array_tome_"+id+"_id_"+tome);
+		label_array_tome_id.innerHTML = " n° ";
+	
+	conten_tome.appendChild(label_array_tome_id);
+	
+	var input_array_tome_id = document.createElement("input");
+		input_array_tome_id.type = "text";
+		input_array_tome_id.id = "array_tome_"+id+"_id_"+tome;
+		input_array_tome_id.name = "data["+id+"][array_tome]["+tome+"][ID]";
+		input_array_tome_id.setAttribute("size", "3");
+	
+	conten_tome.appendChild(input_array_tome_id);
+	
+	var label_array_tome_name = document.createElement("label");
+		label_array_tome_name.setAttribute("for", "array_tome_"+id+"_name_"+tome);
+		label_array_tome_name.innerHTML = " , titre ";
+	
+	conten_tome.appendChild(label_array_tome_name);
+	
+	var span_help_array_tome_name = document.createElement('span');
+		span_help_array_tome_name.className = 'help';
+		span_help_array_tome_name.title = "Laissez vide les champs suivant pour un affichage 'Tome n°...' dans le lecteur.";
+		span_help_array_tome_name.setAttribute("onclick", "alert('Laissez vide les champs suivant pour un affichage \\\'Tome n°...\\\' dans le lecteur.');");
+		span_help_array_tome_name.innerHTML = "(?) ";
+	
+	conten_tome.appendChild(span_help_array_tome_name);
+	
+	var input_array_tome_name = document.createElement("input");
+		input_array_tome_name.type = "text";
+		input_array_tome_name.id = "array_tome_"+id+"_name_"+tome;
+		input_array_tome_name.name = "data["+id+"][array_tome]["+tome+"][NAME]";
+		input_array_tome_name.setAttribute("size", "10");
+	
+	conten_tome.appendChild(input_array_tome_name);
+	
+	var label_array_tome_def1 = document.createElement("label");
+		label_array_tome_def1.setAttribute("for", "array_tome_"+id+"_def1_"+tome);
+		label_array_tome_def1.innerHTML = " , d&eacute;f 1 ";
+	
+	conten_tome.appendChild(label_array_tome_def1);
+	
+	var span_help_array_tome_def1 = document.createElement('span');
+		span_help_array_tome_def1.className = 'help';
+		span_help_array_tome_def1.title = "Vous diposez de 2 lignes de définition, de 50 caractères max.";
+		span_help_array_tome_def1.setAttribute("onclick", "alert('Vous diposez de 2 lignes de définition, de 50 caractères max.');");
+		span_help_array_tome_def1.innerHTML = "(?) ";
+	
+	conten_tome.appendChild(span_help_array_tome_def1);
+	
+	var input_array_tome_def1 = document.createElement("input");
+		input_array_tome_def1.type = "text";
+		input_array_tome_def1.id = "array_tome_"+id+"_def1_"+tome;
+		input_array_tome_def1.name = "data["+id+"][array_tome]["+tome+"][DEF_LINE_1]";
+		input_array_tome_def1.setAttribute("size", "20");
+	
+	conten_tome.appendChild(input_array_tome_def1);
+	
+	var label_array_tome_def2 = document.createElement("label");
+		label_array_tome_def2.setAttribute("for", "array_tome_"+id+"_def2_"+tome);
+		label_array_tome_def2.innerHTML = " , d&eacute;f 2 ";
+	
+	conten_tome.appendChild(label_array_tome_def2);
+	
+	var input_array_tome_def2 = document.createElement("input");
+		input_array_tome_def2.type = "text";
+		input_array_tome_def2.id = "array_tome_"+id+"_def2_"+tome;
+		input_array_tome_def2.name = "data["+id+"][array_tome]["+tome+"][DEF_LINE_2]";
+		input_array_tome_def2.setAttribute("size", "20");
+	
+	conten_tome.appendChild(input_array_tome_def2);
+	conten_tome.appendChild(document.createElement('br'));
+	
+	
+	return ++id;
+
+}
+//***************************************//
 function add_ligne(i)
 {
 	var conten = document.createElement('div');
@@ -313,7 +418,7 @@ function add_ligne(i)
 	delet.appendChild(a);
 	conten.appendChild(delet);
 	
-	var show = document.createElement("p");
+	var show = document.createElement("div");
 		show.id = "show_"+i;
 		show.className = 'break_float';
 	
@@ -603,15 +708,7 @@ function add_ligne(i)
 	// ajout de notre balise principale dans la page
 	document.getElementById("list_serie").appendChild(conten);
 	
-	i++;
-	return i;
-}
-function delet_line(line_id)
-{
-	var list_serie = document.getElementById("list_serie");
-	var old = document.getElementById(line_id);
-
-	list_serie.removeChild(old);
+	return ++i;
 }
 //-->
 </script>
