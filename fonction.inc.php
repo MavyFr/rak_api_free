@@ -9,42 +9,103 @@ if(empty($page_index))
 // fonction cree un array de la lecture d une string
 function loader($string=null)
 {
-	if(!($ligne_array = explode("\n", str_replace("\n\n","\n", str_replace("\r","\n",$string)))))
-		return false;
-	if(!($const = explode(' ', $ligne_array[0])))
-		return false;
+	$string = str_replace("\n\n","\n", str_replace("\r","\n",$string)); // vire les \r et \n\n
+	$out = null;
+	$alloc_long = array(); // array d allocaltion Clef-NomLong pour les check de doublon
+	$alloc_short = array(); // array d allocaltion Clef-Nomcourt pour les check de doublon
 	
-	unset($ligne_array[0]);
-
-	$out['const']['LONG_MANAGER_NAME'] = (isset($const[0]))? str_replace('_',' ',$const[0]) : null;
-	$out['const']['SHORT_MANAGER_NAME'] = (isset($const[1]))? str_replace('_',' ',$const[1]) : null;
-
-	foreach($ligne_array as $ligne)
+	if(!($partie_array = explode("#\n", $string)))
+		return false;
+	for($i=0; isset($partie_array[$i]); $i++)// on parcours les partie du fichier
 	{
-		if($ligne != '#' and $ligne != null)
+		if(!$i) // si premere ligne
 		{
-			$elem = explode(' ', $ligne);
-			//-2	longN	shortN	firstC	lastC	firstT	lastT	StatGnR	info	chapsp
-			//	[0]	[1]	[2]	[3]	[4]	[5]	[6]	[7]	[8]
-			//-1	longN	shortN	firstC	lastC	StatGnR	info
-			$check_elem['LONG_PROJECT_NAME'] = isset($elem[0])? str_replace('_',' ',$elem[0]) : null;
-			$check_elem['SHORT_PROJECT_NAME'] = isset($elem[1])? str_replace('_',' ',$elem[1]) : null;
-			$check_elem['FIRST_CHAPTER'] = isset($elem[2])? $elem[2] : -1;
-			$check_elem['LAST_CHAPTER'] = isset($elem[3])? $elem[3] : -1;
-			$check_elem['FIRST_TOME'] = isset($elem[4], $elem[6], $elem[7])? $elem[4] : -1;
-			$check_elem['LAST_TOME'] = isset($elem[5], $elem[6], $elem[7])? $elem[5] : -1;
-				$elem['a'] = isset($elem[6])? str_split($elem[6]) : (isset($elem[4])? str_split($elem[4]) : array(1,1));
-			$check_elem['STATE'] = isset($elem['a'][0])? $elem['a'][0] : 1;
-			$check_elem['GENDER'] = isset($elem['a'][1])? $elem['a'][1] : 1;
-			$check_elem['INFOPNG'] = isset($elem[7])? $elem[7] : (isset($elem[5])? $elem[5] : null);
-			$check_elem['CHAPTER_SPECIALS'] = isset($elem[8])? $elem[8] : null;
+			if(!($ligne_array = explode("\n", $partie_array[$i])))
+				return false;
+			if(!($const = explode(' ', $ligne_array[0])))
+				return false;
+	
+			unset($ligne_array[0]);
+			// on charge les constantes du depot 
+			$out['const']['LONG_MANAGER_NAME'] = (isset($const[0]))? str_replace('_',' ',$const[0]) : null;
+			$out['const']['SHORT_MANAGER_NAME'] = (isset($const[1]))? str_replace('_',' ',$const[1]) : null;
+
+			foreach($ligne_array as $ligne)
+			{
+				if($ligne != '#' and $ligne != null)
+				{
+					$elem = explode(' ', $ligne);
+					//-2	longN	shortN	firstC	lastC	firstT	lastT	StatGnR	info	chapsp
+					//	[0]	[1]	[2]	[3]	[4]	[5]	[6]	[7]	[8]
+					//-1	longN	shortN	firstC	lastC	StatGnR	info
+					$check_elem['LONG_PROJECT_NAME'] = isset($elem[0])? str_replace('_',' ',$elem[0]) : null;
+					$check_elem['SHORT_PROJECT_NAME'] = isset($elem[1])? str_replace('_',' ',$elem[1]) : null;
+					$check_elem['FIRST_CHAPTER'] = isset($elem[2])? $elem[2] : -1;
+					$check_elem['LAST_CHAPTER'] = isset($elem[3])? $elem[3] : -1;
+					$check_elem['FIRST_TOME'] = isset($elem[4], $elem[6], $elem[7])? $elem[4] : -1;
+					$check_elem['LAST_TOME'] = isset($elem[5], $elem[6], $elem[7])? $elem[5] : -1;
+						$elem['a'] = isset($elem[6])? str_split($elem[6]) : (isset($elem[4])? str_split($elem[4]) : array(1,1));
+					$check_elem['STATE'] = isset($elem['a'][0])? $elem['a'][0] : 1;
+					$check_elem['GENDER'] = isset($elem['a'][1])? $elem['a'][1] : 1;
+					$check_elem['INFOPNG'] = isset($elem[7])? $elem[7] : (isset($elem[5])? $elem[5] : null);
+					$check_elem['CHAPTER_SPECIALS'] = isset($elem[8])? $elem[8] : null;
 			
-			$out['data'][] = $check_elem;
-			unset($elem, $check_elem);
+					if	(	($check_elem['LONG_PROJECT_NAME'] == null 
+							or !in_array($check_elem['LONG_PROJECT_NAME'], $alloc_long)
+							)
+						and 	($check_elem['SHORT_PROJECT_NAME'] == null 
+							or !in_array($check_elem['SHORT_PROJECT_NAME'], $alloc_short)
+							)
+						) // si le projet est vide ou exsiste pas
+					{
+						$out['data'][] = $check_elem;
+						$alloc_long[] = $check_elem['LONG_PROJECT_NAME'];
+						$alloc_short[] = $check_elem['SHORT_PROJECT_NAME'];
+					}
+					
+					unset($elem, $check_elem);
+				}
+			}
+			unset($ligne, $ligne_array);
+			
+			if(isset($out['data']))
+				$out['data'] = sort_array($out['data']);
 		}
+		else
+		{
+			if(!($ligne_array = explode("\n", $partie_array[$i])))
+				continue;
+			if(!($head = explode(' ', $ligne_array[0]))) // si 1er ligne vide on passe a la partie next
+				continue;
+	
+			unset($ligne_array[0]);
+			
+			if(!empty($alloc_long) and in_array(str_replace('_',' ',$head[0]), $alloc_long)) // si le projet exsite
+			{
+				if($head[1] == 'C') // si c est un/des chapitre(s)
+				{
+					$chap_sp_array_tmp = explode(' ', $ligne_array[1]);
+					natcasesort($chap_sp_array_tmp);
+					foreach($chap_sp_array_tmp as $key=>$value)
+					{
+						if(intval($value))
+							$chap_sp_array[] = intval($value) / 10;
+					}
+					$key_serie = array_keys($alloc_long, str_replace('_',' ',$head[0]));
+					$out['data'][$key_serie[0]]['array_chap_sp'] = $chap_sp_array;
+					$out['data'][$key_serie[0]]['string_chap_sp'] = implode('; ', $chap_sp_array);
+					$out['data'][$key_serie[0]]['CHAPTER_SPECIALS'] = count($chap_sp_array);
+					
+					unset($chap_sp_array_tmp, $chap_sp_array, $key_serie, $key, $value);
+				}
+				elseif($head[1] == 'T') // si c est des tomes
+				{
+					
+				}
+			}
+		}
+		
 	}
-	if(isset($out['data']))
-		$out['data'] = sort_array($out['data']);
 	return $out;
 }
 /*************************************************/
@@ -52,6 +113,10 @@ function loader($string=null)
 function parser($input=null)
 {
 	$version = 1;
+	$footer = null;
+	$alloc_long = array(); // array d allocaltion Clef-NomLong pour les check de doublon
+	$alloc_short = array(); // array d allocaltion Clef-Nomcourt pour les check de doublon
+	
 	if(empty($input['const']['LONG_MANAGER_NAME']))
 		$_SESSION['error']['LONG_MANAGER_NAME'][] = 'Merci de remplir le "Nom Long" de votre d&eacute;p&ocirc;t.';
 	if(empty($input['const']['SHORT_MANAGER_NAME']))
@@ -65,21 +130,33 @@ function parser($input=null)
 	else
 	{
 		$out = null;
-		foreach($input['data'] as $key => $array){
-			if(($array = check_manga_line($array, $key)))
+		foreach($input['data'] as $key => $array)
+		{
+			if	(($array = check_manga_line($array, $key))
+				and !in_array($array['LONG_PROJECT_NAME'], $alloc_long)
+				and !in_array($array['SHORT_PROJECT_NAME'], $alloc_short)
+				)
+			{
+				// les array d allocation :
+				$alloc_long[] = $array['LONG_PROJECT_NAME'];
+				$alloc_short[] = $array['SHORT_PROJECT_NAME'];
+				// 2eme partie, list serie
 				$out.=$array['LONG_PROJECT_NAME'].' '.$array['SHORT_PROJECT_NAME'].' '.$array['FIRST_CHAPTER'].' '.
 					$array['LAST_CHAPTER'].' '.$array['FIRST_TOME'].' '.$array['LAST_TOME'].' '.$array['STATE'].
 					$array['GENDER'].' '.$array['INFOPNG'].' '.$array['CHAPTER_SPECIALS']."\n";
+				// 3eme partie, chap sp
+				if(!empty($array['string_chap_sp']))
+					$footer .= "#\n".$array['LONG_PROJECT_NAME']." C\n".str_replace(';','',$array['string_chap_sp'])."\n";
+			}
 		}
 	}
 	if(empty($out))
 		$_SESSION['error']['data'][] = 'Merci de remplir correctement vos s&eacute;ries.';
-	
 	if(!empty($_SESSION['error']))
 		return false;
 	
 	$head = str_replace(' ','_',$input['const']['LONG_MANAGER_NAME']). ' ' .str_replace(' ','_',$input['const']['SHORT_MANAGER_NAME']).' '.$version."\n";
-	return $head . $out;
+	return $head . $out . $footer;
 }
 /*************************************************/
 // fonction check si les valeur de la ligne sont correcte
@@ -93,7 +170,7 @@ function check_manga_line($input, $id)
 		&& empty($input['FIRST_TOME']) 
 		&& empty($input['LAST_TOME']) 
 		&& empty($input['INFOPNG']) 
-		&& empty($input['CHAPTER_SPECIALS'])
+		&& empty($input['string_chap_sp'])
 		)
 		return false;
 	// Check que toutes les variables sont remplies & correctment
@@ -159,8 +236,8 @@ function check_manga_line($input, $id)
 		$_SESSION['error'][$id]['LAST_TOME'][] = 'Merci de remplir correctement "Dernier tome".';
 	elseif(intval($input['LAST_TOME']) > 999999999 || intval($input['LAST_TOME']) < 0)
 		$_SESSION['error'][$id]['chapitre'][] = 'Votre dernier tome est hors de la limite 0 / 999 999 999...';
-	if(!empty($input['CHAPTER_SPECIALS']) && !ctype_digit($input['CHAPTER_SPECIALS']))
-		$_SESSION['error'][$id]['CHAPTER_SPECIALS'][] = 'Merci de remplir correctement "Chapitre sp&eacute;ciaux".';
+	if(!empty($input['string_chap_sp']) && preg_match('#[^0-9 ;,.]#', $input['string_chap_sp']))
+		$_SESSION['error'][$id]['string_chap_sp'][] = 'Merci de remplir correctement "Chapitre sp&eacute;ciaux".';
 
 	if(!empty($_SESSION['error'][$id]))
 		return false;
@@ -173,10 +250,22 @@ function check_manga_line($input, $id)
 	if(!empty($_SESSION['error'][$id]))
 		return false;
 	
+	if(!empty($input['string_chap_sp']))
+	{
+		$input['array_chap_sp'] = array();
+		$chap_sp_array_tmp = explode(';', $input['string_chap_sp']);
+		natcasesort($chap_sp_array_tmp);
+		foreach($chap_sp_array_tmp as $key=>$value)
+		{
+			if(!in_array(intval($value * 10), $input['array_chap_sp']))
+				$input['array_chap_sp'][] = intval($value * 10);
+		}
+		$input['string_chap_sp'] = implode('; ', $input['array_chap_sp']);
+	}
 	// on met les par def pour les valeurs vide
 	$input['SHORT_PROJECT_NAME'] = str_replace(' ', '_', $input['SHORT_PROJECT_NAME']);
 	$input['LONG_PROJECT_NAME'] = str_replace(' ', '_', $input['LONG_PROJECT_NAME']);
-	$input['CHAPTER_SPECIALS'] = empty($input['CHAPTER_SPECIALS'])? 0 : intval($input['CHAPTER_SPECIALS']);
+	$input['CHAPTER_SPECIALS'] = empty($input['array_chap_sp'])? 0 : count($input['array_chap_sp']);
 	$input['FIRST_CHAPTER'] = ($input['FIRST_CHAPTER'] == null)? -1 : intval($input['FIRST_CHAPTER']);
 	$input['LAST_CHAPTER'] = ($input['LAST_CHAPTER'] == null)? -1 : intval($input['LAST_CHAPTER']);
 	$input['FIRST_TOME'] = ($input['FIRST_TOME'] == null)? -1 : intval($input['FIRST_TOME']);

@@ -191,13 +191,13 @@ if(!empty($_POST['const']) and !empty($_POST['data']) and empty($_FILES['old-rep
 					if(!empty($old['data'][$i]['INFOPNG']))echo 'checked="checked"';?>/>
 					<label for="INFOPNG_<?php echo $i;?>">Oui</label>
 				<br/>
-				<?php if(!empty($_SESSION['error'][$i]['CHAPTER_SPECIALS'])) show_error($_SESSION['error'][$i]['CHAPTER_SPECIALS']);?>
+				<?php if(!empty($_SESSION['error'][$i]['string_chap_sp'])) show_error($_SESSION['error'][$i]['string_chap_sp']);?>
 				<span class="tree" >&nbsp;|</span>
-				<label for="CHAPTER_SPECIALS_<?php echo $i;?>">Nombre de chapitre sp&eacute;ciaux : </label>
-					<?php help("Avez-vous des inter-chapitres de type '10.5' ? Donnez le nombre de ces chapitres");?>
-				<input type="text" id="CHAPTER_SPECIALS_<?php echo $i;?>" name="data[<?php echo $i;?>][CHAPTER_SPECIALS]" <?php 
-					if(isset($old['data'][$i]['CHAPTER_SPECIALS']))
-						echo 'value="'.$old['data'][$i]['CHAPTER_SPECIALS'].'"';?>/>
+				<label for="string_chap_sp_<?php echo $i;?>">Liste des chapitres sp&eacute;ciaux, s&eacute;par&eacute; par des <kbd>;</kbd> : </label>
+					<?php help("Avez-vous des inter-chapitres de type '10.5' ? Faite la liste avec des ';' sous la forme '5,7; 10.5;20.2'");?>
+				<input type="text" id="string_chap_sp_<?php echo $i;?>" name="data[<?php echo $i;?>][string_chap_sp]" <?php 
+					if(!empty($old['data'][$i]['string_chap_sp']))
+						echo 'value="'.$old['data'][$i]['string_chap_sp'].'"';?>/>
 			</p>
 			</div>
 			<?php
@@ -265,7 +265,7 @@ function autofocus()
 {
 	var a = true;
 	var elem = new Array('LONG_PROJECT_NAME_', 'SHORT_PROJECT_NAME_', 'FIRST_CHAPTER_', 'LAST_CHAPTER_', 'FIRST_TOME_', 
-				'LAST_TOME_', 'STATE_', 'GENDER_', 'INFOPNG_', 'CHAPTER_SPECIALS_');
+				'LAST_TOME_', 'STATE_', 'GENDER_', 'INFOPNG_', 'string_chap_sp_');
 	for(var i = 0; i < document.getElementById('list_serie').getElementsByClassName('hr').length && a; i++)
 	{
 		if(document.getElementById('list_serie').getElementsByClassName('hr')[i].getElementsByClassName('error').length)
@@ -573,32 +573,32 @@ function add_ligne(i)
 	show.appendChild(label_INFOPNG);
 	show.appendChild(document.createElement('br'));
 	
-	var span_tree_CHAPTER_SPECIALS = document.createElement('span');
-		span_tree_CHAPTER_SPECIALS.className = 'tree';
-		span_tree_CHAPTER_SPECIALS.innerHTML = "&nbsp;|";
+	var span_tree_string_chap_sp = document.createElement('span');
+		span_tree_string_chap_sp.className = 'tree';
+		span_tree_string_chap_sp.innerHTML = "&nbsp;|";
 	
-	show.appendChild(span_tree_CHAPTER_SPECIALS);
+	show.appendChild(span_tree_string_chap_sp);
 	
-	var label_CHAPTER_SPECIALS = document.createElement("label");
-		label_CHAPTER_SPECIALS.setAttribute("for", "CHAPTER_SPECIALS_"+i);
-		label_CHAPTER_SPECIALS.innerHTML = "Nombre de chapitre sp&eacute;ciaux : ";
+	var label_string_chap_sp = document.createElement("label");
+		label_string_chap_sp.setAttribute("for", "string_chap_sp_"+i);
+		label_string_chap_sp.innerHTML = "Liste des chapitres sp&eacute;ciaux, s&eacute;par&eacute; par des <kbd>;</kbd> : ";
 	
-	show.appendChild(label_CHAPTER_SPECIALS);
+	show.appendChild(label_string_chap_sp);
 	
-	var span_help_CHAPTER_SPECIALS = document.createElement('span');
-		span_help_CHAPTER_SPECIALS.className = 'help';
-		span_help_CHAPTER_SPECIALS.title = "Avez-vous des inter-chapitres de type '10.5' ? Donnez le nombre de ces chapitres";
-		span_help_CHAPTER_SPECIALS.setAttribute("onclick", "alert('Avez-vous des inter-chapitres de type \\\'10.5\\\' ? Donnez le nombre de ces chapitres');");
-		span_help_CHAPTER_SPECIALS.innerHTML = "(?)";
+	var span_help_string_chap_sp = document.createElement('span');
+		span_help_string_chap_sp.className = 'help';
+		span_help_string_chap_sp.title = "Avez-vous des inter-chapitres de type '10.5' ? Faite la liste avec des ';' sous la forme '5,7; 10.5;20.2'";
+		span_help_string_chap_sp.setAttribute("onclick", "alert('Avez-vous des inter-chapitres de type \\\'10.5\\\' ? Faite la liste avec des \\\';\\\' sous la forme \\\'5,7; 10.5;20.2\\\'');");
+		span_help_string_chap_sp.innerHTML = "(?)";
 	
-	show.appendChild(span_help_CHAPTER_SPECIALS);
+	show.appendChild(span_help_string_chap_sp);
 	
-	var input_CHAPTER_SPECIALS = document.createElement("input");
-		input_CHAPTER_SPECIALS.type = "text";
-		input_CHAPTER_SPECIALS.id = "CHAPTER_SPECIALS_"+i;
-		input_CHAPTER_SPECIALS.name = "data["+i+"][CHAPTER_SPECIALS]";
+	var input_string_chap_sp = document.createElement("input");
+		input_string_chap_sp.type = "text";
+		input_string_chap_sp.id = "string_chap_sp_"+i;
+		input_string_chap_sp.name = "data["+i+"][string_chap_sp]";
 	
-	show.appendChild(input_CHAPTER_SPECIALS);
+	show.appendChild(input_string_chap_sp);
 	
 	// ajout de notre balise principale dans la page
 	document.getElementById("list_serie").appendChild(conten);
