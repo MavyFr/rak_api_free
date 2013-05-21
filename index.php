@@ -210,7 +210,7 @@ if(!empty($_POST['const']) and !empty($_POST['data']) and empty($_FILES['old-rep
 				</select>
 				<br/>
 				<span class="tree" >&nbsp;|</span>
-				<label>Page d'information : </label><?php help("Utilisez-vous une page 'info.png' pour cette s&eacute;rie ?");?>
+				<label>Page d'information dans le d&eacute;p&ocirc;t : </label><?php help("Utilisez-vous une page 'info.png' pour cette s&eacute;rie ?");?>
 				<input type="checkbox" id="INFOPNG_<?php echo $i;?>" name="data[<?php echo $i;?>][INFOPNG]" <?php 
 					if(!empty($old['data'][$i]['INFOPNG']))echo 'checked="checked"';?>/>
 					<label for="INFOPNG_<?php echo $i;?>">Oui</label>
@@ -521,39 +521,28 @@ function add_ligne(i)
 	
 	show.appendChild(span_tree_FIRST_TOME);
 	
-	var label_FIRST_TOME = document.createElement("label");
-		label_FIRST_TOME.setAttribute("for", "FIRST_TOME_"+i);
-		label_FIRST_TOME.innerHTML = "Premier tome (vide si non-sorti) : ";
+	var label_tome = document.createElement("label");
+		label_tome.innerHTML = "Tome(s) sorti(s) : ";
 	
-	show.appendChild(label_FIRST_TOME);
+	show.appendChild(label_tome);
 	
-	var input_FIRST_TOME = document.createElement("input");
-		input_FIRST_TOME.type = "text";
-		input_FIRST_TOME.id = "FIRST_TOME_"+i;
-		input_FIRST_TOME.name = "data["+i+"][FIRST_TOME]";
+	var input_add_tome = document.createElement("input");
+		input_add_tome.type = "button";
+		input_add_tome.value = "+";
+		input_add_tome.setAttribute("onclick", "line_"+i+"_tome = add_tome("+i+", line_"+i+"_tome);return false;");
 	
-	show.appendChild(input_FIRST_TOME);
-	show.appendChild(document.createElement('br'));
+	show.appendChild(input_add_tome);
 	
-	var span_tree_LAST_TOME = document.createElement('span');
-		span_tree_LAST_TOME.className = 'tree';
-		span_tree_LAST_TOME.innerHTML = "&nbsp;|";
+	var line_tome = document.createElement('div');
+		line_tome.id = 'line_'+i+'_tome';
 	
-	show.appendChild(span_tree_LAST_TOME);
+	show.appendChild(line_tome);
 	
-	var label_LAST_TOME = document.createElement("label");
-		label_LAST_TOME.setAttribute("for", "LAST_TOME_"+i);
-		label_LAST_TOME.innerHTML = "Dernier tome : ";
+	var js_tome = document.createElement("script");
+		js_tome.type = "text/javascript"
+		js_tome.innerHTML = "var line_"+i+"_tome = 1;";
 	
-	show.appendChild(label_LAST_TOME);
-	
-	var input_LAST_TOME = document.createElement("input");
-		input_LAST_TOME.type = "text";
-		input_LAST_TOME.id = "LAST_TOME_"+i;
-		input_LAST_TOME.name = "data["+i+"][LAST_TOME]";
-	
-	show.appendChild(input_LAST_TOME);
-	show.appendChild(document.createElement('br'));
+	show.appendChild(js_tome);
 	
 	var span_tree_STATE = document.createElement('span');
 		span_tree_STATE.className = 'tree';
@@ -652,7 +641,7 @@ function add_ligne(i)
 	show.appendChild(span_tree_info);
 	
 	var label_info = document.createElement("label");
-		label_info.innerHTML = "Page d'information : ";
+		label_info.innerHTML = "Page d'information dans le d&eacute;p&ocirc;t : ";
 	
 	show.appendChild(label_info);
 	
