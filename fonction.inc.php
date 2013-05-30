@@ -13,7 +13,7 @@ function loader($string=null)
 	$out = null;
 	$alloc_long = array(); // array d allocaltion Clef-NomLong pour les check de doublon
 	$alloc_short = array(); // array d allocaltion Clef-Nomcourt pour les check de doublon
-	
+
 	if(!($partie_array = explode("#\n", $string)))
 		return false;
 	for($i=0; isset($partie_array[$i]); $i++)// on parcours les partie du fichier
@@ -24,7 +24,7 @@ function loader($string=null)
 				return false;
 			if(!($const = explode(' ', $ligne_array[0])))
 				return false;
-	
+
 			unset($ligne_array[0]);
 			// on charge les constantes du depot 
 			$out['const']['LONG_MANAGER_NAME'] = (isset($const[0]))? str_replace('_',' ',$const[0]) : null;
@@ -49,7 +49,7 @@ function loader($string=null)
 					$check_elem['GENDER'] = isset($elem['a'][1])? $elem['a'][1] : 1;
 					$check_elem['INFOPNG'] = isset($elem[7])? $elem[7] : (isset($elem[5])? $elem[5] : null);
 					$check_elem['CHAPTER_SPECIALS'] = isset($elem[8])? $elem[8] : null;
-			
+
 					if	(	($check_elem['LONG_PROJECT_NAME'] == null 
 							or !in_array($check_elem['LONG_PROJECT_NAME'], $alloc_long)
 							)
@@ -62,14 +62,11 @@ function loader($string=null)
 						$alloc_long[] = $check_elem['LONG_PROJECT_NAME'];
 						$alloc_short[] = $check_elem['SHORT_PROJECT_NAME'];
 					}
-					
+
 					unset($elem, $check_elem);
 				}
 			}
 			unset($ligne, $ligne_array);
-			
-			if(isset($out['data']))
-				$out['data'] = sort_array($out['data']);
 		}
 		else
 		{
@@ -77,10 +74,10 @@ function loader($string=null)
 				continue;
 			if(!($head = explode(' ', $ligne_array[0]))) // si 1er ligne vide on passe a la partie next
 				continue;
-	
+
 			unset($ligne_array[0]);
 			$head[0]= str_replace('_',' ',$head[0]);
-			
+
 			if(!empty($alloc_long) and in_array($head[0], $alloc_long)) // si le projet exsite
 			{
 				$key_serie = array_keys($alloc_long, $head[0]); // la key serie dans l array master
@@ -111,13 +108,20 @@ function loader($string=null)
 							and !array_key_exists(intval($tome_array_tmp[0]), $tome_array) 
 							)
 						{ // si ID + titre, que id est bien un int qui n est pas dans les deja ajoute
-							$tome_array[intval($tome_array_tmp[0])]['NAME'] = isset($tome_array_tmp[1])? 
-								str_replace('_',' ',$tome_array_tmp[1]) 
-								: null;
-							if(isset($tome_array_tmp[2]))
+							if(isset($tome_array_tmp[1]) and $tome_array_tmp[1] != '_')
+								$tome_array[intval($tome_array_tmp[0])]['NAME'] = str_replace('_',' ',$tome_array_tmp[1]);
+							else
+								$tome_array[intval($tome_array_tmp[0])]['NAME'] = null;
+
+							if(isset($tome_array_tmp[2]) and $tome_array_tmp[2] != '_')
 								$tome_array[intval($tome_array_tmp[0])]['DEF_LINE_1'] = str_replace('_',' ',$tome_array_tmp[2]);
-							if(isset($tome_array_tmp[3]))
+							else
+								$tome_array[intval($tome_array_tmp[0])]['DEF_LINE_1'] = null;
+
+							if(isset($tome_array_tmp[3]) and $tome_array_tmp[3] != '_')
 								$tome_array[intval($tome_array_tmp[0])]['DEF_LINE_2'] = str_replace('_',' ',$tome_array_tmp[3]);
+							else
+								$tome_array[intval($tome_array_tmp[0])]['DEF_LINE_2'] = null;
 						}
 						unset($tome_array_tmp);
 					}
@@ -133,12 +137,14 @@ function loader($string=null)
 			}
 			unset($ligne_array, $head);
 		}
-		
-	}
+	}	
+	if(isset($out['data']))
+		$out['data'] = sort_array($out['data']);
+
 	return $out;
 }
 /*************************************************/
-// fonction met en forme les valeur pour l output
+// fonction met en forme les valeur array pour l output string
 function parser($input=null)
 {
 	$version = 1;
@@ -175,6 +181,28 @@ function parser($input=null)
 				// 3eme partie, chap sp
 				if(!empty($array['string_chap_sp']))
 					$footer .= "#\n".$array['LONG_PROJECT_NAME']." C\n".str_replace(';','',$array['string_chap_sp'])."\n";
+				// 4eme partie, tome
+				if(!empty($array['array_tome']) and is_array($array['array_tome']))
+				{
+					$footer .= "#\n".$array['LONG_PROJECT_NAME']." T\n";
+					foreach ($array['array_tome'] as $id => $tome)
+					{
+						$footer .= $id;
+						if(isset($tome['NAME']) and $tome['NAME'] != null)
+						{
+							$footer .= ' ' .$tome['NAME'];
+							if(isset($tome['DEF_LINE_1']) and $tome['DEF_LINE_1'] != null)
+							{
+								$footer .= ' ' .$tome['DEF_LINE_1'];
+							}
+							if(isset($tome['DEF_LINE_2']) and $tome['DEF_LINE_2'] != null)
+							{
+								$footer .= ' ' .$tome['DEF_LINE_2'];
+							}
+						}
+						$footer .= "\n";
+					}
+				}
 			}
 		}
 	}
@@ -182,7 +210,7 @@ function parser($input=null)
 		$_SESSION['error']['data'][] = 'Merci de remplir correctement vos s&eacute;ries.';
 	if(!empty($_SESSION['error']))
 		return false;
-	
+	// 1ere partie, le header
 	$head = str_replace(' ','_',$input['const']['LONG_MANAGER_NAME']). ' ' .str_replace(' ','_',$input['const']['SHORT_MANAGER_NAME']).' '.$version."\n";
 	return $head . $out . $footer;
 }
@@ -226,9 +254,9 @@ function check_manga_line($input, $id)
 	$input['FIRST_CHAPTER'] = (isset($input['FIRST_CHAPTER']) && $input['FIRST_CHAPTER'] == -1)? null : $input['FIRST_CHAPTER'];
 	$input['LAST_CHAPTER'] = (isset($input['LAST_CHAPTER']) && $input['LAST_CHAPTER'] == -1)? null : $input['LAST_CHAPTER'];
 	
-	if(	(isset($input['FIRST_CHAPTER']) && $input['FIRST_CHAPTER'] != null) 
-		xor (isset($input['LAST_CHAPTER']) && $input['LAST_CHAPTER'] != null)
-	)
+	if	(	(isset($input['FIRST_CHAPTER']) && $input['FIRST_CHAPTER'] != null) 
+			xor (isset($input['LAST_CHAPTER']) && $input['LAST_CHAPTER'] != null)
+		) // si un chap deb OU fin remplis error
 	{
 		if(!isset($input['FIRST_CHAPTER']) || $input['FIRST_CHAPTER'] == null) {
 			$_SESSION['error'][$id]['FIRST_CHAPTER'][] = 'Merci de remplir "Premier chapitre".';
@@ -240,10 +268,10 @@ function check_manga_line($input, $id)
 		}
 	}
 	if (	(!isset($input['FIRST_CHAPTER']) || $input['FIRST_CHAPTER'] == null)
-		&& (!isset($input['LAST_CHAPTER']) || $input['LAST_CHAPTER'] == null)
-		//&& (!isset($input['FIRST_TOME']) || $input['FIRST_TOME'] == null)
-		//&& (!isset($input['LAST_TOME']) || $input['LAST_TOME'] == null)
-	){
+			&& (!isset($input['LAST_CHAPTER']) || $input['LAST_CHAPTER'] == null)
+			&& empty($input['array_tome'])
+		) // si rien de remplis comme sortie
+	{
 		$_SESSION['error'][$id]['sortie'][] = 'Merci de remplir les champs "Tome" ou "Chapitre".';
 		if(empty($_SESSION['error']['id'])) $_SESSION['error']['id'] = 'FIRST_CHAPTER_'.$id;
 	}
@@ -267,10 +295,44 @@ function check_manga_line($input, $id)
 		$_SESSION['error'][$id]['string_chap_sp'][] = 'Merci de remplir correctement "Chapitre sp&eacute;ciaux".';
 		if(empty($_SESSION['error']['id'])) $_SESSION['error']['id'] = 'string_chap_sp_'.$id;
 	}
+	if(!empty($input['array_tome']) and is_array($input['array_tome']))
+	{ // gestion des tomes
+		foreach($input['array_tome'] as $id_tome=>$tome)
+		{
+			if(!empty($tome['error']) and $tome['error'] == 'id_empty')
+			{
+				$_SESSION['error'][$id]['array_tome'][$id_tome][] = 'Merci de remplir le n° du tome.';
+				if(empty($_SESSION['error']['id'])) $_SESSION['error']['id'] = 'array_tome_'.$id.'_id_'.$id_tome;
+			}
+			elseif(!empty($tome['error']) and $tome['error'] == 'id_nan')
+			{
+				$_SESSION['error'][$id]['array_tome'][$id_tome][] = 'Merci de remplir correctement le n° du tome.';
+				if(empty($_SESSION['error']['id'])) $_SESSION['error']['id'] = 'array_tome_'.$id.'_id_'.$id_tome;
+			}
 
+			if($id_tome < 0 or $id_tome > 999999999){
+				$_SESSION['error'][$id]['array_tome'][$id_tome][] = 'Merci de mettre un n° de tome entre 0 et 999 999.';
+				if(empty($_SESSION['error']['id'])) $_SESSION['error']['id'] = 'array_tome_'.$id.'_id_'.$id_tome;
+			}
+			if(!empty($tome['NAME']) && strlen($tome['NAME']) > 30){
+				$_SESSION['error'][$id]['array_tome'][$id_tome][] = 'Merci de mettre un titre de moins de 30 caract&egrave;res.';
+				if(empty($_SESSION['error']['id'])) $_SESSION['error']['id'] = 'array_tome_'.$id.'_name_'.$id_tome;
+			}
+			if(!empty($tome['DEF_LINE_1']) && strlen($tome['DEF_LINE_1']) > 60){
+				$_SESSION['error'][$id]['array_tome'][$id_tome][] = 'Merci de mettre une d&eacute;finition 1 de moins de 60 caract&egrave;res.';
+				if(empty($_SESSION['error']['id'])) $_SESSION['error']['id'] = 'array_tome_'.$id.'_def1_'.$id_tome;
+			}
+			if(!empty($tome['DEF_LINE_2']) && strlen($tome['DEF_LINE_2']) > 60){
+				$_SESSION['error'][$id]['string_chap_sp'][$id_tome][] = 'Merci de mettre une d&eacute;finition 2 de moins de 60 caract&egrave;res.';
+				if(empty($_SESSION['error']['id'])) $_SESSION['error']['id'] = 'array_tome_'.$id.'_def2_'.$id_tome;
+			}
+		}
+	}
+	unset($id_tome, $tome);
 	if(!empty($_SESSION['error'][$id]))
 		return false;
-	
+	/////////////////////////////////////////////////
+	// check des coherances entre debut et fin
 	if(intval($input['FIRST_CHAPTER']) > intval($input['LAST_CHAPTER'])){
 		$_SESSION['error'][$id]['chapitre'][] = 'Votre n° de premier chapitre est plus grand que votre dernier...';
 		if(empty($_SESSION['error']['id'])) $_SESSION['error']['id'] = 'FIRST_CHAPTER_'.$id;
@@ -278,7 +340,8 @@ function check_manga_line($input, $id)
 		
 	if(!empty($_SESSION['error'][$id]))
 		return false;
-	
+	//////////////////////////////////////////////////
+	// traitement des chap sp et des tomes
 	if(!empty($input['string_chap_sp']))
 	{
 		$input['array_chap_sp'] = array();
@@ -290,13 +353,38 @@ function check_manga_line($input, $id)
 		}
 		$input['string_chap_sp'] = implode('; ', $input['array_chap_sp']);
 	}
+
+	if(!empty($input['array_tome']) and is_array($input['array_tome']))
+	{
+		foreach($input['array_tome'] as $id_tome=>$tome)
+		{
+				if(isset($tome['NAME']))
+					$input['array_tome'][$id_tome]['NAME'] = str_replace(' ', '_', $tome['NAME']);
+
+				if(!isset($tome['NAME']) or $tome['NAME'] == null)
+					$input['array_tome'][$id_tome]['NAME'] = '_';
+
+				if(isset($tome['DEF_LINE_1']))
+					$input['array_tome'][$id_tome]['DEF_LINE_1'] = str_replace(' ', '_', $tome['DEF_LINE_1']);
+
+				if(!isset($tome['DEF_LINE_1']) or $tome['DEF_LINE_1'] == null)
+					$input['array_tome'][$id_tome]['DEF_LINE_1'] = '_';
+
+				if(isset($tome['DEF_LINE_2']))
+					$input['array_tome'][$id_tome]['DEF_LINE_2'] = str_replace(' ', '_', $tome['DEF_LINE_2']);
+
+				if(!isset($tome['DEF_LINE_2']) or $tome['DEF_LINE_2'] == null)
+					$input['array_tome'][$id_tome]['DEF_LINE_2'] = '_';
+		}
+	}
 	// on met les par def pour les valeurs vide
+
 	$input['SHORT_PROJECT_NAME'] = str_replace(' ', '_', $input['SHORT_PROJECT_NAME']);
 	$input['LONG_PROJECT_NAME'] = str_replace(' ', '_', $input['LONG_PROJECT_NAME']);
 	$input['CHAPTER_SPECIALS'] = empty($input['array_chap_sp'])? 0 : count($input['array_chap_sp']);
 	$input['FIRST_CHAPTER'] = ($input['FIRST_CHAPTER'] == null)? -1 : intval($input['FIRST_CHAPTER']);
 	$input['LAST_CHAPTER'] = ($input['LAST_CHAPTER'] == null)? -1 : intval($input['LAST_CHAPTER']);
-	//$input['FIRST_TOME'] = ($input['FIRST_TOME'] == null)? -1 : 1;
+	$input['FIRST_TOME'] = empty($input['array_tome'])? -1 : 1;
 	$input['INFOPNG'] = empty($input['INFOPNG'])? 0 : 1;
 	$input['GENDER'] = (!ctype_digit($input['GENDER']) || $input['GENDER'] < 1 || $input['GENDER'] > 4)? 1 : intval($input['GENDER']);
 	$input['STATE'] = (!ctype_digit($input['STATE']) || $input['STATE'] < 1 || $input['STATE'] > 3)? 1 : intval($input['STATE']);
@@ -349,15 +437,105 @@ function switch_utf8_ascii($mixed, $out_enc='ISO-8859-1//TRANSLIT', $in_enc='UTF
 // fonction fait le tri naturel des nom long; re-index les serie
 function sort_array($array=array())
 {
+// var_dump($out);
 	$in = null;
 	$add = array();
-	foreach($array as $value){
+	foreach($array as $value){ // on boucle sur les series
 		$in[] = $value;
 		$add[] = (isset($value['LONG_PROJECT_NAME']) && $value['LONG_PROJECT_NAME'] != null)? $value['LONG_PROJECT_NAME'] : '';
 	}
 	natcasesort($add);
-	foreach($add as $clef=>$valeur)
+	foreach($add as $clef=>$valeur) // re index des clefs avec le natsort
 		$out[] = $in[$clef];
+	return sort_tome($out);
+}
+/*************************************************/
+// fonction re-organise l array data tome
+function sort_tome($array=array())
+{
+	$out = null;
+	if(!empty($array) and is_array($array)) // si il y a bien des serie
+	{
+		foreach($array as $key=>$value)
+		{
+			$out[$key] = $value; // on charges les info serie
+			if(!empty($value['array_tome']) and is_array($value['array_tome'])) // si on a des tomes
+			{
+				unset($out[$key]['array_tome']); // on vire les tomes de l output
+				$alloc_tome = array();
+				$error_tome = array();
+				foreach($value['array_tome'] as $id=>$tome) // on boucles les tomes
+				{
+					if(isset($tome['ID'])) // si c est un envois POST
+					{
+						if($tome['ID'] == null or !ctype_digit($tome['ID'])) // si ID est vide & un truc remplis, on charge erreur
+						{
+							if(isset($tome['NAME']) and $tome['NAME'] != null) 
+								$error_tome[$id]['NAME'] = $tome['NAME'];
+							
+							if(isset($tome['DEF_LINE_1']) and $tome['DEF_LINE_1'] != null) 
+								$error_tome[$id]['DEF_LINE_1'] = $tome['DEF_LINE_1'];
+						
+							if(isset($tome['DEF_LINE_2']) and $tome['DEF_LINE_2'] != null) 
+								$error_tome[$id]['DEF_LINE_2'] = $tome['DEF_LINE_2'];
+							
+							// si on a sauver qq chose, on cree le flag d erreur
+							if(isset($error_tome[$id]))
+							{
+								if($tome['ID'] == null)
+									$error_tome[$id]['error'] = 'id_empty';
+								elseif (!ctype_digit($tome['ID'])) 
+									$error_tome[$id]['error'] = 'id_nan';
+							}
+						}
+						elseif(!in_array(intval($tome['ID']), $alloc_tome)) // si pas deja dans les tome de la serie
+						{
+							$out[$key]['array_tome'][intval($tome['ID'])] = null;
+							$alloc_tome[] = intval($tome['ID']);
+						
+							if(isset($tome['NAME']) and $tome['NAME'] != null) 
+								$out[$key]['array_tome'][intval($tome['ID'])]['NAME'] = $tome['NAME'];
+
+							if(isset($tome['DEF_LINE_1']) and $tome['DEF_LINE_1'] != null) 
+								$out[$key]['array_tome'][intval($tome['ID'])]['DEF_LINE_1'] = $tome['DEF_LINE_1'];
+						
+							if(isset($tome['DEF_LINE_2']) and $tome['DEF_LINE_2'] != null) 
+								$out[$key]['array_tome'][intval($tome['ID'])]['DEF_LINE_2'] = $tome['DEF_LINE_2'];
+						}
+					}
+					elseif(!isset($tome['ID']) and !in_array($id, $alloc_tome)) // si envois FILE
+					{
+						$out[$key]['array_tome'][intval($id)] = null;
+						$alloc_tome[] = intval($id);
+						
+						if(isset($tome['NAME']) and $tome['NAME'] != null) 
+							$out[$key]['array_tome'][intval($id)]['NAME'] = $tome['NAME'];
+						
+						if(isset($tome['DEF_LINE_1']) and $tome['DEF_LINE_1'] != null) 
+							$out[$key]['array_tome'][intval($id)]['DEF_LINE_1'] = $tome['DEF_LINE_1'];
+						
+						if(isset($tome['DEF_LINE_2']) and $tome['DEF_LINE_2'] != null) 
+							$out[$key]['array_tome'][intval($id)]['DEF_LINE_2'] = $tome['DEF_LINE_2'];
+					}
+				}
+				unset($alloc_tome, $id, $tome);
+
+				if(!empty($error_tome))
+				{
+					foreach ($error_tome as $tome) 
+					{
+						$out[$key]['array_tome'][] = $tome; // re assignation dans l array principale
+					}
+					unset($error_tome);
+				}
+
+				// tri des tome par ID
+				if(isset($out[$key]['array_tome']) and is_array($out[$key]['array_tome']))
+					ksort($out[$key]['array_tome']);
+			}
+		}
+	}
+	
 	return $out;
 }
 /*************************************************/

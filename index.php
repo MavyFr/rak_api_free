@@ -12,8 +12,8 @@ $_SESSION['hello'] = true;
 
 if (get_magic_quotes_gpc())
 	mq_stripslashes(); // on vire l effet magic-quote
-
-if(!empty($_FILES['old-repo']) and $_FILES['old-repo']['error']==0 and $_FILES['old-repo']['size']<=5048576)
+/////////////////////////////////////////////////////////////////
+if(!empty($_FILES['old-repo']) and $_FILES['old-repo']['error']==0 and $_FILES['old-repo']['size']<=1048576)
 {
 	log_f('`loader`', 'from file '.$_FILES['old-repo']['size'].'o / '.substr_count(file_get_contents($_FILES['old-repo']['tmp_name']), "\n").' `\n`');
 	$old = loader(switch_utf8_ascii(file_get_contents($_FILES['old-repo']['tmp_name']), 'UTF-8', 'ISO-8859-1//TRANSLIT'));
@@ -29,6 +29,7 @@ elseif(!empty($_COOKIE['old']))
 	$old = $_COOKIE['old'];
 	log_f('`loader`', 'from COOKIE');
 }
+////////////////////////////////////////////////////////////////
 // si on a un envois, on lance la procedure de set download
 if(!empty($_POST['const']) and !empty($_POST['data']) and empty($_FILES['old-repo']['size']))
 {
@@ -110,7 +111,7 @@ if(!empty($_POST['const']) and !empty($_POST['data']) and empty($_FILES['old-rep
 				if(!empty($old['data'][$i]['LONG_PROJECT_NAME']) and empty($_SESSION['error'][$i])) echo '+|';else echo '-|';?></span><?php 
 				if(isset($old['data'][$i]['LONG_PROJECT_NAME']))echo $old['data'][$i]['LONG_PROJECT_NAME'];?></h2>
 			<p class="delet">
-				<a href="#" onclick="delet_line('line_<?php echo $i;?>'); return false;">Supprimer</a>
+				<a href="#" onclick="if(confirm('Supprimer cette s&eacute;rie ?')) delet_line('line_<?php echo $i;?>'); return false;">Supprimer</a>
 			</p>
 			<?php if(!empty($_SESSION['error'][$i]['champs'])) show_error($_SESSION['error'][$i]['champs']);?>
 			<?php if(!empty($_SESSION['error'][$i]['LONG_PROJECT_NAME'])) show_error($_SESSION['error'][$i]['LONG_PROJECT_NAME']);?>
@@ -156,23 +157,35 @@ if(!empty($_POST['const']) and !empty($_POST['data']) and empty($_FILES['old-rep
 					if(!empty($old['data'][$i]['array_tome']) and is_array($old['data'][$i]['array_tome']))
 					{
 						foreach($old['data'][$i]['array_tome'] as $key => $value)
-						{
+						{ // gestion des tomes
+							if(!empty($_SESSION['error'][$i]['array_tome'][$key]))
+								show_error($_SESSION['error'][$i]['array_tome'][$key]);
 							?>
 							<span class="tree" >&nbsp;|&nbsp;|</span>
 							<label for="array_tome_<?php echo $i;?>_id_<?php echo $key;?>">n° </label>
-							<input type="text" id="array_tome_<?php echo $i;?>_id_<?php echo $key;?>" name="data[<?php echo $i;?>][array_tome][<?php echo $key;?>][ID]" size="3" <?php 
-								if(isset($key))
+							<input type="text" class="inc_num" 
+								id="array_tome_<?php echo $i;?>_id_<?php echo $key;?>" 
+								name="data[<?php echo $i;?>][array_tome][<?php echo $key;?>][ID]" size="3" <?php 
+								if(isset($key) and empty($value['error']))
 									echo 'value="'.$key.'"';?>/>
-							<label for="array_tome_<?php echo $i;?>_name_<?php echo $key;?>">, titre </label><?php help("Laissez vide les champs suivant pour un affichage 'Tome n°...' dans le lecteur.");?>
-							<input type="text" id="array_tome_<?php echo $i;?>_name_<?php echo $key;?>" name="data[<?php echo $i;?>][array_tome][<?php echo $key;?>][NAME]" size="10" <?php 
+							<label for="array_tome_<?php echo $i;?>_name_<?php echo $key;?>">, titre </label><?php 
+							help("Laissez vide ce champ 'titre' pour un affichage 'Tome n°...' dans le lecteur.");?>
+							<input type="text" class="inc_name" 
+								id="array_tome_<?php echo $i;?>_name_<?php echo $key;?>" 
+								name="data[<?php echo $i;?>][array_tome][<?php echo $key;?>][NAME]" size="10" <?php 
 								if(isset($value['NAME']))
 									echo 'value="'.$value['NAME'].'"';?>/>
-							<label for="array_tome_<?php echo $i;?>_def1_<?php echo $key;?>">, d&eacute;f 1 </label><?php help("Vous diposez de 2 lignes de d&eacute;finition, de 50 caract&egrave;res max.");?>
-							<input type="text" id="array_tome_<?php echo $i;?>_def1_<?php echo $key;?>" name="data[<?php echo $i;?>][array_tome][<?php echo $key;?>][DEF_LINE_1]" size="20" <?php 
+							<label for="array_tome_<?php echo $i;?>_def1_<?php echo $key;?>">, d&eacute;f 1 </label><?php 
+							help("Vous diposez de 2 lignes de d&eacute;finition, de 50 caract&egrave;res max.");?>
+							<input type="text" class="inc_def" 
+								id="array_tome_<?php echo $i;?>_def1_<?php echo $key;?>" 
+								name="data[<?php echo $i;?>][array_tome][<?php echo $key;?>][DEF_LINE_1]" size="20" <?php 
 								if(isset($value['DEF_LINE_1']))
 									echo 'value="'.$value['DEF_LINE_1'].'"';?>/>
 							<label for="array_tome_<?php echo $i;?>_def2_<?php echo $key;?>">, d&eacute;f 2 </label>
-							<input type="text" id="array_tome_<?php echo $i;?>_def2_<?php echo $key;?>" name="data[<?php echo $i;?>][array_tome][<?php echo $key;?>][DEF_LINE_2]" size="20" <?php 
+							<input type="text" class="inc_def" 
+								id="array_tome_<?php echo $i;?>_def2_<?php echo $key;?>" 
+								name="data[<?php echo $i;?>][array_tome][<?php echo $key;?>][DEF_LINE_2]" size="20" <?php 
 								if(isset($value['DEF_LINE_2']))
 									echo 'value="'.$value['DEF_LINE_2'].'"';?>/>
 							<br />
@@ -321,6 +334,7 @@ function add_tome(id, tome)
 	var input_array_tome_id = document.createElement("input");
 		input_array_tome_id.type = "text";
 		input_array_tome_id.id = "array_tome_"+id+"_id_"+tome;
+		input_array_tome_id.className = "inc_num";
 		input_array_tome_id.name = "data["+id+"][array_tome]["+tome+"][ID]";
 		input_array_tome_id.setAttribute("size", "3");
 	
@@ -334,8 +348,8 @@ function add_tome(id, tome)
 	
 	var span_help_array_tome_name = document.createElement('span');
 		span_help_array_tome_name.className = 'help';
-		span_help_array_tome_name.title = "Laissez vide les champs suivant pour un affichage 'Tome n°...' dans le lecteur.";
-		span_help_array_tome_name.setAttribute("onclick", "alert('Laissez vide les champs suivant pour un affichage \\\'Tome n°...\\\' dans le lecteur.');");
+		span_help_array_tome_name.title = "Laissez vide ce champ 'titre' pour un affichage 'Tome n°...' dans le lecteur.";
+		span_help_array_tome_name.setAttribute("onclick", "alert('Laissez vide le champ \\\'titre\\\' suivant pour un affichage \\\'Tome n°...\\\' dans le lecteur.');");
 		span_help_array_tome_name.innerHTML = "(?) ";
 	
 	conten_tome.appendChild(span_help_array_tome_name);
@@ -343,6 +357,7 @@ function add_tome(id, tome)
 	var input_array_tome_name = document.createElement("input");
 		input_array_tome_name.type = "text";
 		input_array_tome_name.id = "array_tome_"+id+"_name_"+tome;
+		input_array_tome_name.className = "inc_name";
 		input_array_tome_name.name = "data["+id+"][array_tome]["+tome+"][NAME]";
 		input_array_tome_name.setAttribute("size", "10");
 	
@@ -365,6 +380,7 @@ function add_tome(id, tome)
 	var input_array_tome_def1 = document.createElement("input");
 		input_array_tome_def1.type = "text";
 		input_array_tome_def1.id = "array_tome_"+id+"_def1_"+tome;
+		input_array_tome_def1.className = "inc_def";
 		input_array_tome_def1.name = "data["+id+"][array_tome]["+tome+"][DEF_LINE_1]";
 		input_array_tome_def1.setAttribute("size", "20");
 	
@@ -379,6 +395,7 @@ function add_tome(id, tome)
 	var input_array_tome_def2 = document.createElement("input");
 		input_array_tome_def2.type = "text";
 		input_array_tome_def2.id = "array_tome_"+id+"_def2_"+tome;
+		input_array_tome_def2.className = "inc_def";
 		input_array_tome_def2.name = "data["+id+"][array_tome]["+tome+"][DEF_LINE_2]";
 		input_array_tome_def2.setAttribute("size", "20");
 	
