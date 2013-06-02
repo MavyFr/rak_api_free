@@ -153,19 +153,19 @@ function parser($input=null)
 	$alloc_short = array(); // array d allocaltion Clef-Nomcourt pour les check de doublon
 	
 	if(empty($input['const']['LONG_MANAGER_NAME'])){
-		$_SESSION['error']['LONG_MANAGER_NAME'][] = 'Merci de remplir le "Nom Long" de votre d&eacute;p&ocirc;t.';
+		$_SESSION['error']['LONG_MANAGER_NAME'][] = 'Merci de remplir le "Nom Complet" de votre d&eacute;p&ocirc;t.';
 		if(empty($_SESSION['error']['id'])) $_SESSION['error']['id'] = 'LONG_MANAGER_NAME';
 	}
 	if(empty($input['const']['SHORT_MANAGER_NAME'])){
-		$_SESSION['error']['SHORT_MANAGER_NAME'][] = 'Merci de remplir le "Nom Court" de votre d&eacute;p&ocirc;t.';
+		$_SESSION['error']['SHORT_MANAGER_NAME'][] = 'Merci de remplir le "Nom Abr&eacute;g&eacute;" de votre d&eacute;p&ocirc;t.';
 		if(empty($_SESSION['error']['id'])) $_SESSION['error']['id'] = 'SHORT_MANAGER_NAME';
 	}
 	if(strlen($input['const']['LONG_MANAGER_NAME']) > 25){
-		$_SESSION['error']['LONG_MANAGER_NAME'][] = 'Le "Nom Long" de votre d&eacute;p&ocirc;t fait plus de 25 caract&egrave;res.';
+		$_SESSION['error']['LONG_MANAGER_NAME'][] = 'Le "Nom Complet" de votre d&eacute;p&ocirc;t fait plus de 25 caract&egrave;res.';
 		if(empty($_SESSION['error']['id'])) $_SESSION['error']['id'] = 'LONG_MANAGER_NAME';
 	}
 	if(strlen($input['const']['SHORT_MANAGER_NAME']) > 10){
-		$_SESSION['error']['SHORT_MANAGER_NAME'][] = 'Le "Nom Court" de votre d&eacute;p&ocirc;t fait plus de 10 caract&egrave;res';
+		$_SESSION['error']['SHORT_MANAGER_NAME'][] = 'Le "Nom Abr&eacute;g&eacute;" de votre d&eacute;p&ocirc;t fait plus de 10 caract&egrave;res';
 		if(empty($_SESSION['error']['id'])) $_SESSION['error']['id'] = 'SHORT_MANAGER_NAME';
 	}
 	if(empty($input['data']) || !is_array($input['data']))
@@ -238,19 +238,19 @@ function check_manga_line($input, $id)
 		return false;
 	// Check que toutes les variables sont remplies & correctment
 	if(!isset($input['LONG_PROJECT_NAME']) || $input['LONG_PROJECT_NAME'] == null){
-		$_SESSION['error'][$id]['LONG_PROJECT_NAME'][] = 'Merci de remplir le "Nom Long" de cette s&eacute;rie.';
+		$_SESSION['error'][$id]['LONG_PROJECT_NAME'][] = 'Merci de remplir le "Nom Complet" de cette s&eacute;rie.';
 		if(empty($_SESSION['error']['id'])) $_SESSION['error']['id'] = 'LONG_PROJECT_NAME_'.$id;
 	}
 	if(strlen($input['LONG_PROJECT_NAME']) > 50){
-		$_SESSION['error'][$id]['LONG_PROJECT_NAME'][] = 'Le "Nom Long" de cette s&eacute;rie fait plus de 50 caract&egrave;res.';
+		$_SESSION['error'][$id]['LONG_PROJECT_NAME'][] = 'Le "Nom Complet" de cette s&eacute;rie fait plus de 50 caract&egrave;res.';
 		if(empty($_SESSION['error']['id'])) $_SESSION['error']['id'] = 'LONG_PROJECT_NAME_'.$id;
 	}
 	if(!isset($input['SHORT_PROJECT_NAME']) || $input['SHORT_PROJECT_NAME'] == null){
-		$_SESSION['error'][$id]['SHORT_PROJECT_NAME'][] = 'Merci de remplir le "Nom Courts" de cette s&eacute;rie.';
+		$_SESSION['error'][$id]['SHORT_PROJECT_NAME'][] = 'Merci de remplir le "Nom Abr&eacute;g&eacute;" de cette s&eacute;rie.';
 		if(empty($_SESSION['error']['id'])) $_SESSION['error']['id'] = 'SHORT_PROJECT_NAME_'.$id;
 	}
 	if(strlen($input['SHORT_PROJECT_NAME']) > 10){
-		$_SESSION['error'][$id]['SHORT_PROJECT_NAME'][] = 'Le "Nom Court" de cette s&eacute;rie fait plus de 10 caract&egrave;res.';
+		$_SESSION['error'][$id]['SHORT_PROJECT_NAME'][] = 'Le "Nom Abr&eacute;g&eacute;" de cette s&eacute;rie fait plus de 10 caract&egrave;res.';
 		if(empty($_SESSION['error']['id'])) $_SESSION['error']['id'] = 'SHORT_PROJECT_NAME_'.$id;
 	}
 	if	(  empty($input['STATE']) 

@@ -86,13 +86,13 @@ if(!empty($_POST['const']) and !empty($_POST['data']) and empty($_FILES['old-rep
 		<h1>D&eacute;p&ocirc;t</h1>
 		<p id="depot">
 			<?php if(!empty($_SESSION['error']['LONG_MANAGER_NAME'])) show_error($_SESSION['error']['LONG_MANAGER_NAME']);?>
-			<label for="LONG_MANAGER_NAME">Nom long de votre d&eacute;p&ocirc;t (25 caract&egrave;res max) : <span class="red">*</span></label>
+			<label for="LONG_MANAGER_NAME">Nom complet de votre d&eacute;p&ocirc;t (25 caract&egrave;res max) : <span class="red">*</span></label>
 			<br />
 			<input type="text" id="LONG_MANAGER_NAME" name="const[LONG_MANAGER_NAME]" <?php 
 				if(isset($old['const']['LONG_MANAGER_NAME']))echo 'value="'.$old['const']['LONG_MANAGER_NAME'].'"';?>/>
 			<br />
 			<?php if(!empty($_SESSION['error']['SHORT_MANAGER_NAME'])) show_error($_SESSION['error']['SHORT_MANAGER_NAME']);?>
-			<label for="SHORT_MANAGER_NAME">Nom court de votre d&eacute;p&ocirc;t (10 caract&egrave;res max) : <span class="red">*</span></label>
+			<label for="SHORT_MANAGER_NAME">Nom abr&eacute;g&eacute; de votre d&eacute;p&ocirc;t (10 caract&egrave;res max) : <span class="red">*</span></label>
 			<br />
 			<input type="text" id="SHORT_MANAGER_NAME" name="const[SHORT_MANAGER_NAME]" <?php 
 				if(isset($old['const']['SHORT_MANAGER_NAME']))echo 'value="'.$old['const']['SHORT_MANAGER_NAME'].'"';?>/>
@@ -119,7 +119,7 @@ if(!empty($_POST['const']) and !empty($_POST['data']) and empty($_FILES['old-rep
 			 if(!empty($old['data'][$i]['LONG_PROJECT_NAME']) and empty($_SESSION['error'][$i])) echo 'style="display:none;"';?> >
 				<span class="tree" >&nbsp;|</span>
 				<label for="LONG_PROJECT_NAME_<?php echo $i;?>">
-					Nom long de votre s&eacute;rie (50 caract&egrave;res max) : <span class="red">*</span></label>
+					Nom complet de votre s&eacute;rie (50 caract&egrave;res max) : <span class="red">*</span></label>
 				<input type="text" id="LONG_PROJECT_NAME_<?php echo $i;?>" name="data[<?php echo $i;?>][LONG_PROJECT_NAME]" 
 					onchange="refresh(this, <?php echo $i;?>)" <?php 
 					if(isset($old['data'][$i]['LONG_PROJECT_NAME']))echo 'value="'.$old['data'][$i]['LONG_PROJECT_NAME'].'" ';?>/>
@@ -127,7 +127,7 @@ if(!empty($_POST['const']) and !empty($_POST['data']) and empty($_FILES['old-rep
 				<?php if(!empty($_SESSION['error'][$i]['SHORT_PROJECT_NAME'])) show_error($_SESSION['error'][$i]['SHORT_PROJECT_NAME']);?>
 				<span class="tree" >&nbsp;|</span>
 				<label for="SHORT_PROJECT_NAME_<?php echo $i;?>">
-					Nom court de votre s&eacute;rie (10 caract&egrave;res max) : <span class="red">*</span></label>
+					Nom abr&eacute;g&eacute; de votre s&eacute;rie (10 caract&egrave;res max) : <span class="red">*</span></label>
 				<input type="text" id="SHORT_PROJECT_NAME_<?php echo $i;?>" name="data[<?php echo $i;?>][SHORT_PROJECT_NAME]" <?php 
 					if(isset($old['data'][$i]['SHORT_PROJECT_NAME']))echo 'value="'.$old['data'][$i]['SHORT_PROJECT_NAME'].'"';?>/>
 				<br/>
@@ -473,7 +473,7 @@ function add_ligne(i)
 	
 	var label_LONG_PROJECT_NAME = document.createElement("label");
 		label_LONG_PROJECT_NAME.setAttribute("for", "LONG_PROJECT_NAME_"+i);
-		label_LONG_PROJECT_NAME.innerHTML = "Nom long de votre s&eacute;rie (50 caract&egrave;res max) : ";
+		label_LONG_PROJECT_NAME.innerHTML = "Nom complet de votre s&eacute;rie (50 caract&egrave;res max) : ";
 	
 	var span_LONG_PROJECT_NAME = document.createElement('span');
 		span_LONG_PROJECT_NAME.className = 'red';
@@ -499,7 +499,7 @@ function add_ligne(i)
 	
 	var label_SHORT_PROJECT_NAME = document.createElement("label");
 		label_SHORT_PROJECT_NAME.setAttribute("for", "SHORT_PROJECT_NAME_"+i);
-		label_SHORT_PROJECT_NAME.innerHTML = "Nom court de votre s&eacute;rie (10 caract&egrave;res max) : ";
+		label_SHORT_PROJECT_NAME.innerHTML = "Nom abr&eacute;g&eacute; de votre s&eacute;rie (10 caract&egrave;res max) : ";
 	
 	var span_SHORT_PROJECT_NAME = document.createElement('span');
 		span_SHORT_PROJECT_NAME.className = 'red';

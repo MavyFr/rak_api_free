@@ -64,6 +64,10 @@ hr
 	color: #B84700;
 	background-color: #B84700;
 }
+img
+{
+	border: none;
+}
 /* def des #id */ 
 #conten
 {
