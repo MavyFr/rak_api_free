@@ -1,6 +1,6 @@
 <?php
 session_start();
-$curent_version = '0.9 [beta]';
+$curent_version = '1.0 [beta]';
 $page_index = true;
 include_once('fonction.inc.php');
 if(empty($page_fonction)) // si le chargement merde
@@ -111,7 +111,7 @@ if(!empty($_POST['const']) and !empty($_POST['data']) and empty($_FILES['old-rep
 				if(!empty($old['data'][$i]['LONG_PROJECT_NAME']) and empty($_SESSION['error'][$i])) echo '+|';else echo '-|';?></span><?php 
 				if(isset($old['data'][$i]['LONG_PROJECT_NAME']))echo $old['data'][$i]['LONG_PROJECT_NAME'];?></h2>
 			<p class="delet">
-				<a href="#" onclick="if(confirm('Supprimer cette s&eacute;rie ?')) delet_line('line_<?php echo $i;?>'); return false;">Supprimer</a>
+				<a href="#" onclick="if(confirm('Supprimer cette s&eacute;rie ?')) delet_line('list_serie', 'line_<?php echo $i;?>'); return false;">Supprimer</a>
 			</p>
 			<?php if(!empty($_SESSION['error'][$i]['champs'])) show_error($_SESSION['error'][$i]['champs']);?>
 			<?php if(!empty($_SESSION['error'][$i]['LONG_PROJECT_NAME'])) show_error($_SESSION['error'][$i]['LONG_PROJECT_NAME']);?>
@@ -150,7 +150,7 @@ if(!empty($_POST['const']) and !empty($_POST['data']) and empty($_FILES['old-rep
 				<span class="tree" >&nbsp;|</span>
 				<label>Tome(s) sorti(s) : </label>
 				<?php help("Si vous avez sorti un ou plusieurs tomes, utilisez le bouton '+' pour ajouter des lignes pour rentrer ces tomes.");?>
-				<input type="button" value="+" onclick="line_<?php echo $i;?>_tome = add_tome(<?php echo $i;?>, line_<?php echo $i;?>_tome);return false;"/>
+				<input type="button" value="+" onclick="obj_tome[<?php echo $i;?>] = add_tome(<?php echo $i;?>, obj_tome[<?php echo $i;?>]);return false;"/>
 				<div id="line_<?php echo $i;?>_tome">
 					<?php
 					$key = 0;
@@ -158,6 +158,8 @@ if(!empty($_POST['const']) and !empty($_POST['data']) and empty($_FILES['old-rep
 					{
 						foreach($old['data'][$i]['array_tome'] as $key => $value)
 						{ // gestion des tomes
+							echo '<div id="line_'.$i.'_tome_'.$key.'">';
+
 							if(!empty($_SESSION['error'][$i]['array_tome'][$key]))
 								show_error($_SESSION['error'][$i]['array_tome'][$key]);
 							?>
@@ -188,15 +190,22 @@ if(!empty($_POST['const']) and !empty($_POST['data']) and empty($_FILES['old-rep
 								name="data[<?php echo $i;?>][array_tome][<?php echo $key;?>][DEF_LINE_2]" size="20" <?php 
 								if(isset($value['DEF_LINE_2']))
 									echo 'value="'.$value['DEF_LINE_2'].'"';?>/>
+
+							<a href="#" title="Supprimer" 
+								onclick="if(confirm('Supprimer ce tome ?')) delet_line(<?php 
+									echo "'line_".$i."_tome', 'line_".$i.'_tome_'.$key."'"; ?>); return false;">X</a>
 							<br />
 							<?php
+							echo '</div>';
 						}
 						unset($value);
 					}
-					echo "\n<script type=\"text/javascript\"><!--\n var line_".$i."_tome = ".++$key.'; //--></script>'."\n";
-					unset($key);
 					?>
 				</div>
+				<?php
+					echo "\n<script type=\"text/javascript\"><!--\n var obj_tome = {}; obj_tome[".$i.'] = '.++$key.'; //--></script>'."\n";
+					unset($key);
+				?>
 				
 				<span class="tree" >&nbsp;|</span>
 				<label for="STATE_<?php echo $i;?>">&Eacute;tat de la s&eacute;rie : <span class="red">*</span></label>
@@ -307,17 +316,24 @@ function refresh(obj, id)
 	document.getElementById("line_"+id).getElementsByClassName('tree_head')[0].innerHTML='<span class="tree" >-|</span>'+obj.value;
 }
 //***************************************//
-function delet_line(line_id)
+function delet_line(id_master, id_delet)
 {
-	var list_serie = document.getElementById("list_serie");
-	var old = document.getElementById(line_id);
+	var master = document.getElementById(id_master);
+	var delet = document.getElementById(id_delet);
 
-	list_serie.removeChild(old);
+	master.removeChild(delet);
 }
 //***************************************//
 function add_tome(id, tome)
 {
-	var conten_tome = document.getElementById("line_"+id+"_tome");
+	// id = id (INT) de la serie à traiter
+	// tome = n° du tome a ajouter
+	var conten_master = document.getElementById("line_"+id+"_tome");
+	
+	var conten_tome = document.createElement('div');
+		conten_tome.id = 'line_'+id+'_tome_'+tome;
+	
+	conten_master.appendChild(conten_tome);	
 	
 	var span_tree_tome_id = document.createElement('span');
 		span_tree_tome_id.className = 'tree';	
@@ -400,15 +416,24 @@ function add_tome(id, tome)
 		input_array_tome_def2.setAttribute("size", "20");
 	
 	conten_tome.appendChild(input_array_tome_def2);
+
+	var link_delet = document.createElement('a');
+		link_delet.href = "#";
+		link_delet.title = "Supprimer";
+		link_delet.setAttribute("onclick", "if(confirm('Supprimer ce tome ?')) delet_line('line_"+id+"_tome', 'line_"+id+"_tome_"+tome+"'); return false;");
+		link_delet.innerHTML = " X";
+	
+	conten_tome.appendChild(link_delet);
 	conten_tome.appendChild(document.createElement('br'));
 	
 	
-	return ++id;
+	return ++tome;
 
 }
 //***************************************//
 function add_ligne(i)
 {
+	// i = ID de la ligne de serie a ajouter
 	var conten = document.createElement('div');
 		conten.className = 'hr';
 		conten.id = 'line_'+i;
@@ -429,12 +454,12 @@ function add_ligne(i)
 	
 	var a = document.createElement('a');
 		a.href = "#";
-		a.setAttribute("onclick", "delet_line('line_"+i+"'); return false;");
+		a.setAttribute("onclick", "if(confirm('Supprimer cette série ?')) delet_line('list_serie', 'line_"+i+"'); return false;");
 		a.innerHTML = "Supprimer";
 	
 	delet.appendChild(a);
 	conten.appendChild(delet);
-	
+
 	var show = document.createElement("div");
 		show.id = "show_"+i;
 		show.className = 'break_float';
@@ -546,7 +571,7 @@ function add_ligne(i)
 	var input_add_tome = document.createElement("input");
 		input_add_tome.type = "button";
 		input_add_tome.value = "+";
-		input_add_tome.setAttribute("onclick", "line_"+i+"_tome = add_tome("+i+", line_"+i+"_tome);return false;");
+		input_add_tome.setAttribute("onclick", "obj_tome["+i+"] = add_tome("+i+", obj_tome["+i+"]);return false;");
 	
 	show.appendChild(input_add_tome);
 	
@@ -554,12 +579,6 @@ function add_ligne(i)
 		line_tome.id = 'line_'+i+'_tome';
 	
 	show.appendChild(line_tome);
-	
-	var js_tome = document.createElement("script");
-		js_tome.type = "text/javascript"
-		js_tome.innerHTML = "var line_"+i+"_tome = 1;";
-	
-	show.appendChild(js_tome);
 	
 	var span_tree_STATE = document.createElement('span');
 		span_tree_STATE.className = 'tree';
@@ -714,6 +733,9 @@ function add_ligne(i)
 	// ajout de notre balise principale dans la page
 	document.getElementById("list_serie").appendChild(conten);
 	
+	// initialisation de l' ID du prochain tome de la serie
+	obj_tome[i] = 1;
+
 	return ++i;
 }
 //-->

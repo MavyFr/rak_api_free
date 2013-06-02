@@ -437,7 +437,6 @@ function switch_utf8_ascii($mixed, $out_enc='ISO-8859-1//TRANSLIT', $in_enc='UTF
 // fonction fait le tri naturel des nom long; re-index les serie
 function sort_array($array=array())
 {
-// var_dump($out);
 	$in = null;
 	$add = array();
 	foreach($array as $value){ // on boucle sur les series
