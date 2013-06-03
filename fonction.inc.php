@@ -45,8 +45,8 @@ function loader($string=null)
 					$check_elem['FIRST_TOME'] = isset($elem[4], $elem[6], $elem[7])? $elem[4] : -1;
 					$check_elem['LAST_TOME'] = isset($elem[5], $elem[6], $elem[7])? $elem[5] : -1;
 						$elem['a'] = isset($elem[6])? str_split($elem[6]) : (isset($elem[4])? str_split($elem[4]) : array(1,1));
-					$check_elem['STATE'] = isset($elem['a'][0])? $elem['a'][0] : 1;
-					$check_elem['GENDER'] = isset($elem['a'][1])? $elem['a'][1] : 1;
+					$check_elem['GENDER'] = isset($elem['a'][0])? $elem['a'][0] : 1;
+					$check_elem['STATE'] = isset($elem['a'][1])? $elem['a'][1] : 1;
 					$check_elem['INFOPNG'] = isset($elem[7])? $elem[7] : (isset($elem[5])? $elem[5] : null);
 					$check_elem['CHAPTER_SPECIALS'] = isset($elem[8])? $elem[8] : null;
 
@@ -185,8 +185,8 @@ function parser($input=null)
 				$alloc_short[] = $array['SHORT_PROJECT_NAME'];
 				// 2eme partie, list serie
 				$out.=$array['LONG_PROJECT_NAME'].' '.$array['SHORT_PROJECT_NAME'].' '.$array['FIRST_CHAPTER'].' '.
-					$array['LAST_CHAPTER'].' '.$array['FIRST_TOME'].' -1 '.$array['STATE'].
-					$array['GENDER'].' '.$array['INFOPNG'].' '.$array['CHAPTER_SPECIALS']."\n";
+					$array['LAST_CHAPTER'].' '.$array['FIRST_TOME'].' -1 '.$array['GENDER'].
+					$array['STATE'].' '.$array['INFOPNG'].' '.$array['CHAPTER_SPECIALS']."\n";
 				// 3eme partie, chap sp
 				if(!empty($array['string_chap_sp']))
 					$footer .= "#\n".$array['LONG_PROJECT_NAME']." C\n".str_replace(';','',$array['string_chap_sp'])."\n";
