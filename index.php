@@ -177,14 +177,14 @@ if(!empty($_POST['const']) and !empty($_POST['data']) and empty($_FILES['old-rep
 								name="data[<?php echo $i;?>][array_tome][<?php echo $key;?>][NAME]" size="10" <?php 
 								if(isset($value['NAME']))
 									echo 'value="'.$value['NAME'].'"';?>/>
-							<label for="array_tome_<?php echo $i;?>_def1_<?php echo $key;?>">, d&eacute;f 1 </label><?php 
-							help("Vous diposez de 2 lignes de d&eacute;finition, de 50 caract&egrave;res max.");?>
+							<label for="array_tome_<?php echo $i;?>_def1_<?php echo $key;?>">, desc 1 </label><?php 
+							help("Vous diposez de 2 lignes de description, de 50 caract&egrave;res max.");?>
 							<input type="text" class="inc_def" 
 								id="array_tome_<?php echo $i;?>_def1_<?php echo $key;?>" 
 								name="data[<?php echo $i;?>][array_tome][<?php echo $key;?>][DEF_LINE_1]" size="20" <?php 
 								if(isset($value['DEF_LINE_1']))
 									echo 'value="'.$value['DEF_LINE_1'].'"';?>/>
-							<label for="array_tome_<?php echo $i;?>_def2_<?php echo $key;?>">, d&eacute;f 2 </label>
+							<label for="array_tome_<?php echo $i;?>_def2_<?php echo $key;?>">, desc 2 </label>
 							<input type="text" class="inc_def" 
 								id="array_tome_<?php echo $i;?>_def2_<?php echo $key;?>" 
 								name="data[<?php echo $i;?>][array_tome][<?php echo $key;?>][DEF_LINE_2]" size="20" <?php 
@@ -381,13 +381,13 @@ function add_tome(id, tome)
 	
 	var label_array_tome_def1 = document.createElement("label");
 		label_array_tome_def1.setAttribute("for", "array_tome_"+id+"_def1_"+tome);
-		label_array_tome_def1.innerHTML = " , d&eacute;f 1 ";
+		label_array_tome_def1.innerHTML = " , desc 1 ";
 	
 	conten_tome.appendChild(label_array_tome_def1);
 	
 	var span_help_array_tome_def1 = document.createElement('span');
 		span_help_array_tome_def1.className = 'help';
-		span_help_array_tome_def1.title = "Vous diposez de 2 lignes de définition, de 50 caractères max.";
+		span_help_array_tome_def1.title = "Vous diposez de 2 lignes de description, de 50 caractères max.";
 		span_help_array_tome_def1.setAttribute("onclick", "alert('Vous diposez de 2 lignes de définition, de 50 caractères max.');");
 		span_help_array_tome_def1.innerHTML = "(?) ";
 	
@@ -404,7 +404,7 @@ function add_tome(id, tome)
 	
 	var label_array_tome_def2 = document.createElement("label");
 		label_array_tome_def2.setAttribute("for", "array_tome_"+id+"_def2_"+tome);
-		label_array_tome_def2.innerHTML = " , d&eacute;f 2 ";
+		label_array_tome_def2.innerHTML = " , desc 2 ";
 	
 	conten_tome.appendChild(label_array_tome_def2);
 	

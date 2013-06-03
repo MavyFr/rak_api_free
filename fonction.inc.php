@@ -328,11 +328,11 @@ function check_manga_line($input, $id)
 				if(empty($_SESSION['error']['id'])) $_SESSION['error']['id'] = 'array_tome_'.$id.'_name_'.$id_tome;
 			}
 			if(!empty($tome['DEF_LINE_1']) && strlen($tome['DEF_LINE_1']) > 60){
-				$_SESSION['error'][$id]['array_tome'][$id_tome][] = 'Merci de mettre une d&eacute;finition 1 de moins de 60 caract&egrave;res.';
+				$_SESSION['error'][$id]['array_tome'][$id_tome][] = 'Merci de mettre une description 1 de moins de 60 caract&egrave;res.';
 				if(empty($_SESSION['error']['id'])) $_SESSION['error']['id'] = 'array_tome_'.$id.'_def1_'.$id_tome;
 			}
 			if(!empty($tome['DEF_LINE_2']) && strlen($tome['DEF_LINE_2']) > 60){
-				$_SESSION['error'][$id]['string_chap_sp'][$id_tome][] = 'Merci de mettre une d&eacute;finition 2 de moins de 60 caract&egrave;res.';
+				$_SESSION['error'][$id]['string_chap_sp'][$id_tome][] = 'Merci de mettre une description 2 de moins de 60 caract&egrave;res.';
 				if(empty($_SESSION['error']['id'])) $_SESSION['error']['id'] = 'array_tome_'.$id.'_def2_'.$id_tome;
 			}
 		}
