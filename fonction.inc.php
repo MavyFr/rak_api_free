@@ -184,32 +184,21 @@ function parser($input=null)
 				$alloc_long[] = $array['LONG_PROJECT_NAME'];
 				$alloc_short[] = $array['SHORT_PROJECT_NAME'];
 				// 2eme partie, list serie
-				$out.=$array['LONG_PROJECT_NAME'].' '.$array['SHORT_PROJECT_NAME'].' '.$array['FIRST_CHAPTER'].' '.
+				$out .= "\n".$array['LONG_PROJECT_NAME'].' '.$array['SHORT_PROJECT_NAME'].' '.$array['FIRST_CHAPTER'].' '.
 					$array['LAST_CHAPTER'].' '.$array['FIRST_TOME'].' -1 '.$array['GENDER'].
-					$array['STATE'].' '.$array['INFOPNG'].' '.$array['CHAPTER_SPECIALS']."\n";
+					$array['STATE'].' '.$array['INFOPNG'].' '.$array['CHAPTER_SPECIALS'];
 				// 3eme partie, chap sp
 				if(!empty($array['string_chap_sp']))
-					$footer .= "#\n".$array['LONG_PROJECT_NAME']." C\n".str_replace(';','',$array['string_chap_sp'])."\n";
+					$footer .= "\n#\n".$array['LONG_PROJECT_NAME']." C\n".str_replace(';','',$array['string_chap_sp']);
 				// 4eme partie, tome
 				if(!empty($array['array_tome']) and is_array($array['array_tome']))
 				{
-					$footer .= "#\n".$array['LONG_PROJECT_NAME']." T\n";
+					$footer .= "\n#\n".$array['LONG_PROJECT_NAME']." T";
 					foreach ($array['array_tome'] as $id => $tome)
 					{
-						$footer .= $id;
-						if(isset($tome['NAME']) and $tome['NAME'] != null)
-						{
-							$footer .= ' ' .$tome['NAME'];
-							if(isset($tome['DEF_LINE_1']) and $tome['DEF_LINE_1'] != null)
-							{
-								$footer .= ' ' .$tome['DEF_LINE_1'];
-							}
-							if(isset($tome['DEF_LINE_2']) and $tome['DEF_LINE_2'] != null)
-							{
-								$footer .= ' ' .$tome['DEF_LINE_2'];
-							}
-						}
-						$footer .= "\n";
+						$footer .= "\n".$id;
+						if($tome['NAME'] != '_' or $tome['DEF_LINE_1'] != '_' or $tome['DEF_LINE_2'] != '_')
+							$footer .= ' '.$tome['NAME'].' '.$tome['DEF_LINE_1'].' '.$tome['DEF_LINE_2'];
 					}
 				}
 			}
@@ -220,7 +209,7 @@ function parser($input=null)
 	if(!empty($_SESSION['error']))
 		return false;
 	// 1ere partie, le header
-	$head = str_replace(' ','_',$input['const']['LONG_MANAGER_NAME']). ' ' .str_replace(' ','_',$input['const']['SHORT_MANAGER_NAME']).' '.$version."\n";
+	$head = str_replace(' ','_',$input['const']['LONG_MANAGER_NAME']). ' ' .str_replace(' ','_',$input['const']['SHORT_MANAGER_NAME']).' '.$version;
 	return $head . $out . $footer;
 }
 /*************************************************/
@@ -354,12 +343,14 @@ function check_manga_line($input, $id)
 	if(!empty($input['string_chap_sp']))
 	{
 		$input['array_chap_sp'] = array();
+		$input['string_chap_sp'] = str_replace(',', '.', $input['string_chap_sp']);
 		$chap_sp_array_tmp = explode(';', $input['string_chap_sp']);
 		natcasesort($chap_sp_array_tmp);
 		foreach($chap_sp_array_tmp as $key=>$value)
 		{
-			if(!in_array(intval($value * 10), $input['array_chap_sp']))
-				$input['array_chap_sp'][] = intval($value * 10);
+			// si pas rentre, et different de *0 (chap normal donc)
+			if(!in_array(intval($value * 10), $input['array_chap_sp']) and intval($value * 10)%10)
+				$input['array_chap_sp'][] = intval($value * 10); 
 		}
 		$input['string_chap_sp'] = implode('; ', $input['array_chap_sp']);
 	}
