@@ -84,6 +84,7 @@ function loader($string=null)
 				
 				if($head[1] == 'C') // si c est un/des chapitre(s)
 				{
+					$chap_sp_array = array();
 					$chap_sp_array_tmp = explode(' ', $ligne_array[1]);
 					natcasesort($chap_sp_array_tmp);
 					foreach($chap_sp_array_tmp as $key=>$value)
