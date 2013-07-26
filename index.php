@@ -3,7 +3,7 @@ session_start();
 $curent_version = '1.0 [beta]';
 $page_index = true;
 include_once('fonction.inc.php');
-if(empty($page_fonction)) // si le chargement merde
+if(empty($page_fonction)) // si le chargement rate
 	die('SECURITY ERROR : Please Contact Your Admin, <a href="mailto:contact@rakshata.com">contact@rakshata.com</a>.');
 
 if(empty($_SESSION['hello']))
@@ -30,7 +30,7 @@ elseif(!empty($_COOKIE['old']))
 	log_f('`loader`', 'from COOKIE');
 }
 ////////////////////////////////////////////////////////////////
-// si on a un envois, on lance la procedure de set download
+// si on a un envoi, on lance la procedure de set download
 if(!empty($_POST['const']) and !empty($_POST['data']) and empty($_FILES['old-repo']['size']))
 {
 	$manga_array['const'] = $_POST['const'];
@@ -261,7 +261,7 @@ if(!empty($_POST['const']) and !empty($_POST['data']) and empty($_FILES['old-rep
 		<br />
 		<input type="checkbox" name="remember" id="remember" <?php if(!empty($old['remember']))echo'checked="checked"';?> />
 			<label for="remember">Se souvenir de moi ! </label><?php 
-			help("Les informations de ce d&eacute;p&ocirc;t serons retenues par votre ordinateur pour pr&eacute;-remplir le formulaire &agrave; votre prochaine visite.");?>
+			help("Les informations de ce d&eacute;p&ocirc;t seron.t retenues par votre ordinateur pour pr&eacute;-remplir le formulaire &agrave; votre prochaine visite.");?>
 			(<a href="#" onclick="forget(); return false;">m'oublier</a>)
 		<br />
 		<input type="submit" value="cr&eacute;er" />
@@ -710,14 +710,14 @@ function add_ligne(i)
 	
 	var label_string_chap_sp = document.createElement("label");
 		label_string_chap_sp.setAttribute("for", "string_chap_sp_"+i);
-		label_string_chap_sp.innerHTML = "Liste des chapitres sp&eacute;ciaux, s&eacute;par&eacute; par des <kbd>;</kbd> : ";
+		label_string_chap_sp.innerHTML = "Liste des chapitres sp&eacute;ciaux, s&eacute;par&eacute;s par des <kbd>;</kbd> : ";
 	
 	show.appendChild(label_string_chap_sp);
 	
 	var span_help_string_chap_sp = document.createElement('span');
 		span_help_string_chap_sp.className = 'help';
-		span_help_string_chap_sp.title = "Avez-vous des inter-chapitres de type '10.5' ? Faite la liste avec des ';' sous la forme '5,7; 10.5;20.2'";
-		span_help_string_chap_sp.setAttribute("onclick", "alert('Avez-vous des inter-chapitres de type \\\'10.5\\\' ? Faite la liste avec des \\\';\\\' sous la forme \\\'5,7; 10.5;20.2\\\'');");
+		span_help_string_chap_sp.title = "Avez-vous des inter-chapitres de type '10.5' ? Faites la liste avec des ';' sous la forme '5,7; 10.5;20.2'";
+		span_help_string_chap_sp.setAttribute("onclick", "alert('Avez-vous des inter-chapitres de type \\\'10.5\\\' ? Faites la liste avec des \\\';\\\' sous la forme \\\'5,7; 10.5;20.2\\\'');");
 		span_help_string_chap_sp.innerHTML = "(?)";
 	
 	show.appendChild(span_help_string_chap_sp);

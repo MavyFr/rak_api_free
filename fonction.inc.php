@@ -16,9 +16,9 @@ function loader($string=null)
 
 	if(!($partie_array = explode("#\n", $string)))
 		return false;
-	for($i=0; isset($partie_array[$i]); $i++)// on parcours les partie du fichier
+	for($i=0; isset($partie_array[$i]); $i++)// on parcourt les parties du fichier
 	{
-		if(!$i) // si premere ligne
+		if(!$i) // si premiere ligne
 		{
 			if(!($ligne_array = explode("\n", $partie_array[$i])))
 				return false;
@@ -56,7 +56,7 @@ function loader($string=null)
 						and 	($check_elem['SHORT_PROJECT_NAME'] == null 
 							or !in_array($check_elem['SHORT_PROJECT_NAME'], $alloc_short)
 							)
-						) // si le projet est vide ou exsiste pas
+						) // si le projet est vide ou n'exsiste pas
 					{
 						$out['data'][] = $check_elem;
 						$alloc_long[] = $check_elem['LONG_PROJECT_NAME'];
@@ -72,17 +72,17 @@ function loader($string=null)
 		{
 			if(!($ligne_array = explode("\n", $partie_array[$i])))
 				continue;
-			if(!($head = explode(' ', $ligne_array[0]))) // si 1er ligne vide on passe a la partie next
+			if(!($head = explode(' ', $ligne_array[0]))) // si 1er ligne vide on passe à la partie next
 				continue;
 
 			unset($ligne_array[0]);
 			$head[0]= str_replace('_',' ',$head[0]);
 
-			if(!empty($alloc_long) and in_array($head[0], $alloc_long)) // si le projet exsite
+			if(!empty($alloc_long) and in_array($head[0], $alloc_long)) // si le projet existe
 			{
 				$key_serie = array_keys($alloc_long, $head[0]); // la key serie dans l array master
 				
-				if($head[1] == 'C') // si c est un/des chapitre(s)
+				if($head[1] == 'C') // si c'est un/des chapitre(s)
 				{
 					$chap_sp_array = array();
 					$chap_sp_array_tmp = explode(' ', $ligne_array[1]);
@@ -101,14 +101,14 @@ function loader($string=null)
 				elseif($head[1] == 'T') // si c est des tomes
 				{
 					$tome_array = array();
-					foreach($ligne_array as $value) // les ligne de tome
+					foreach($ligne_array as $value) // les lignes de tome
 					{
 						$tome_array_tmp = explode(' ', $value);
 						if	(isset($tome_array_tmp[0]) 
 							and ctype_digit($tome_array_tmp[0]) 
 							and !array_key_exists(intval($tome_array_tmp[0]), $tome_array) 
 							)
-						{ // si ID + titre, que id est bien un int qui n est pas dans les deja ajoute
+						{ // si ID + titre, que id est bien un int qui n est pas dans les deja ajoutes
 							if(isset($tome_array_tmp[1]) and $tome_array_tmp[1] != '_')
 								$tome_array[intval($tome_array_tmp[0])]['NAME'] = str_replace('_',' ',$tome_array_tmp[1]);
 							else
@@ -145,7 +145,7 @@ function loader($string=null)
 	return $out;
 }
 /*************************************************/
-// fonction met en forme les valeur array pour l output string
+// fonction met en forme les valeurs array pour l output string
 function parser($input=null)
 {
 	$version = 1;
@@ -214,7 +214,7 @@ function parser($input=null)
 	return $head . $out . $footer;
 }
 /*************************************************/
-// fonction check si les valeur de la ligne sont correcte
+// fonction check si les valeurs de la ligne sont correctes
 function check_manga_line($input, $id)
 {
 	// projet vide : on saute
@@ -269,7 +269,7 @@ function check_manga_line($input, $id)
 	if (	(!isset($input['FIRST_CHAPTER']) || $input['FIRST_CHAPTER'] == null)
 			&& (!isset($input['LAST_CHAPTER']) || $input['LAST_CHAPTER'] == null)
 			&& empty($input['array_tome'])
-		) // si rien de remplis comme sortie
+		) // si rien de rempli comme sortie
 	{
 		$_SESSION['error'][$id]['sortie'][] = 'Merci de remplir les champs "Tome" ou "Chapitre".';
 		if(empty($_SESSION['error']['id'])) $_SESSION['error']['id'] = 'FIRST_CHAPTER_'.$id;
@@ -331,7 +331,7 @@ function check_manga_line($input, $id)
 	if(!empty($_SESSION['error'][$id]))
 		return false;
 	/////////////////////////////////////////////////
-	// check des coherances entre debut et fin
+	// check des coherences entre debut et fin
 	if(intval($input['FIRST_CHAPTER']) > intval($input['LAST_CHAPTER'])){
 		$_SESSION['error'][$id]['chapitre'][] = 'Votre n° de premier chapitre est plus grand que votre dernier...';
 		if(empty($_SESSION['error']['id'])) $_SESSION['error']['id'] = 'FIRST_CHAPTER_'.$id;
@@ -379,7 +379,7 @@ function check_manga_line($input, $id)
 					$input['array_tome'][$id_tome]['DEF_LINE_2'] = '_';
 		}
 	}
-	// on met les par def pour les valeurs vide
+	// on met les par def pour les valeurs vides
 
 	$input['SHORT_PROJECT_NAME'] = str_replace(' ', '_', $input['SHORT_PROJECT_NAME']);
 	$input['LONG_PROJECT_NAME'] = str_replace(' ', '_', $input['LONG_PROJECT_NAME']);
@@ -410,7 +410,7 @@ function set_download($str_file=null, $name = 'rakshata-manga-2')
 	die();
 }
 /*************************************************/
-// fonction creer ou modifier les cookie de maniere recursive
+// fonction creer ou modifier les cookies de maniere recursive
 function set_cookie($mixed=null,$name=null, $time_out=30758400)
 {
 	if(is_array($mixed))
@@ -420,7 +420,7 @@ function set_cookie($mixed=null,$name=null, $time_out=30758400)
 		setcookie($name, $mixed, time() + $time_out);
 }
 /*************************************************/
-// fonction convertire utf8 en ascii
+// fonction convertir utf8 en ascii
 function switch_utf8_ascii($mixed, $out_enc='ISO-8859-1//TRANSLIT', $in_enc='UTF-8')
 {
 	if(is_array($mixed)){ // si on lui passe un array on recursive
@@ -436,7 +436,7 @@ function switch_utf8_ascii($mixed, $out_enc='ISO-8859-1//TRANSLIT', $in_enc='UTF
 	return $out;
 }
 /*************************************************/
-// fonction fait le tri naturel des nom long; re-index les serie
+// fonction fait le tri naturel des noms longs; re-index les series
 function sort_array($array=array())
 {
 	$in = null;
@@ -459,17 +459,17 @@ function sort_tome($array=array())
 	{
 		foreach($array as $key=>$value)
 		{
-			$out[$key] = $value; // on charges les info serie
+			$out[$key] = $value; // on charge les info serie
 			if(!empty($value['array_tome']) and is_array($value['array_tome'])) // si on a des tomes
 			{
 				unset($out[$key]['array_tome']); // on vire les tomes de l output
 				$alloc_tome = array();
 				$error_tome = array();
-				foreach($value['array_tome'] as $id=>$tome) // on boucles les tomes
+				foreach($value['array_tome'] as $id=>$tome) // on boucle les tomes
 				{
-					if(isset($tome['ID'])) // si c est un envois POST
+					if(isset($tome['ID'])) // si c est un envoi POST
 					{
-						if($tome['ID'] == null or !ctype_digit($tome['ID'])) // si ID est vide & un truc remplis, on charge erreur
+						if($tome['ID'] == null or !ctype_digit($tome['ID'])) // si ID est vide & un truc rempli, on charge erreur
 						{
 							if(isset($tome['NAME']) and $tome['NAME'] != null) 
 								$error_tome[$id]['NAME'] = $tome['NAME'];
@@ -480,7 +480,7 @@ function sort_tome($array=array())
 							if(isset($tome['DEF_LINE_2']) and $tome['DEF_LINE_2'] != null) 
 								$error_tome[$id]['DEF_LINE_2'] = $tome['DEF_LINE_2'];
 							
-							// si on a sauver qq chose, on cree le flag d erreur
+							// si on a sauve qq chose, on cree le flag d erreur
 							if(isset($error_tome[$id]))
 							{
 								if($tome['ID'] == null)
@@ -489,7 +489,7 @@ function sort_tome($array=array())
 									$error_tome[$id]['error'] = 'id_nan';
 							}
 						}
-						elseif(!in_array(intval($tome['ID']), $alloc_tome)) // si pas deja dans les tome de la serie
+						elseif(!in_array(intval($tome['ID']), $alloc_tome)) // si pas deja dans les tomes de la serie
 						{
 							$out[$key]['array_tome'][intval($tome['ID'])] = null;
 							$alloc_tome[] = intval($tome['ID']);
@@ -504,7 +504,7 @@ function sort_tome($array=array())
 								$out[$key]['array_tome'][intval($tome['ID'])]['DEF_LINE_2'] = $tome['DEF_LINE_2'];
 						}
 					}
-					elseif(!isset($tome['ID']) and !in_array($id, $alloc_tome)) // si envois FILE
+					elseif(!isset($tome['ID']) and !in_array($id, $alloc_tome)) // si envoi FILE
 					{
 						$out[$key]['array_tome'][intval($id)] = null;
 						$alloc_tome[] = intval($id);
@@ -577,7 +577,7 @@ function mq_stripslashes()
 	array_walk_recursive($super_glob, 'mq_loc_stripslashes');
 }
 /*************************************************/
-// fonction echape les " du csv
+// fonction echappe les " du csv
 function csv($texte)
 {
 	return str_replace('"', '""', $texte);
