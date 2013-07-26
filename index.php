@@ -261,7 +261,7 @@ if(!empty($_POST['const']) and !empty($_POST['data']) and empty($_FILES['old-rep
 		<br />
 		<input type="checkbox" name="remember" id="remember" <?php if(!empty($old['remember']))echo'checked="checked"';?> />
 			<label for="remember">Se souvenir de moi ! </label><?php 
-			help("Les informations de ce d&eacute;p&ocirc;t seron.t retenues par votre ordinateur pour pr&eacute;-remplir le formulaire &agrave; votre prochaine visite.");?>
+			help("Les informations de ce d&eacute;p&ocirc;t seront retenues par votre ordinateur pour pr&eacute;-remplir le formulaire &agrave; votre prochaine visite.");?>
 			(<a href="#" onclick="forget(); return false;">m'oublier</a>)
 		<br />
 		<input type="submit" value="cr&eacute;er" />
